@@ -23,7 +23,7 @@ Its primary goal is to allow one to change some key offspot configuration upon n
 offspot-config-fromfile --debug /boot/offspot.yaml
 ```
 
-- `--debug` will show you what exact parameters where passed to individual scripts so you can manually launch them should there be an issue.
+- `--debug` will show you what exact parameters were passed to individual scripts so you can manually launch them should there be an issue.
 - this script is meant to be run automaticaly on boot (via systemd) **before `docker-compose.service`**.
 - It returns `0` on success, `1` on general failures and `2` on misconfiguration (invalid parameter). Same goes for individual scripts.
 - it starts `hostapd`, `dnsmasq` and `iptables-restore` automatically. If you start it on boot, disable them (`systemctl disable hostapd dnsmasq`)
