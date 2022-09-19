@@ -33,7 +33,7 @@ offspot-config-fromfile --debug /boot/offspot.yaml
 **⚠️ Warning**: only tested on offspot base-image (raspiOS bullseye)
 
 ```sh
-apt install hostapd dnsmasq dhcpcd5 python3-yaml
+apt install hostapd dnsmasq dhcpcd5 python3-yaml python3-pip
 systemctl unmask hostapd
 systemctl disable hostapd dnsmasq
 pip3 install offspot_runtime_config
