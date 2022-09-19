@@ -161,6 +161,7 @@ Without an *armor*, configuration is appended at end of file, specifying `eth0` 
 | `interface`  | `string`   | no | Interface to configure AP for. Defaults to `wlan0`                                                               |
 | `dhcp-range` | `string`   | no | IP range for AP clients. `start,end,subnet,ttl` format. Default: `.100-.240` from address                        |
 | `network`    | `[string]` | no | Network to advertise DHCP on. Defaults to `.0/24` from address                                                   |
+| `nodhcp-interfaces` | `[string]` | no | Interfaces where the DHCP server will not run |
 | `dns`        | `[string]` | no | DNS to set via DHCP when working as Internet gateway. Defaults to `8.8.8.8`, `1.1.1.1`                           |
 | `as-gateway` | `boolean`  | no | Make this device act as a gateway to Internet (wired) for AP (wireless) clients (when/if `eth0` has connectivity)|
 | `tld`        | `string`   | no | Search (top-level) *domain* to set via DHCP. Defaults to `offspot`                                               |
