@@ -147,7 +147,7 @@ def main(
     except ValueError as exc:
         fail_error(f"Missing placeholder in {DHCPCD_CONF_PATH}: {exc}")
 
-    if simple_run([str(SYSTEMCTL_PATH), "restart", "dhcpcd"]) != 0:
+    if simple_run([str(SYSTEMCTL_PATH), "--no-pager", "restart", "dhcpcd"]) != 0:
         return 1
 
     # make sure we return once network conf has been applied

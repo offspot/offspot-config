@@ -146,7 +146,7 @@ def restart_service(service):
     """start or restart systemd unit based on status"""
     action = (
         "restart"
-        if simple_run([str(SYSTEMCTL_PATH), "status", service]) == 0
+        if simple_run([str(SYSTEMCTL_PATH), "--no-pager", "status", service]) == 0
         else "start"
     )
     return simple_run([str(SYSTEMCTL_PATH), action, service])
