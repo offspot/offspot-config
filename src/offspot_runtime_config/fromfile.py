@@ -228,7 +228,7 @@ def main(config_path, debug: Optional[bool] = False):
             colored(f"Unable to read/parse YAML config at {config_path}: {exc}", "red")
         )
         start_ap_stack()
-        has_error = True
+        return 1
 
     for key in ("timezone", "hostname", "ethernet", "ap", "containers"):
         if config.get(key):
