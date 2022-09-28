@@ -11,6 +11,7 @@ import fcntl
 import inspect
 import pathlib
 import re
+import shutil
 import socket
 import struct
 import subprocess
@@ -237,7 +238,7 @@ def write_dnsmasq_conf(dnsmasq_conf_path: pathlib.Path, **kwargs) -> int:
         return 1
 
     ensure_folder(dnsmasq_conf_path.parent)
-    temp_conf.replace(dnsmasq_conf_path)
+    shutil.move(temp_conf, dnsmasq_conf_path)
     return 0
 
 
