@@ -31,7 +31,7 @@ def get_version():
 
 setup(
     name="offspot-runtime-config",
-    version="1.0",
+    version="1.0.0",
     description="Offspot Runtime Configuration Scripts",
     long_description=read("README.md"),
     long_description_content_type="text/markdown; charset=UTF-8; variant=GFM",

@@ -2,6 +2,10 @@
 
 A collection of scripts for use within [offspot/base-image](https://github.com/offspot/base-image).
 
+[![CodeFactor](https://www.codefactor.io/repository/github/offspot/runtime-config/badge)](https://www.codefactor.io/repository/github/offspot/runtime-config)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![PyPI version shields.io](https://img.shields.io/pypi/v/offspot-runtime-config.svg)](https://pypi.org/project/offspot-runtime-config/)
+
 Launched via `offspot-config-fromfile`, it:
 
 - reads a YAML config file and changes the offspot configuration accordingly.
