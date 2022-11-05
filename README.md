@@ -171,7 +171,7 @@ Without an *armor*, configuration is appended at end of file, specifying `eth0` 
 | `tld`        | `string`   | no | Search (top-level) *domain* to set via DHCP. Defaults to `offspot`                                               |
 | `domain`     | `string`   | no | Domain name to direct to the offspot. Defaults to `generic` (resolved as `generic.{tld}`                         |
 | `welcome`    | `string`   | no | Additional domain to direct to offspot. Defaults to `goto.kiwix` (resolved as `goto.generic.{tld}`               |
-| `spoof`      | `boolean`  | no | Whether to direct all DNS requests to the offspot. Useful for captive-portal without Internet bridge             |
+| `spoof`      | `boolean`* | no | Whether to direct all DNS requests to the offspot. Useful for captive-portal without Internet bridge. Special value `auto` triggers it when the hotspot is offline and disables it when it is connected to Internet    |
 
 ### notes
 

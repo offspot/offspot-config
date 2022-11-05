@@ -155,11 +155,12 @@ class Handlers:
             "interface",
             "dhcp-range",
             "network",
+            "spoof",
         ):
             if item.get(key) is not None:
                 command += [f"--{key}", str(item.get(key))]
 
-        for key in ("hide", "as-gateway", "spoof"):
+        for key in ("hide", "as-gateway"):
             if item.get(key):
                 command += [f"--{key}"]
 
