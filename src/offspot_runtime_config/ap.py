@@ -24,12 +24,15 @@ if parent not in sys.path:
     sys.path.insert(0, str(parent))
 
 from offspot_config_lib import (  # noqa: E402
+    DNSMASQ_CONF_PATH,
+    DNSMASQ_SPOOF_CONFIG_PATH,
     IPTABLES_DIR,
     Config,
     __version__,
     ensure_folder,
     fail_error,
     fail_invalid,
+    install_dnsmasq_spoof_service,
     is_valid_ip,
     restart_service,
     simple_run,
@@ -50,7 +53,6 @@ DEFAULT_TLD = "offspot"
 DEFAULT_DOMAIN = "generic"
 DEFAULT_WELCOME_DOMAIN = "goto.generic"
 HOSTAPD_CONF_PATH = pathlib.Path("/etc/hostapd/hostapd.conf")
-DNSMASQ_CONF_PATH = pathlib.Path("/etc/dnsmasq.conf")
 NF_MASQUERADE_RULES_PATH = IPTABLES_DIR / "offspot-masquerade.rules"
 NF_FORWARDING_RULES_PATH = IPTABLES_DIR / "offspot-forwarding.rules"
 INTERFACES_PATH = pathlib.Path("/etc/network/interfaces.d/offspot")
@@ -110,6 +112,7 @@ address=/{welcome_fqdn}/{address}
 address=/{fqdn}/{address}
 {servers}
 no-hosts
+conf-file={DNSMASQ_SPOOF_CONFIG_PATH}
 """
 INTERFACES_CONF = """
 allow-hotplug {interface}
@@ -193,10 +196,26 @@ def write_hostapd_conf(hostapd_conf_path: pathlib.Path, **kwargs) -> int:
     return 0
 
 
+def write_dnsmasq_spoof_conf(dnsmasq_spoof_conf_path: pathlib.Path, **kwargs) -> int:
+    """std-returncode writing dnsmasq-spoof.conf
+
+    at this stage, we only enable spoof is spoof was unconditionaly requested.
+    auto-spoof would be triggered externaly"""
+    line = "address=/#/1.1.1.1"
+    if not kwargs["spoof"]:
+        line = f"# {line}"
+
+    with open(dnsmasq_spoof_conf_path, "w") as fh:
+        fh.write(f"{line}\n")
+
+    return 0
+
+
 def write_dnsmasq_conf(dnsmasq_conf_path: pathlib.Path, **kwargs) -> int:
     """std-returncode, building and writing dnsmasq.conf from kwargs"""
 
     kwargs = dict(kwargs)  # work on a local copy
+    kwargs["DNSMASQ_SPOOF_CONFIG_PATH"] = DNSMASQ_SPOOF_CONFIG_PATH
     kwargs["other_interfaces_lines"] = "\n".join(
         [
             f"interface={iface}"
@@ -216,11 +235,7 @@ def write_dnsmasq_conf(dnsmasq_conf_path: pathlib.Path, **kwargs) -> int:
         [f"no-dhcp-interface={iface}" for iface in kwargs["nodhcp_interfaces"]]
     )
 
-    # spoof-mode captures all dns requests (captive-portal-like)
-    if kwargs["spoof"]:
-        kwargs["servers"] = f"address=/#/{kwargs['address']}"
-    # let clients use proper DNS servers
-    elif kwargs["as_gateway"]:
+    if kwargs["as_gateway"]:
         kwargs["servers"] = "\n".join([f"server={server}" for server in kwargs["dns"]])
     # no internet, no need for DNS
     else:
@@ -338,6 +353,18 @@ def main(**kwargs) -> int:
         fail_error("failed to set {kwargs['address']=} on {kwargs['interface']=}")
     logger.debug("ip-address set")
 
+    _str_spoof = str(kwargs["spoof"]).strip().lower()
+    kwargs["auto_spoof"] = _str_spoof == "auto"
+    kwargs["spoof"] = not kwargs["auto_spoof"] and _str_spoof == "true"
+    if (
+        write_dnsmasq_spoof_conf(
+            dnsmasq_spoof_conf_path=DNSMASQ_SPOOF_CONFIG_PATH, **kwargs
+        )
+        != 0
+    ):
+        fail_error("writing dnsmasq-spoof.conf failed")
+    logger.debug("dnsmasq-spoof.conf written")
+
     if write_dnsmasq_conf(dnsmasq_conf_path=DNSMASQ_CONF_PATH, **kwargs) != 0:
         fail_error("writing dnsmasq.conf failed")
     logger.debug("dnsmasq.conf written")
@@ -370,6 +397,19 @@ def main(**kwargs) -> int:
     else:
         disable_forwarding()
         logger.debug("forwarding disabling requested")
+
+    # not spoofing nor auto-spoof, make sure auto-spoof is disabled
+    if not kwargs["spoof"] and not kwargs["auto_spoof"]:
+        if install_dnsmasq_spoof_service(remove=True) != 0:
+            fail_error("failed to remove auto-spoof toggle")
+            logger.debug("auto-spoof toggle removed")
+    # install auto-spoof units
+    if kwargs["auto_spoof"]:
+        if install_dnsmasq_spoof_service(remove=False) != 0:
+            fail_error("failed to install auto-spoof toggle")
+            logger.debug("installed auto-spoof toggle")
+        # run it once to align with current status
+        restart_service("toggle-dnsmasq-spoof.service")
 
     succeed("Wireless AP configured")
 
@@ -525,7 +565,7 @@ def entrypoint():
         action="append",
     )
 
-    parser.add_argument("--spoof", action="store_true", dest="spoof")
+    parser.add_argument("--spoof", dest="spoof")
 
     kwargs = dict(parser.parse_args()._get_kwargs())
     Config.set_debug(kwargs.get("debug"))

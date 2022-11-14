@@ -30,6 +30,8 @@ RE_IP = re.compile(
     r"\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
 )
 SYSTEMCTL_PATH = pathlib.Path("/usr/bin/systemctl")
+DNSMASQ_CONF_PATH = pathlib.Path("/etc/dnsmasq.conf")
+DNSMASQ_SPOOF_CONFIG_PATH = DNSMASQ_CONF_PATH.with_name("dnsmasq-spoof.conf")
 IPTABLES_DIR = pathlib.Path("/etc/iptables/")
 TERM_COLORS = {"red": "31", "green": "32", "blue": "34"}
 
@@ -150,3 +152,47 @@ def restart_service(service):
         else "start"
     )
     return simple_run([str(SYSTEMCTL_PATH), action, service])
+
+
+def install_dnsmasq_spoof_service(remove: Optional[bool] = False):
+    svcunit_path = pathlib.Path("/etc/systemd/system/toggle-dnsmasq-spoof.service")
+    pathunit_path = pathlib.Path("/etc/systemd/system/toggle-dnsmasq-spoof.path")
+
+    if remove:
+        simple_run([str(SYSTEMCTL_PATH), "stop", pathunit_path.name]),
+        simple_run([str(SYSTEMCTL_PATH), "disable", pathunit_path.name]),
+        pathunit_path.unlink(missing_ok=True)
+        svcunit_path.unlink(missing_ok=True)
+        simple_run([str(SYSTEMCTL_PATH), "daemon-reload"])
+        return
+
+    with open(svcunit_path, "w") as fh:
+        fh.write(
+            """[Unit]
+Description=Toggle dnsmasq spoof mode based on internet connectivity
+
+[Service]
+ExecStart=toggle-dnsmasq-spoof
+"""
+        )
+
+    with open(pathunit_path, "w") as fh:
+        fh.write(
+            """[Unit]
+Description="Monitor internet connectivity file for changes"
+
+[Path]
+PathModified=/var/run/internet
+Unit=toggle-dnsmasq-spoof.service
+
+[Install]
+WantedBy=multi-user.target
+"""
+        )
+    return sum(
+        [
+            simple_run([str(SYSTEMCTL_PATH), "daemon-reload"]),
+            simple_run([str(SYSTEMCTL_PATH), "enable", pathunit_path.name]),
+            simple_run([str(SYSTEMCTL_PATH), "start", pathunit_path.name]),
+        ]
+    )

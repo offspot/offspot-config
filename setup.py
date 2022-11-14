@@ -50,6 +50,7 @@ setup(
             "offspot-config-ethernet=offspot_runtime_config.ethernet:entrypoint",
             "offspot-config-hostname=offspot_runtime_config.hostname:entrypoint",
             "offspot-config-timezone=offspot_runtime_config.timezone:entrypoint",
+            "toggle-dnsmasq-spoof=offspot_runtime_config.dnsmasqspoof:entrypoint",
             "offspot-config-fromfile=offspot_runtime_config.fromfile:entrypoint",
         ]
     },
