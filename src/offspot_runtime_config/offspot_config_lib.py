@@ -164,7 +164,7 @@ def install_dnsmasq_spoof_service(remove: Optional[bool] = False):
         pathunit_path.unlink(missing_ok=True)
         svcunit_path.unlink(missing_ok=True)
         simple_run([str(SYSTEMCTL_PATH), "daemon-reload"])
-        return
+        return 0
 
     with open(svcunit_path, "w") as fh:
         fh.write(
