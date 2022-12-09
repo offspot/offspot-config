@@ -15,7 +15,7 @@ parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
 if parent not in sys.path:
     sys.path.insert(0, str(parent))
 
-from offspot_config_lib import (  # noqa: E402
+from configlib import (  # noqa: E402
     IPTABLES_DIR,
     SYSTEMCTL_PATH,
     Config,

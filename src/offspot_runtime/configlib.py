@@ -23,12 +23,6 @@ else:
 
 
 __version__ = "1.0"
-RE_IP = re.compile(
-    r"^(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
-    r"\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
-    r"\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
-    r"\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-)
 SYSTEMCTL_PATH = pathlib.Path("/usr/bin/systemctl")
 DNSMASQ_CONF_PATH = pathlib.Path("/etc/dnsmasq.conf")
 DNSMASQ_SPOOF_CONFIG_PATH = DNSMASQ_CONF_PATH.with_name("dnsmasq-spoof.conf")
@@ -86,21 +80,6 @@ def succeed(message: str) -> int:
 def warn_unless_root():
     if os.getuid() != 0:
         Config.logger.warning(f"you are not root! uid={os.getuid()}")
-
-
-def is_valid_ip(address):
-    match = RE_IP.match(address)
-    if not match:
-        return False
-    for index, sub in enumerate(match.groups()):
-        if not sub.isnumeric():
-            return False
-        dsub = int(sub)
-        if dsub < 0 or dsub > 254:
-            return False
-        if index in (0, 3) and dsub == 0:
-            return False
-    return True
 
 
 def simple_run(command: List[str], stdin: Optional[str] = None):

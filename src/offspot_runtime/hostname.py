@@ -14,7 +14,8 @@ parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
 if parent not in sys.path:
     sys.path.insert(0, str(parent))
 
-from offspot_config_lib import (  # noqa: E402
+from checks import is_valid_hostname  # noqa: E402
+from configlib import (  # noqa: E402
     Config,
     __version__,
     fail_invalid,
@@ -24,9 +25,7 @@ from offspot_config_lib import (  # noqa: E402
 )
 
 NAME = pathlib.Path(__file__).stem
-RE_HOSTNAME = re.compile(
-    r"^([a-zA-Z0-9](?:(?:[a-zA-Z0-9-]*|(?<!-)\.(?![-.]))*[a-zA-Z0-9]+)?)$"
-)
+
 Config.init(NAME)
 logger = Config.logger
 
@@ -35,15 +34,9 @@ def main(hostname: str, debug: Optional[bool] = False) -> int:
     logging.info(f"Configuring hostname for `{hostname}`")
     warn_unless_root()
 
-    parts = [len(part) for part in hostname.split(".")]
-    if (
-        len(hostname) > 255
-        or len(parts) > 64
-        or min(parts) < 1
-        or max(parts) > 63
-        or not RE_HOSTNAME.match(hostname)
-    ):
-        fail_invalid(f"Invalid hostname “{hostname}”")
+    check = is_valid_hostname(hostname)
+    if not check.passed:
+        fail_invalid(check.help_text)
 
     rc = simple_run(
         ["/usr/bin/hostnamectl", "--no-ask-password", "set-hostname", hostname]

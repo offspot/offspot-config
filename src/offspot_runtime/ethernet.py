@@ -15,14 +15,14 @@ parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
 if parent not in sys.path:
     sys.path.insert(0, str(parent))
 
-from offspot_config_lib import (  # noqa: E402
+from checks import is_valid_ethernet_config  # noqa: E402
+from configlib import (  # noqa: E402
     SYSTEMCTL_PATH,
     Config,
     __version__,
     ensure_folder,
     fail_error,
     fail_invalid,
-    is_valid_ip,
     simple_run,
     succeed,
     warn_unless_root,
@@ -110,31 +110,17 @@ def main(
     logging.info("Configuring network")
     warn_unless_root()
 
-    if network_type not in ("dhcp", "static"):
-        fail_invalid(f"Incorrect network type: {network_type}")
+    check = is_valid_ethernet_config(
+        network_type=network_type, address=address, routers=routers, dns=dns
+    )
+    if not check.passed:
+        fail_invalid(check.help_text)
 
-    # rest of network conf is solely for static
     if network_type == "static":
-        if not address:
-            fail_invalid("Missing static address")
-        if not is_valid_ip(address):
-            fail_invalid(f"Incorrect static address: {address}")
-
-        if not routers or not isinstance(routers, list):
-            fail_invalid("Missing static router")
-        for router in routers:
-            if not is_valid_ip(router):
-                fail_invalid(f"Invalid router address: {router}")
-        net_dns = str(dns).split(" ")
-        if not net_dns:
-            fail_invalid("Missing static dns")
-        for server in net_dns:
-            if not is_valid_ip(server):
-                fail_invalid(f"Invalid dns address: {server}")
         network_conf = (
             f"static ip_address={address}/24\n"
             f"static routers={' '.join(routers)}\n"
-            f"static domain_name_servers={' '.join(net_dns)}\n"
+            f"static domain_name_servers={' '.join(dns)}\n"
         )
     else:
         network_conf = "dhcp"

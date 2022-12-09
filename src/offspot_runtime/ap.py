@@ -9,8 +9,8 @@
 import argparse
 import fcntl
 import inspect
+import ipaddress
 import pathlib
-import re
 import shutil
 import socket
 import struct
@@ -23,7 +23,8 @@ parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
 if parent not in sys.path:
     sys.path.insert(0, str(parent))
 
-from offspot_config_lib import (  # noqa: E402
+from checks import is_valid_ap_config, is_valid_ipv4  # noqa: E402
+from configlib import (  # noqa: E402
     DNSMASQ_CONF_PATH,
     DNSMASQ_SPOOF_CONFIG_PATH,
     IPTABLES_DIR,
@@ -33,7 +34,6 @@ from offspot_config_lib import (  # noqa: E402
     fail_error,
     fail_invalid,
     install_dnsmasq_spoof_service,
-    is_valid_ip,
     restart_service,
     simple_run,
     succeed,
@@ -41,9 +41,7 @@ from offspot_config_lib import (  # noqa: E402
 )
 
 NAME = pathlib.Path(__file__).stem
-NETWORK_TYPES = ("dhcp", "static")
-RE_SSID = re.compile(r'^[^!#;+\]/"\t][^+\]/"\t]{0,31}$')
-RE_PASSPHRASE = re.compile(r"^[\u0020-\u007e]{8,63}$")
+
 RFKILL_PATH = pathlib.Path("/usr/sbin/rfkill")
 IPTABLES_PATH = pathlib.Path("/usr/sbin/iptables")
 DEFAULT_CHANNEL = 11
@@ -155,9 +153,17 @@ def set_ip_address(
 
 
 def dhcp_range_for(address: str):
-    """generic dhcp range string from a class C address"""
-    network = address.rsplit(".", 1)[0]
-    return f"{network}.100,{network}.240,255.255.255.0,12h"
+    """generic dhcp range string for a /24 network from a class C address"""
+    network = ipaddress.IPv4Network((address, 24), strict=False)
+    hosts = list(network.hosts())
+    index = hosts.index(ipaddress.IPv4Address(address))
+    if index >= network.num_addresses // 2:
+        start = hosts[0]
+        end = hosts[index - 1]
+    else:
+        start = hosts[index + 1]
+        end = hosts[-1]
+    return f"{start.exploded},{end.exploded},{network.netmask.exploded},1h"
 
 
 def unblock_wireless():
@@ -315,28 +321,46 @@ def main(**kwargs) -> int:
     logger.info("Configuring WiFi AP")
     warn_unless_root()
 
-    if not RE_SSID.match(kwargs["ssid"]):
-        fail_invalid("Invalid SSID. Use 32 chars max without: !#;+]/")
-
-    if kwargs["passphrase"] and not RE_PASSPHRASE.match(kwargs["passphrase"]):
-        fail_invalid("Invalid Passphrase. Must be 8-63 long ASCII chars")
-
-    if kwargs["channel"] < 1 or kwargs["channel"] > 14:
-        fail_invalid("Invalid channel. Must be 1-14 (1-11 for most places)")
-
-    if kwargs["channel"] > 11:
-        logger.warning("Channels 12-14 are not allowed everywhere")
-
-    if not is_valid_ip(kwargs["address"]):
-        fail_invalid("Invalid IPv4 address")
+    # test address early as we'll use it to infer some default values
+    if not is_valid_ipv4(kwargs["address"]):
+        return fail_invalid("Invalid IPv4 address")
 
     if not kwargs["dns"]:
         kwargs["dns"] = DEFAULT_DNS
 
     if kwargs["network"] is None:
-        kwargs["network"] = re.sub(r"\.\d+$", ".0/24", kwargs["address"])
+        kwargs["network"] = ipaddress.IPv4Network(
+            (ipaddress.IPv4Interface(kwargs["address"]), 24), strict=False
+        ).with_prefixlen
 
-    kwargs["dhcp_range"] = dhcp_range_for(kwargs["address"])
+    if not kwargs["dhcp_range"]:
+        kwargs["dhcp_range"] = dhcp_range_for(kwargs["address"])
+
+    check = is_valid_ap_config(
+        ssid=kwargs["ssid"],
+        hide=kwargs["hide"],
+        passphrase=kwargs["passphrase"],
+        address=kwargs["address"],
+        as_gateway=kwargs["as_gateway"],
+        spoof=kwargs["spoof"],
+        tld=kwargs["tld"],
+        domain=kwargs["domain"],
+        welcome=kwargs["welcome"],
+        channel=kwargs["channel"],
+        country=kwargs["country"],
+        interface=kwargs["interface"],
+        dhcp_range=kwargs["dhcp_range"],
+        network=kwargs["network"],
+        dns=kwargs["dns"],
+        other_interfaces=kwargs["other_interfaces"],
+        except_interfaces=kwargs["except_interfaces"],
+        nodhcp_interfaces=kwargs["nodhcp_interfaces"],
+    )
+    if not check.passed:
+        fail_invalid(check.help_text)
+
+    # std cidr notation for network
+    kwargs["network"] = ipaddress.IPv4Network(kwargs["network"]).with_prefixlen
 
     unblock_wireless()
     logger.debug("wireless unblocked")
@@ -497,9 +521,9 @@ def entrypoint():
 
     parser.add_argument(
         "--country",
-        help="Country-code to apply frequencies limitations for. Defaults to FR",
+        help="Country-code to apply frequencies limitations for. Defaults to 00",
         dest="country_code",
-        default="FR",
+        default="00",
         required=False,
     )
 
@@ -565,7 +589,7 @@ def entrypoint():
         action="append",
     )
 
-    parser.add_argument("--spoof", dest="spoof")
+    parser.add_argument("--spoof", dest="spoof", required=False, default="auto")
 
     kwargs = dict(parser.parse_args()._get_kwargs())
     Config.set_debug(kwargs.get("debug"))

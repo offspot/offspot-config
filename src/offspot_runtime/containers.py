@@ -13,7 +13,8 @@ parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
 if parent not in sys.path:
     sys.path.insert(0, str(parent))
 
-from offspot_config_lib import (  # noqa: E402
+from checks import is_valid_compose  # noqa: E402
+from configlib import (  # noqa: E402
     Config,
     __version__,
     ensure_folder,
@@ -54,9 +55,9 @@ def main(src: str, dest: str, debug: Optional[bool]) -> int:
         fail_invalid(f"Unable to parse YAML compose: {exc}")
 
     # make sure we have defined services
-    services = compose.get("services", [])
-    if not services or not isinstance(services, dict):
-        fail_invalid("No `services` defined in your YAML payload")
+    check = is_valid_compose(compose)
+    if not check.passed:
+        fail_invalid(check.help_text)
 
     ensure_folder(dest.parent)
     with open(dest, "w") as fh:

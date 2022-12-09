@@ -2,35 +2,32 @@ name: QA
 
 on: [push, pull_request]
 
-env:
-  # black default
-  MAX_LINE_LENGTH: 88
-
 jobs:
   check-qa:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v1
+      - uses: actions/checkout@v3.1.0
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4.3.0
         with:
           python-version: "3.10"
           architecture: x64
 
       - name: Check black formatting
         run: |
-          pip install black==22.8.0
+          pip install black==22.10.0
           black --version
-          black --check .
+          black --check src/ tests/
 
       - name: Check flake8 linting
         run: |
-          pip install flake8==5.0.4
+          pip install flake8==6.0.0
           flake8 --version
-          flake8 . --count --max-line-length=$MAX_LINE_LENGTH --statistics
+          # default ignores + E203 (black incompat)
+          flake8 src/ tests/ --count --max-line-length=88 --ignore E121,E123,E126,E226,E24,E704,W503,W504,E203 --statistics
 
       - name: Check import order with isort
         run: |
           pip install isort==5.10.1
           isort --version
-          isort --profile black --check .
+          isort --profile black --check src/ tests/
