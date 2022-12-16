@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed disabling auto-spoof apparently failing due to lack of return code
 - `ap.dhcp_range_for()` now calculates an actual range instead of replacing strings
 - updated QA worflow
+- fixed program name in usage of scripts
 
 # [1.1.0] - 2022-11-16
 

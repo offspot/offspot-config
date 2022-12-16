@@ -20,6 +20,7 @@ from configlib import (  # noqa: E402
     __version__,
     ensure_folder,
     fail_error,
+    get_progname,
     restart_service,
     succeed,
     warn_unless_root,
@@ -107,7 +108,7 @@ def main(debug: Optional[bool] = False):
 
 def entrypoint():
     parser = argparse.ArgumentParser(
-        prog=NAME,
+        prog=get_progname(),
         description="Toggle dnsmasq's spoof mode based on internet connectivity",
     )
     parser.add_argument("-V", "--version", action="version", version=__version__)

@@ -23,6 +23,7 @@ from configlib import (  # noqa: E402
     ensure_folder,
     fail_error,
     fail_invalid,
+    get_progname,
     simple_run,
     succeed,
     warn_unless_root,
@@ -144,7 +145,7 @@ def main(
 
 def entrypoint():
     parser = argparse.ArgumentParser(
-        prog="offspot-config-network",
+        prog=get_progname(),
         description="Configure Offspot's ethernet network",
     )
     parser.add_argument("-V", "--version", action="version", version=__version__)

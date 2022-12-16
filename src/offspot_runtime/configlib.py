@@ -108,6 +108,14 @@ def get_bin(name: str) -> str:
     return ["/usr/bin/env", f"offspot-config-{name}"]
 
 
+def get_progname() -> str:
+    """ human-friendly program name for use in usage help text"""
+    try:
+        return pathlib.Path(sys.argv[0]).stem
+    except Exception:
+        return sys.argv[0]
+
+
 def ensure_folder(fpath: pathlib.Path):
     """ensures folder exists"""
     fpath.mkdir(exist_ok=True, parents=True)

@@ -19,6 +19,7 @@ from configlib import (  # noqa: E402
     Config,
     __version__,
     fail_invalid,
+    get_progname,
     simple_run,
     succeed,
     warn_unless_root,
@@ -62,7 +63,7 @@ def main(hostname: str, debug: Optional[bool] = False) -> int:
 
 def entrypoint():
     parser = argparse.ArgumentParser(
-        prog=NAME, description="Configure Offspot's hostname"
+        prog=get_progname(), description="Configure Offspot's hostname"
     )
     parser.add_argument("-V", "--version", action="version", version=__version__)
     parser.add_argument("--debug", action="store_true", dest="debug")

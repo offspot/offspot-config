@@ -33,6 +33,7 @@ from configlib import (  # noqa: E402
     ensure_folder,
     fail_error,
     fail_invalid,
+    get_progname,
     install_dnsmasq_spoof_service,
     restart_service,
     simple_run,
@@ -440,7 +441,7 @@ def main(**kwargs) -> int:
 
 def entrypoint():
     parser = argparse.ArgumentParser(
-        prog=NAME,
+        prog=get_progname(),
         description="Configure Offspot's WiFi Access Point",
     )
     parser.add_argument("-V", "--version", action="version", version=__version__)

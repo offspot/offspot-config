@@ -18,6 +18,7 @@ from configlib import (  # noqa: E402
     Config,
     __version__,
     fail_invalid,
+    get_progname,
     simple_run,
     succeed,
     warn_unless_root,
@@ -47,7 +48,7 @@ def main(timezone: str, debug: Optional[bool] = None) -> int:
 
 def entrypoint():
     parser = argparse.ArgumentParser(
-        prog=NAME, description="Configure Offspot's timezone"
+        prog=get_progname(), description="Configure Offspot's timezone"
     )
     parser.add_argument("-V", "--version", action="version", version=__version__)
     parser.add_argument("--debug", action="store_true", dest="debug")

@@ -23,6 +23,7 @@ from configlib import (  # noqa: E402
     colored,
     from_yaml,
     get_bin,
+    get_progname,
     restart_service,
     simple_run,
     succeed,
@@ -262,7 +263,7 @@ def save_config(config_path: pathlib.Path, config: Dict):
 
 def entrypoint():
     parser = argparse.ArgumentParser(
-        prog=NAME,
+        prog=get_progname(),
         description="Configure Offspot's WiFi Access Point",
     )
     parser.add_argument("-V", "--version", action="version", version=__version__)
