@@ -109,7 +109,7 @@ def get_bin(name: str) -> str:
 
 
 def get_progname() -> str:
-    """ human-friendly program name for use in usage help text"""
+    """human-friendly program name for use in usage help text"""
     try:
         return pathlib.Path(sys.argv[0]).stem
     except Exception:
