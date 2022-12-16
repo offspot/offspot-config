@@ -472,34 +472,88 @@ def is_valid_ap_config(
     """whether valid ap config values"""
     check = is_valid_ssid(ssid)
     if not check.passed:
-        return check
+        return CheckResponse(False, f"SSID: {check.help_text}")
+
+    if not isinstance(hide, bool):
+        return CheckResponse(False, "Hide: Incorrect type")
 
     if passphrase:
         check = is_valid_wpa2_passphrase(passphrase)
         if not check.passed:
-            return check
-
-    check = is_valid_wifi_channel(channel)
-    if not check.passed:
-        return check
+            return CheckResponse(False, f"Passphrase: {check.help_text}")
 
     if not is_valid_ipv4(address):
         return CheckResponse(False, "Invalid IPv4 address")
+
+    if not isinstance(as_gateway, bool):
+        return CheckResponse(False, "As-gateway: Incorrect type")
 
     if spoof not in (True, False, "auto"):
         return CheckResponse(False, f"Invalid spoof value `{spoof}`")
 
     check = is_valid_tld(tld)
     if not check.passed:
-        return check
+        return CheckResponse(False, f"TLD: {check.help_text}")
 
     check = is_valid_domain(domain)
     if not check.passed:
-        return check
+        return CheckResponse(False, f"Domain: {check.help_text}")
 
     if welcome:
         check = is_valid_domain(welcome)
         if not check.passed:
-            return check
+            return CheckResponse(False, f"Welcome Domain: {check.help_text}")
+
+    check = is_valid_wifi_channel(channel)
+    if not check.passed:
+        return CheckResponse(False, f"Channel: {check.help_text}")
+
+    check = is_valid_wifi_country_code(country)
+    if not check.passed:
+        return CheckResponse(False, f"Country: {check.help_text}")
+
+    check = is_valid_interface_name(interface)
+    if not check.passed:
+        return CheckResponse(False, f"Interface: {check.help_text}")
+
+    check = is_valid_dhcp_range(dhcp_range, with_address=address)
+    if not check.passed:
+        return CheckResponse(False, f"DHCP-range: {check.help_text}")
+
+    check = is_valid_network(network, with_address=address, allow_any=False)
+    if not check.passed:
+        return CheckResponse(False, f"Network: {check.help_text}")
+
+    if not isinstance(dns, list):
+        return CheckResponse(False, "DNS: Incorrect type")
+    for index, server in enumerate(dns):
+        check = is_valid_ipv4(server)
+        if not check.passed:
+            return CheckResponse(False, f"DNS #{index}: {check.help_text}")
+
+    if not isinstance(other_interfaces, list):
+        return CheckResponse(False, "Other-interfaces: Incorrect type")
+    for index, iface in enumerate(other_interfaces):
+        check = is_valid_interface_name(iface)
+        if not check.passed:
+            return CheckResponse(False, f"Other-interfaces #{index}: {check.help_text}")
+
+    if not isinstance(other_interfaces, list):
+        return CheckResponse(False, "Except-interfaces: Incorrect type")
+    for index, iface in enumerate(except_interfaces):
+        check = is_valid_interface_name(iface)
+        if not check.passed:
+            return CheckResponse(
+                False, f"Except-interfaces #{index}: {check.help_text}"
+            )
+
+    if not isinstance(other_interfaces, list):
+        return CheckResponse(False, "NoDHCPD-interfaces: Incorrect type")
+    for index, iface in enumerate(nodhcp_interfaces):
+        check = is_valid_interface_name(iface)
+        if not check.passed:
+            return CheckResponse(
+                False, f"NoDHCPD-interfaces #{index}: {check.help_text}"
+            )
 
     return CheckResponse(True)
