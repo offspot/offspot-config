@@ -386,7 +386,7 @@ def test_is_valid_ap_config():
         "channel": 11,
         "country": "00",
         "interface": "wlan0",
-        "dhcp_range": "192.168.2.1,192.168.2.254,255.255.255.0,1h",
+        "dhcp_range": "192.168.2.2,192.168.2.254,255.255.255.0,1h",
         "network": "192.168.2.0/24",
         "dns": ["8.8.8.8", "1.1.1.1"],
         "other_interfaces": [],
@@ -400,6 +400,11 @@ def test_is_valid_ap_config():
     config["ssid"] = "working!"
     assert is_valid_ap_config(**config)
 
+    config["hide"] = "yes"
+    assert not is_valid_ap_config(**config)
+    config["hide"] = True
+    assert is_valid_ap_config(**config)
+
     config["passphrase"] = "ɛɛɛɛɛ NOT OK"
     assert not is_valid_ap_config(**config)
     config["passphrase"] = "this is OK"
@@ -410,9 +415,34 @@ def test_is_valid_ap_config():
     config["channel"] = 6
     assert is_valid_ap_config(**config)
 
+    config["country"] = "AAA"
+    assert not is_valid_ap_config(**config)
+    config["country"] = "FR"
+    assert is_valid_ap_config(**config)
+
+    config["interface"] = "wifi"
+    assert not is_valid_ap_config(**config)
+    config["interface"] = "wlan0"
+    assert is_valid_ap_config(**config)
+
+    config["dhcp_range"] = "192.168.2.1,192.168.2.254,255.255.255.0,1h"
+    assert not is_valid_ap_config(**config)
+    config["dhcp_range"] = "192.168.2.2,192.168.2.254,255.255.255.0,1h"
+    assert is_valid_ap_config(**config)
+
+    config["network"] = "192.168.2.2"
+    assert not is_valid_ap_config(**config)
+    config["network"] = "192.168.2.0/24"
+    assert is_valid_ap_config(**config)
+
     config["address"] = "0.0.0.0"  # nosec B104
     assert not is_valid_ap_config(**config)
-    config["address"] = "192.168.2.2"
+    config["address"] = "192.168.2.3"
+    assert is_valid_ap_config(**config)
+
+    config["as_gateway"] = 3
+    assert not is_valid_ap_config(**config)
+    config["as_gateway"] = True
     assert is_valid_ap_config(**config)
 
     config["spoof"] = "yes"
@@ -434,6 +464,21 @@ def test_is_valid_ap_config():
     assert not is_valid_ap_config(**config)
     config["welcome"] = "goto.project"
     assert is_valid_ap_config(**config)
+
+    config["dns"] = 1
+    assert not is_valid_ap_config(**config)
+    config["dns"] = ["240.0.0.1"]
+    assert not is_valid_ap_config(**config)
+    config["dns"] = ["1.1.1.1"]
+    assert is_valid_ap_config(**config)
+
+    for key in ("other_interfaces", "except_interfaces", "nodhcp_interfaces"):
+        config[key] = 1
+        assert not is_valid_ap_config(**config)
+        config[key] = ["wifi"]
+        assert not is_valid_ap_config(**config)
+        config[key] = ["eth1"]
+        assert is_valid_ap_config(**config)
 
 
 def test_port_in_range_api():

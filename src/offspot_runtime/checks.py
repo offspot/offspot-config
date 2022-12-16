@@ -538,7 +538,7 @@ def is_valid_ap_config(
         if not check.passed:
             return CheckResponse(False, f"Other-interfaces #{index}: {check.help_text}")
 
-    if not isinstance(other_interfaces, list):
+    if not isinstance(except_interfaces, list):
         return CheckResponse(False, "Except-interfaces: Incorrect type")
     for index, iface in enumerate(except_interfaces):
         check = is_valid_interface_name(iface)
@@ -547,7 +547,7 @@ def is_valid_ap_config(
                 False, f"Except-interfaces #{index}: {check.help_text}"
             )
 
-    if not isinstance(other_interfaces, list):
+    if not isinstance(nodhcp_interfaces, list):
         return CheckResponse(False, "NoDHCPD-interfaces: Incorrect type")
     for index, iface in enumerate(nodhcp_interfaces):
         check = is_valid_interface_name(iface)
