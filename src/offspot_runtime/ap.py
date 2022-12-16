@@ -331,7 +331,7 @@ def main(**kwargs) -> int:
 
     if kwargs["network"] is None:
         kwargs["network"] = ipaddress.IPv4Network(
-            (ipaddress.IPv4Interface(kwargs["address"]), 24), strict=False
+            (str(ipaddress.IPv4Interface(kwargs["address"]).ip), 24), strict=False
         ).with_prefixlen
 
     if not kwargs["dhcp_range"]:
@@ -339,16 +339,16 @@ def main(**kwargs) -> int:
 
     check = is_valid_ap_config(
         ssid=kwargs["ssid"],
-        hide=kwargs["hide"],
+        hide=kwargs["hide_ssid"],
         passphrase=kwargs["passphrase"],
         address=kwargs["address"],
         as_gateway=kwargs["as_gateway"],
         spoof=kwargs["spoof"],
         tld=kwargs["tld"],
         domain=kwargs["domain"],
-        welcome=kwargs["welcome"],
+        welcome=kwargs["welcome_domain"],
         channel=kwargs["channel"],
-        country=kwargs["country"],
+        country=kwargs["country_code"],
         interface=kwargs["interface"],
         dhcp_range=kwargs["dhcp_range"],
         network=kwargs["network"],
@@ -457,6 +457,7 @@ def entrypoint():
         help="Hide SSID (Clients must know and enter its name to connect)",
         dest="hide_ssid",
         action="store_true",
+        default=False,
         required=False,
     )
 
