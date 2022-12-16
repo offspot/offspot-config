@@ -15,7 +15,7 @@ parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
 if parent not in sys.path:
     sys.path.insert(0, str(parent))
 
-from offspot_config_lib import (  # noqa: E402
+from configlib import (  # noqa: E402
     IPTABLES_DIR,
     SYSTEMCTL_PATH,
     Config,
@@ -23,6 +23,7 @@ from offspot_config_lib import (  # noqa: E402
     colored,
     from_yaml,
     get_bin,
+    get_progname,
     restart_service,
     simple_run,
     succeed,
@@ -262,7 +263,7 @@ def save_config(config_path: pathlib.Path, config: Dict):
 
 def entrypoint():
     parser = argparse.ArgumentParser(
-        prog=NAME,
+        prog=get_progname(),
         description="Configure Offspot's WiFi Access Point",
     )
     parser.add_argument("-V", "--version", action="version", version=__version__)

@@ -5,6 +5,7 @@ A collection of scripts for use within [offspot/base-image](https://github.com/o
 [![CodeFactor](https://www.codefactor.io/repository/github/offspot/runtime-config/badge)](https://www.codefactor.io/repository/github/offspot/runtime-config)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![PyPI version shields.io](https://img.shields.io/pypi/v/offspot-runtime-config.svg)](https://pypi.org/project/offspot-runtime-config/)
+[![codecov](https://codecov.io/gh/offspot/runtime-config/branch/main/graph/badge.svg)](https://codecov.io/gh/offspot/runtime-config)
 
 Launched via `offspot-config-fromfile`, it:
 
@@ -55,12 +56,31 @@ done
 
 ```
 
+## Library usage
+
+```sh
+pip3 install offspot-runtime-config
+```
+
+```py
+from offspot_runtime.checks import is_valid_ipv4
+
+# CheckResponse can be treated as a boolean
+if is_valid_ipv4("10.0.0.1"):
+   …
+
+# CheckResponse exposes `.passed` (`bool`) and `.help_text` (`str`)
+check = is_valid_ipv4("10.0.0.a")
+if not check.passed:
+    raise SystemExit(check.help_text)
+
+# Directly raise a `ValueError` exception
+is_valid_ipv4("10.0.0.a").raise_for_status()
+```
+
 ---
 
 # `offspot.yaml` format
-
-
-# Main document
 
 `offspot.yaml` is composed of a single `object` with predefined candidate members.
 

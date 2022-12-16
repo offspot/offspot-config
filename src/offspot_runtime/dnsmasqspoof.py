@@ -14,12 +14,13 @@ parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
 if parent not in sys.path:
     sys.path.insert(0, str(parent))
 
-from offspot_config_lib import (  # noqa: E402
+from configlib import (  # noqa: E402
     DNSMASQ_SPOOF_CONFIG_PATH,
     Config,
     __version__,
     ensure_folder,
     fail_error,
+    get_progname,
     restart_service,
     succeed,
     warn_unless_root,
@@ -107,7 +108,7 @@ def main(debug: Optional[bool] = False):
 
 def entrypoint():
     parser = argparse.ArgumentParser(
-        prog=NAME,
+        prog=get_progname(),
         description="Toggle dnsmasq's spoof mode based on internet connectivity",
     )
     parser.add_argument("-V", "--version", action="version", version=__version__)

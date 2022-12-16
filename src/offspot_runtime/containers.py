@@ -13,12 +13,14 @@ parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
 if parent not in sys.path:
     sys.path.insert(0, str(parent))
 
-from offspot_config_lib import (  # noqa: E402
+from checks import is_valid_compose  # noqa: E402
+from configlib import (  # noqa: E402
     Config,
     __version__,
     ensure_folder,
     fail_invalid,
     from_yaml,
+    get_progname,
     succeed,
     to_yaml,
     warn_unless_root,
@@ -54,9 +56,9 @@ def main(src: str, dest: str, debug: Optional[bool]) -> int:
         fail_invalid(f"Unable to parse YAML compose: {exc}")
 
     # make sure we have defined services
-    services = compose.get("services", [])
-    if not services or not isinstance(services, dict):
-        fail_invalid("No `services` defined in your YAML payload")
+    check = is_valid_compose(compose, required_ports=[80])
+    if not check.passed:
+        fail_invalid(check.help_text)
 
     ensure_folder(dest.parent)
     with open(dest, "w") as fh:
@@ -67,7 +69,7 @@ def main(src: str, dest: str, debug: Optional[bool]) -> int:
 
 def entrypoint():
     parser = argparse.ArgumentParser(
-        prog=NAME, description="Configure Offspot's hostname"
+        prog=get_progname(), description="Configure Offspot's hostname"
     )
     parser.add_argument("-V", "--version", action="version", version=__version__)
     parser.add_argument("--debug", action="store_true", dest="debug")

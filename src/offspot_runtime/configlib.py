@@ -23,12 +23,6 @@ else:
 
 
 __version__ = "1.0"
-RE_IP = re.compile(
-    r"^(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
-    r"\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
-    r"\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
-    r"\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-)
 SYSTEMCTL_PATH = pathlib.Path("/usr/bin/systemctl")
 DNSMASQ_CONF_PATH = pathlib.Path("/etc/dnsmasq.conf")
 DNSMASQ_SPOOF_CONFIG_PATH = DNSMASQ_CONF_PATH.with_name("dnsmasq-spoof.conf")
@@ -88,21 +82,6 @@ def warn_unless_root():
         Config.logger.warning(f"you are not root! uid={os.getuid()}")
 
 
-def is_valid_ip(address):
-    match = RE_IP.match(address)
-    if not match:
-        return False
-    for index, sub in enumerate(match.groups()):
-        if not sub.isnumeric():
-            return False
-        dsub = int(sub)
-        if dsub < 0 or dsub > 254:
-            return False
-        if index in (0, 3) and dsub == 0:
-            return False
-    return True
-
-
 def simple_run(command: List[str], stdin: Optional[str] = None):
     """returncode from running passed command, optionnaly passing str as stdin"""
     Config.logger.debug(f"{command=}")
@@ -127,6 +106,14 @@ def simple_run(command: List[str], stdin: Optional[str] = None):
 def get_bin(name: str) -> str:
     """full path of sub-command script"""
     return ["/usr/bin/env", f"offspot-config-{name}"]
+
+
+def get_progname() -> str:
+    """human-friendly program name for use in usage help text"""
+    try:
+        return pathlib.Path(sys.argv[0]).stem
+    except Exception:
+        return sys.argv[0]
 
 
 def ensure_folder(fpath: pathlib.Path):
@@ -164,7 +151,7 @@ def install_dnsmasq_spoof_service(remove: Optional[bool] = False):
         pathunit_path.unlink(missing_ok=True)
         svcunit_path.unlink(missing_ok=True)
         simple_run([str(SYSTEMCTL_PATH), "daemon-reload"])
-        return
+        return 0
 
     with open(svcunit_path, "w") as fh:
         fh.write(
