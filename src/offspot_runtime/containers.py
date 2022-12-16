@@ -55,7 +55,7 @@ def main(src: str, dest: str, debug: Optional[bool]) -> int:
         fail_invalid(f"Unable to parse YAML compose: {exc}")
 
     # make sure we have defined services
-    check = is_valid_compose(compose)
+    check = is_valid_compose(compose, required_ports=[80])
     if not check.passed:
         fail_invalid(check.help_text)
 
