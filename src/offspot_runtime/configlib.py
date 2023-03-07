@@ -11,7 +11,11 @@ try:
     import yaml
 except ImportError:
     if not os.getenv("SETUP_ONLY"):
-        print("Missing YAML library (apt install python3-yaml)")
+        print(
+            "Missing YAML library (apt install python3-yaml)",
+            file=sys.stderr,
+            flush=True,
+        )
         sys.exit(1)
 else:
     try:

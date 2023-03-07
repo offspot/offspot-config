@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim: ai ts=4 sts=4 et sw=4 nu
 
+import os
 import pathlib
 import subprocess
 import sys
@@ -21,9 +22,14 @@ def get_version():
         [
             sys.executable,
             "-c",
-            "from offspot_runtime.configlib import __version__; print(__version__)",
+            "import sys; "
+            "from offspot_runtime.configlib import __version__; "
+            "print(__version__, file=sys.stdout, flush=True)",
         ],
-        env={"PYTHONPATH": root_dir.joinpath("src")},
+        env={
+            "PYTHONPATH": root_dir.joinpath("src"),
+            "SETUP_ONLY": os.getenv("SETUP_ONLY"),
+        },
         text=True,
         capture_output=True,
     ).stdout.strip()
