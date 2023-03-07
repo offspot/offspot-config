@@ -23,6 +23,8 @@ jobs:
           architecture: x64
 
       - name: Build sdist and wheel
+        env:
+          SETUP_ONLY: y
         run: |
           pip install --upgrade pip build wheel
           python3 -m build --no-isolation
