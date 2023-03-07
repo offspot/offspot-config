@@ -26,7 +26,7 @@ else:
         from yaml import SafeLoader as SafeLoader
 
 
-__version__ = "1.0"
+__version__ = "1.2.0"
 SYSTEMCTL_PATH = pathlib.Path("/usr/bin/systemctl")
 DNSMASQ_CONF_PATH = pathlib.Path("/etc/dnsmasq.conf")
 DNSMASQ_SPOOF_CONFIG_PATH = DNSMASQ_CONF_PATH.with_name("dnsmasq-spoof.conf")
