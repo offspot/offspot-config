@@ -25,8 +25,8 @@ dependencies = [
     "PyYAML == 6.0.1",
     "docker-export == 0.4",
     "humanfriendly == 10.0",
-    "requests >= 2.28, <3.0",
-    "typeguard==4.1.0",
+    "requests == 2.31.0",
+    "typeguard == 4.1.0",
     "tzdata == 2023.3",
     "iso3166 == 2.1.1",
     "xmltodict == 0.13.0",
@@ -35,22 +35,22 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 scripts = [
-  "invoke==2.1.2",
+  "invoke == 2.2.0",
 ]
 lint = [
-  "black==23.3.0",
-  "ruff==0.0.272",
+  "black == 23.7.0",
+  "ruff == 0.0.282",
 ]
 check = [
-  "pyright==1.1.317",
+  "pyright == 1.1.320",
 ]
 test = [
-  "pytest==7.3.1",
-  "coverage==7.2.7",
+  "pytest == 7.4.0",
+  "coverage == 7.2.7",
 ]
 dev = [
-  "pre-commit==3.3.3",
-  "debugpy==1.6.7",
+  "pre-commit == 3.3.3",
+  "debugpy == 1.6.8",
   "offspot-config[scripts]",
   "offspot-config[lint]",
   "offspot-config[test]",
