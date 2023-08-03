@@ -50,7 +50,7 @@ class Config:
 
     @classmethod
     def set_debug(cls, *, enabled: bool = False):
-        cls.debug = enabled
+        cls.debug = bool(enabled)
         if enabled:
             cls.logger.setLevel(logging.DEBUG)
 

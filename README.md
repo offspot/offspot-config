@@ -44,18 +44,6 @@ systemctl disable hostapd dnsmasq
 pip3 install offspot_runtime_config
 ```
 
-Alternatively, if you don't want to rely on python packages, you can use scripts (almost) directly
-
-```sh
-curl -L https://github.com/offspot/runtime-config/archive/refs/heads/main.tar.gz| tar xf -
-mv runtime-config-main/src/offspot_runtine_condig /some/place/
-for name in containers fromfile ap ethernet hostname timezone
-do
-  ln -s /some/place/$name.py /usr/local/bin/offspot-config-$name
-done
-
-```
-
 ## Library usage
 
 ```sh
@@ -208,7 +196,7 @@ Without an *armor*, configuration is appended at end of file, specifying `eth0` 
 ```yaml
 ---
 containers:
-  services: 
+  services:
     kiwix:
       container_name: kiwix
       image: ghcr.io/offspot/kiwix-serve:dev

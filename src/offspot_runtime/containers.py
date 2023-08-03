@@ -3,18 +3,13 @@
 """ Validates and writes a docker-compose payload """
 
 import argparse
-import inspect
 import logging
 import pathlib
 import sys
 
-parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
-if parent not in sys.path:
-    sys.path.insert(0, str(parent))
-
-from __about__ import __version__  # noqa: E402
-from checks import is_valid_compose  # noqa: E402
-from configlib import (  # noqa: E402
+from offspot_runtime.__about__ import __version__
+from offspot_runtime.checks import is_valid_compose
+from offspot_runtime.configlib import (
     Config,
     ensure_folder,
     fail_invalid,
@@ -35,8 +30,9 @@ def main(src: str, dest: str) -> int:
     logging.info(f"Writing docker-compose file from {src}")
     warn_unless_root()
 
-    dest = pathlib.Path(dest).expanduser().resolve()
+    dest_path: pathlib.Path = pathlib.Path(dest).expanduser().resolve()
 
+    payload = ""
     if src == "-":
         if not sys.stdin.isatty():
             payload = "\n".join(line for line in sys.stdin)
@@ -52,16 +48,17 @@ def main(src: str, dest: str) -> int:
         compose = from_yaml(payload)
     except Exception as exc:
         fail_invalid(f"Unable to parse YAML compose: {exc}")
+        compose = {}
 
     # make sure we have defined services
     check = is_valid_compose(compose, required_ports=[80])
     if not check.passed:
         fail_invalid(check.help_text)
 
-    ensure_folder(dest.parent)
-    dest.write_text(to_yaml(compose))
+    ensure_folder(dest_path.parent)
+    dest_path.write_text(to_yaml(compose))
 
-    succeed("docker-compose configured")
+    return succeed("docker-compose configured")
 
 
 def entrypoint():
@@ -85,7 +82,7 @@ def entrypoint():
     )
 
     kwargs = dict(parser.parse_args()._get_kwargs())
-    Config.set_debug(enabled=kwargs.get("debug"))
+    Config.set_debug(enabled=kwargs.get("debug", False))
 
     try:
         sys.exit(main(**kwargs))

@@ -1,6 +1,6 @@
 from typing import Union
 
-import pytest
+import pytest  # pyright: ignore [reportMissingImports]
 from yaml import SafeLoader as Loader
 from yaml import load as yaml_load
 
@@ -368,7 +368,7 @@ def test_is_valid_domain(domain: str, should_pass: bool):
         ("MLI", False),
     ],
 )
-def test_is_valid_wifi_country_code(country_code: int, should_pass: bool):
+def test_is_valid_wifi_country_code(country_code: str, should_pass: bool):
     assert is_valid_wifi_country_code(country_code).passed == should_pass
 
 

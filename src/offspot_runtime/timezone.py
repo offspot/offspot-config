@@ -3,18 +3,13 @@
 """ Sets machine's timezone (using systemd) """
 
 import argparse
-import inspect
 import logging
 import pathlib
 import sys
 
-parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
-if parent not in sys.path:
-    sys.path.insert(0, str(parent))
-
-from __about__ import __version__  # noqa: E402
-from checks import is_valid_timezone  # noqa: E402
-from configlib import (  # noqa: E402
+from offspot_runtime.__about__ import __version__
+from offspot_runtime.checks import is_valid_timezone
+from offspot_runtime.configlib import (
     Config,
     fail_invalid,
     get_progname,
@@ -42,7 +37,7 @@ def main(timezone: str) -> int:
     )
     if rc != 0:
         return 1
-    succeed("Timezone applied")
+    return succeed("Timezone applied")
 
 
 def entrypoint():
@@ -59,7 +54,7 @@ def entrypoint():
     )
 
     kwargs = dict(parser.parse_args()._get_kwargs())
-    Config.set_debug(enabled=kwargs.get("debug"))
+    Config.set_debug(enabled=kwargs.get("debug", False))
 
     try:
         sys.exit(main(**kwargs))

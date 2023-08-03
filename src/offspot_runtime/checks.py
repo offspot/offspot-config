@@ -36,7 +36,7 @@ class CheckResponse(NamedTuple):
     """Check Response Interface"""
 
     passed: Optional[bool] = False
-    help_text: Optional[str] = ""
+    help_text: str = ""
 
     def __bool__(self) -> bool:
         return self.passed or False

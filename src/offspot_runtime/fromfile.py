@@ -6,16 +6,11 @@
     requested setting is valid, and set (or errored) or ignored.
     JSON config file is rewritten to remove applied setting """
 import argparse
-import inspect
 import pathlib
 import sys
 
-parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
-if parent not in sys.path:
-    sys.path.insert(0, str(parent))
-
-from __about__ import __version__  # noqa: E402
-from configlib import (  # noqa: E402
+from offspot_runtime.__about__ import __version__
+from offspot_runtime.configlib import (
     IPTABLES_DIR,
     SYSTEMCTL_PATH,
     Config,
@@ -175,7 +170,7 @@ class Handlers:
                 for entry in option:
                     command += [f"--{key}", entry]
 
-        command += [item.get("ssid")]
+        command += [item["ssid"]]
         return simple_run(command)
 
     @staticmethod
@@ -215,7 +210,7 @@ def start_ap_stack():
     )
 
 
-def main(config_path):
+def main(config_path) -> int:
     config_path = pathlib.Path(config_path).expanduser().resolve()
     logger.info(f"Starting offspot-runtime-config off {config_path}")
     warn_unless_root()
@@ -250,7 +245,7 @@ def main(config_path):
 
     if has_error:
         return 1
-    succeed("runtime-config applied successfuly")
+    return succeed("runtime-config applied successfuly")
 
 
 def save_config(config_path: pathlib.Path, config: dict):
@@ -268,7 +263,7 @@ def entrypoint():
     parser.add_argument(help="Offspot Config YAML file path.", dest="config_path")
 
     kwargs = dict(parser.parse_args()._get_kwargs())
-    Config.set_debug(enabled=kwargs.get("debug"))
+    Config.set_debug(enabled=kwargs.get("debug", False))
 
     try:
         sys.exit(main(**kwargs))

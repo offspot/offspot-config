@@ -3,19 +3,14 @@
 """ Sets machine's hostname (using systemd) """
 
 import argparse
-import inspect
 import logging
 import pathlib
 import re
 import sys
 
-parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
-if parent not in sys.path:
-    sys.path.insert(0, str(parent))
-
-from __about__ import __version__  # noqa: E402
-from checks import is_valid_hostname  # noqa: E402
-from configlib import (  # noqa: E402
+from offspot_runtime.__about__ import __version__
+from offspot_runtime.checks import is_valid_hostname
+from offspot_runtime.configlib import (
     Config,
     fail_invalid,
     get_progname,
@@ -56,7 +51,7 @@ def main(hostname: str) -> int:
         hosts.append(new_line)
     hosts_path.write_text("".join(hosts))
 
-    succeed("hostname configured")
+    return succeed("hostname configured")
 
 
 def entrypoint():
@@ -73,7 +68,7 @@ def entrypoint():
     )
 
     kwargs = dict(parser.parse_args()._get_kwargs())
-    Config.set_debug(enabled=kwargs.get("debug"))
+    Config.set_debug(enabled=kwargs.get("debug", False))
 
     try:
         sys.exit(main(**kwargs))

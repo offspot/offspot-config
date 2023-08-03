@@ -8,7 +8,6 @@
 
 import argparse
 import fcntl
-import inspect
 import ipaddress
 import pathlib
 import shutil
@@ -19,13 +18,9 @@ import sys
 import tempfile
 from typing import Optional
 
-parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
-if parent not in sys.path:
-    sys.path.insert(0, str(parent))
-
-from __about__ import __version__  # noqa: E402
-from checks import is_valid_ap_config, is_valid_ipv4  # noqa: E402
-from configlib import (  # noqa: E402
+from offspot_runtime.__about__ import __version__
+from offspot_runtime.checks import is_valid_ap_config, is_valid_ipv4
+from offspot_runtime.configlib import (
     DNSMASQ_CONF_PATH,
     DNSMASQ_SPOOF_CONFIG_PATH,
     IPTABLES_DIR,
@@ -137,10 +132,9 @@ def get_ip_address(interface: str) -> str:
     )
 
 
-def set_ip_address(
-    interface: str, address: str, netmask: Optional[str] = "255.255.255.0"
-):
+def set_ip_address(interface: str, address: str, netmask: Optional[str] = None):
     """assign static IPv4 address to interface"""
+    netmask = netmask or "255.255.255.0"
     INTERFACES_PATH.write_text(
         INTERFACES_CONF.format(interface=interface, address=address, netmask=netmask)
     )
@@ -429,7 +423,7 @@ def main(**kwargs) -> int:
         # run it once to align with current status
         restart_service("toggle-dnsmasq-spoof.service")
 
-    succeed("Wireless AP configured")
+    return succeed("Wireless AP configured")
 
 
 def entrypoint():
@@ -587,7 +581,7 @@ def entrypoint():
     parser.add_argument("--spoof", dest="spoof", required=False, default="auto")
 
     kwargs = dict(parser.parse_args()._get_kwargs())
-    Config.set_debug(enabled=kwargs.get("debug"))
+    Config.set_debug(enabled=kwargs.get("debug", False))
 
     try:
         sys.exit(main(**kwargs))
