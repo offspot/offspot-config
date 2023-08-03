@@ -38,8 +38,8 @@ class CheckResponse(NamedTuple):
     passed: Optional[bool] = False
     help_text: Optional[str] = ""
 
-    def __bool__(self):
-        return self.passed
+    def __bool__(self) -> bool:
+        return self.passed or False
 
     def raise_for_status(self):
         if not self.passed:
@@ -162,7 +162,7 @@ def is_valid_compose(
                         exposes[rport] = True
             # might be container-only port as int
             else:
-                continue
+                continue  # pragma: no cover (cpython#94974)
 
     missing_ports = [str(key) for key, st in exposes.items() if st is False]
     if missing_ports:
@@ -501,10 +501,8 @@ def is_valid_ap_config(
     if not check.passed:
         return CheckResponse(False, f"Domain: {check.help_text}")
 
-    if welcome:
-        check = is_valid_domain(welcome)
-        if not check.passed:
-            return CheckResponse(False, f"Welcome Domain: {check.help_text}")
+    if welcome and not is_valid_domain(welcome).passed:
+        return CheckResponse(False, f"Welcome Domain: {check.help_text}")
 
     check = is_valid_wifi_channel(channel)
     if not check.passed:

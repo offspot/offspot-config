@@ -510,7 +510,7 @@ def test_is_valid_compose_api():
 
 def test_is_valid_compose_minimal():
     # invalid compose
-    assert not is_valid_compose(None)
+    assert not is_valid_compose(None)  # type: ignore
     assert not is_valid_compose({})
 
     # services not a dict
@@ -569,6 +569,8 @@ def test_is_valid_compose_minimal():
 @pytest.mark.parametrize(
     "port, required_ports, should_pass",
     [
+        (80, [], True),
+        (80, [80], False),
         ("80", [80], False),
         ("81:80", [80], False),
         ("80:81", [80], True),
@@ -586,6 +588,7 @@ def test_is_valid_compose_minimal():
         ({"target": 81, "published": "70-90"}, [80], True),
         ({"target": 81, "published": 80, "protocol": "udp"}, [80], False),
         ({"target": 81, "published": 80, "protocol": "tcp"}, [80], True),
+        ({"target": 81, "published": 80, "protocol": "tcp"}, [8080], False),
     ],
 )
 def test_is_valid_compose_ports(
