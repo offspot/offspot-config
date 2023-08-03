@@ -1,7 +1,7 @@
 import ipaddress
 import re
 import zoneinfo
-from typing import Any, Dict, List, NamedTuple, Optional, Union
+from typing import Any, NamedTuple, Optional, Union
 
 import iso3166
 
@@ -20,7 +20,7 @@ def port_in_range(range_or_port: str, expected: Union[str, int]) -> bool:
     if not isinstance(range_or_port, str) or not isinstance(expected, (str, int)):
         return False
 
-    if not all([part.isdigit() for part in str(range_or_port).split("-")]):
+    if not all(part.isdigit() for part in str(range_or_port).split("-")):
         return False
 
     expected = int(expected)
@@ -28,7 +28,7 @@ def port_in_range(range_or_port: str, expected: Union[str, int]) -> bool:
     if "-" not in range_or_port:
         return int(range_or_port) == expected
 
-    start, end = [int(item) for item in range_or_port.split("-", 1)]
+    start, end = (int(item) for item in range_or_port.split("-", 1))
     return expected >= start and expected <= end
 
 
@@ -78,10 +78,11 @@ def is_valid_hostname(name: str) -> CheckResponse:
 
 
 def is_valid_compose(
-    compose: Dict[str, Any],
+    compose: dict[str, Any],
+    *,
     require_services: Optional[bool] = True,
     require_image: Optional[bool] = True,
-    required_ports: Optional[List[int]] = None,
+    required_ports: Optional[list[int]] = None,
 ) -> CheckResponse:
     """whether compose represents a valid-looking docker-compose Dict
 
@@ -172,7 +173,7 @@ def is_valid_compose(
     return CheckResponse(True)
 
 
-def is_valid_ipv4(ip_addr: str, usable: Optional[bool] = True) -> CheckResponse:
+def is_valid_ipv4(ip_addr: str, *, usable: Optional[bool] = True) -> CheckResponse:
     """whether textual IP address is a valid IP Address value
 
     usable controls whether address must be usable (bit-set, not network) or not"""
@@ -213,7 +214,7 @@ def is_valid_ipv4(ip_addr: str, usable: Optional[bool] = True) -> CheckResponse:
 
 
 def is_valid_ethernet_config(
-    network_type: str, address: str, routers: List[str], dns: List[str]
+    network_type: str, address: str, routers: list[str], dns: list[str]
 ) -> CheckResponse:
     """whether valid ethernet config values"""
     if network_type not in ("dhcp", "static"):
@@ -400,7 +401,7 @@ def is_valid_dhcp_range(range_str: str, with_address: str) -> CheckResponse:
 
 
 def is_valid_network(
-    network: str, with_address: str, allow_any: Optional[bool] = False
+    network: str, *, with_address: str, allow_any: Optional[bool] = False
 ) -> CheckResponse:
     """whether network is a valid hotspot network (CIDR) value
 
@@ -450,6 +451,7 @@ def is_valid_interface_name(name: str) -> CheckResponse:
 
 
 def is_valid_ap_config(
+    *,
     ssid: str,
     hide: bool,
     passphrase: str,
@@ -464,10 +466,10 @@ def is_valid_ap_config(
     interface: str,
     dhcp_range: str,
     network: str,
-    dns: List[str],
-    other_interfaces: List[str],
-    except_interfaces: List[str],
-    nodhcp_interfaces: List[str],
+    dns: list[str],
+    other_interfaces: list[str],
+    except_interfaces: list[str],
+    nodhcp_interfaces: list[str],
 ) -> CheckResponse:
     """whether valid ap config values"""
     check = is_valid_ssid(ssid)

@@ -7,16 +7,15 @@ import inspect
 import logging
 import pathlib
 import sys
-from typing import Optional
 
 parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
 if parent not in sys.path:
     sys.path.insert(0, str(parent))
 
+from __about__ import __version__  # noqa: E402
 from checks import is_valid_compose  # noqa: E402
 from configlib import (  # noqa: E402
     Config,
-    __version__,
     ensure_folder,
     fail_invalid,
     from_yaml,
@@ -32,7 +31,7 @@ Config.init(NAME)
 logger = Config.logger
 
 
-def main(src: str, dest: str, debug: Optional[bool]) -> int:
+def main(src: str, dest: str) -> int:
     logging.info(f"Writing docker-compose file from {src}")
     warn_unless_root()
 
@@ -40,13 +39,12 @@ def main(src: str, dest: str, debug: Optional[bool]) -> int:
 
     if src == "-":
         if not sys.stdin.isatty():
-            payload = "\n".join([line for line in sys.stdin])
+            payload = "\n".join(line for line in sys.stdin)
         else:
             fail_invalid("Missing input on stdin")
     else:
         try:
-            with open(pathlib.Path(src), "r") as fh:
-                payload = fh.read()
+            payload = pathlib.Path(src).read_text()
         except Exception as exc:
             fail_invalid(f"Unable to read compose from {src}: {exc}")
 
@@ -61,8 +59,7 @@ def main(src: str, dest: str, debug: Optional[bool]) -> int:
         fail_invalid(check.help_text)
 
     ensure_folder(dest.parent)
-    with open(dest, "w") as fh:
-        fh.write(to_yaml(compose))
+    dest.write_text(to_yaml(compose))
 
     succeed("docker-compose configured")
 
@@ -81,14 +78,14 @@ def entrypoint():
 
     parser.add_argument(
         "--dest",
-        help="Where to write docker-compose to. " f"Defaults to {DEFAULT_COMPOSE_PATH}",
+        help=f"Where to write docker-compose to. Defaults to {DEFAULT_COMPOSE_PATH}",
         dest="dest",
         required=False,
         default=DEFAULT_COMPOSE_PATH,
     )
 
     kwargs = dict(parser.parse_args()._get_kwargs())
-    Config.set_debug(kwargs.get("debug"))
+    Config.set_debug(enabled=kwargs.get("debug"))
 
     try:
         sys.exit(main(**kwargs))

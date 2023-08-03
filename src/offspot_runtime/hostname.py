@@ -8,16 +8,15 @@ import logging
 import pathlib
 import re
 import sys
-from typing import Optional
 
 parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
 if parent not in sys.path:
     sys.path.insert(0, str(parent))
 
+from __about__ import __version__  # noqa: E402
 from checks import is_valid_hostname  # noqa: E402
 from configlib import (  # noqa: E402
     Config,
-    __version__,
     fail_invalid,
     get_progname,
     simple_run,
@@ -31,7 +30,7 @@ Config.init(NAME)
 logger = Config.logger
 
 
-def main(hostname: str, debug: Optional[bool] = False) -> int:
+def main(hostname: str) -> int:
     logging.info(f"Configuring hostname for `{hostname}`")
     warn_unless_root()
 
@@ -45,8 +44,8 @@ def main(hostname: str, debug: Optional[bool] = False) -> int:
     if rc != 0:
         return 1
 
-    with open("/etc/hosts", "r") as fh:
-        hosts = fh.readlines()
+    hosts_path = pathlib.Path("/etc/hosts")
+    hosts = hosts_path.read_text().splitlines()
     existing = False
     new_line = f"127.0.1.1\t{hostname}\n"
     for index, line in enumerate(list(hosts)):
@@ -55,8 +54,7 @@ def main(hostname: str, debug: Optional[bool] = False) -> int:
             existing = True
     if not existing:
         hosts.append(new_line)
-    with open("/etc/hosts", "w") as fh:
-        fh.write("".join(hosts))
+    hosts_path.write_text("".join(hosts))
 
     succeed("hostname configured")
 
@@ -75,7 +73,7 @@ def entrypoint():
     )
 
     kwargs = dict(parser.parse_args()._get_kwargs())
-    Config.set_debug(kwargs.get("debug"))
+    Config.set_debug(enabled=kwargs.get("debug"))
 
     try:
         sys.exit(main(**kwargs))

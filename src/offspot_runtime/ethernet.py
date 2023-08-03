@@ -9,17 +9,16 @@ import pathlib
 import re
 import sys
 import time
-from typing import List, Optional
 
 parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
 if parent not in sys.path:
     sys.path.insert(0, str(parent))
 
+from __about__ import __version__  # noqa: E402
 from checks import is_valid_ethernet_config  # noqa: E402
 from configlib import (  # noqa: E402
     SYSTEMCTL_PATH,
     Config,
-    __version__,
     ensure_folder,
     fail_error,
     fail_invalid,
@@ -43,32 +42,30 @@ def ensure_dhcpcd_conf_armor(dhcpcd_conf_path: pathlib.Path) -> bool:
 
     Looks for armor in file, adding one at bottom if missing
     Should the file not have an `interface` line, adds one for eth0 as well"""
-    with open(dhcpcd_conf_path, "r") as fh:
-        lines = fh.read().splitlines()
-        has_start = ARMOR_START in lines
-        has_end = ARMOR_END in lines
-        has_iface = "interface" in [re.split(r"\s", line)[0].strip() for line in lines]
+    lines = dhcpcd_conf_path.read_text().splitlines()
+    has_start = ARMOR_START in lines
+    has_end = ARMOR_END in lines
+    has_iface = "interface" in [re.split(r"\s", line)[0].strip() for line in lines]
 
-        if has_start and has_end:
-            if lines.index(ARMOR_START) < lines.index(ARMOR_END) and has_iface:
-                return
-            lines.remove(ARMOR_START)
-            lines.remove(ARMOR_END)
-        elif has_start:
-            lines.remove(ARMOR_START)
-        elif has_end:
-            lines.remove(ARMOR_END)
+    if has_start and has_end:
+        if lines.index(ARMOR_START) < lines.index(ARMOR_END) and has_iface:
+            return
+        lines.remove(ARMOR_START)
+        lines.remove(ARMOR_END)
+    elif has_start:
+        lines.remove(ARMOR_START)
+    elif has_end:
+        lines.remove(ARMOR_END)
 
-        if not has_iface:
-            lines.append("interface eth0")
+    if not has_iface:
+        lines.append("interface eth0")
 
-        lines.append(ARMOR_START)
-        lines.append(ARMOR_END)
+    lines.append(ARMOR_START)
+    lines.append(ARMOR_END)
 
-    with open(dhcpcd_conf_path, "w") as fh:
-        content = "\n".join(lines)
-        logger.debug(f"Fixing armor for {DHCPCD_CONF_PATH}:\n{content}\n---")
-        fh.write(content)
+    content = "\n".join(lines)
+    logger.debug(f"Fixing armor for {DHCPCD_CONF_PATH}:\n{content}\n---")
+    dhcpcd_conf_path.write_text(content)
 
     return True
 
@@ -76,8 +73,7 @@ def ensure_dhcpcd_conf_armor(dhcpcd_conf_path: pathlib.Path) -> bool:
 def write_dhcpcd_conf(dhcpcd_conf_path: pathlib.Path, network_conf: str):
     """add network_conf to dhcpcd_conf_path in-between armor"""
 
-    with open(dhcpcd_conf_path, "r") as fh:
-        dhcpcd_conf = fh.read()
+    dhcpcd_conf = dhcpcd_conf_path.read_text()
 
     armor_start = "### config-network: start ###"
     armor_end = "### config-network: stop ###"
@@ -86,27 +82,25 @@ def write_dhcpcd_conf(dhcpcd_conf_path: pathlib.Path, network_conf: str):
     stop = lines.index(armor_end) + 1
 
     ensure_folder(dhcpcd_conf_path.parent)
-    with open(dhcpcd_conf_path, "w") as fh:
-        new_lines = (
-            lines[0:start]
-            + [armor_start]
-            + network_conf.splitlines()
-            + [armor_end]
-            + lines[stop:]
-        )
-        if lines[-1] != "":
-            new_lines.append("")
-        content = "\n".join(new_lines)
-        logger.debug(f"Writting {DHCPCD_CONF_PATH}:\n{content}\n---")
-        fh.write(content)
+    new_lines = (
+        lines[0:start]
+        + [armor_start]
+        + network_conf.splitlines()
+        + [armor_end]
+        + lines[stop:]
+    )
+    if lines[-1]:
+        new_lines.append("")
+    content = "\n".join(new_lines)
+    logger.debug(f"Writting {DHCPCD_CONF_PATH}:\n{content}\n---")
+    dhcpcd_conf_path.write_text(content)
 
 
 def main(
     network_type: str,
     address: str,
-    routers: List[str],
-    dns: List[str],
-    debug: Optional[bool] = None,
+    routers: list[str],
+    dns: list[str],
 ) -> int:
     logging.info("Configuring network")
     warn_unless_root()
@@ -183,7 +177,7 @@ def entrypoint():
     )
 
     kwargs = dict(parser.parse_args()._get_kwargs())
-    Config.set_debug(kwargs.get("debug"))
+    Config.set_debug(enabled=kwargs.get("debug"))
 
     try:
         sys.exit(main(**kwargs))

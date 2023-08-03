@@ -23,13 +23,13 @@ parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
 if parent not in sys.path:
     sys.path.insert(0, str(parent))
 
+from __about__ import __version__  # noqa: E402
 from checks import is_valid_ap_config, is_valid_ipv4  # noqa: E402
 from configlib import (  # noqa: E402
     DNSMASQ_CONF_PATH,
     DNSMASQ_SPOOF_CONFIG_PATH,
     IPTABLES_DIR,
     Config,
-    __version__,
     ensure_folder,
     fail_error,
     fail_invalid,
@@ -141,12 +141,9 @@ def set_ip_address(
     interface: str, address: str, netmask: Optional[str] = "255.255.255.0"
 ):
     """assign static IPv4 address to interface"""
-    with open(INTERFACES_PATH, "w") as fh:
-        fh.write(
-            INTERFACES_CONF.format(
-                interface=interface, address=address, netmask=netmask
-            )
-        )
+    INTERFACES_PATH.write_text(
+        INTERFACES_CONF.format(interface=interface, address=address, netmask=netmask)
+    )
 
     return simple_run(
         ["/usr/sbin/ifconfig", interface, address, "netmask", netmask, "up"]
@@ -191,14 +188,13 @@ def write_hostapd_conf(hostapd_conf_path: pathlib.Path, **kwargs) -> int:
     )
 
     ensure_folder(hostapd_conf_path.parent)
-    with open(hostapd_conf_path, "w") as fh:
-        fh.write(
-            HOSTAPD_CONF_TEMPLATE.format(
-                ignore_broadcast="1" if kwargs["hide_ssid"] else 0,
-                wpa2=wpa2,
-                **kwargs,
-            )
+    hostapd_conf_path.write_text(
+        HOSTAPD_CONF_TEMPLATE.format(
+            ignore_broadcast="1" if kwargs["hide_ssid"] else 0,
+            wpa2=wpa2,
+            **kwargs,
         )
+    )
 
     return 0
 
@@ -212,8 +208,7 @@ def write_dnsmasq_spoof_conf(dnsmasq_spoof_conf_path: pathlib.Path, **kwargs) ->
     if not kwargs["spoof"]:
         line = f"# {line}"
 
-    with open(dnsmasq_spoof_conf_path, "w") as fh:
-        fh.write(f"{line}\n")
+    dnsmasq_spoof_conf_path.write_text(f"{line}\n")
 
     return 0
 
@@ -254,8 +249,7 @@ def write_dnsmasq_conf(dnsmasq_conf_path: pathlib.Path, **kwargs) -> int:
 
     # write to a temp file and check syntax first
     temp_conf = pathlib.Path(tempfile.NamedTemporaryFile(suffix=".conf").name)
-    with open(temp_conf, "w") as fh:
-        fh.write(DNSMASQ_CONF_TEMPLATE.format(**kwargs))
+    temp_conf.write_text(DNSMASQ_CONF_TEMPLATE.format(**kwargs))
     if simple_run(["/usr/sbin/dnsmasq", "--test", "-C", str(temp_conf)]) != 0:
         return 1
 
@@ -266,8 +260,9 @@ def write_dnsmasq_conf(dnsmasq_conf_path: pathlib.Path, **kwargs) -> int:
 
 def enable_routing():
     """enable (and persist) IP routing in kernel"""
-    with open("/etc/sysctl.d/offspot-ip-forward.conf", "w") as fh:
-        fh.write("net.ipv4.ip_forward=1\n")
+    pathlib.Path("/etc/sysctl.d/offspot-ip-forward.conf").write_text(
+        "net.ipv4.ip_forward=1\n"
+    )
 
     return simple_run(["/usr/sbin/sysctl", "-p"])
 
@@ -275,19 +270,17 @@ def enable_routing():
 def enable_masquerade_for(interface: str):
     """add (and persist) rule to masquerade traffic through interface (internet)"""
     table, rule = "nat", ["-A", "POSTROUTING", "-o", interface, "-j", "MASQUERADE"]
-    if simple_run([str(IPTABLES_PATH), "-t", table] + rule) != 0:
+    if simple_run([str(IPTABLES_PATH), "-t", table, *rule]) != 0:
         return 1
     ensure_folder(NF_MASQUERADE_RULES_PATH.parent)
-    with open(NF_MASQUERADE_RULES_PATH, "w") as fh:
-        fh.write(f"*{table}\n{' '.join(rule)}\nCOMMIT\n")
+    NF_MASQUERADE_RULES_PATH.write_text(f"*{table}\n{' '.join(rule)}\nCOMMIT\n")
     return 0
 
 
 def disable_masquerade():
     """remove masquerade rule from persiting ruleset. No live-disabling"""
     ensure_folder(NF_MASQUERADE_RULES_PATH.parent)
-    with open(NF_MASQUERADE_RULES_PATH, "w") as fh:
-        fh.write("")
+    NF_MASQUERADE_RULES_PATH.write_text("")
     return 0
 
 
@@ -299,22 +292,22 @@ def enable_forwarding_for(interface: str) -> int:
         ["-A", "FORWARD", "-o", interface, "-j", "ACCEPT"],
     )
     if (
-        simple_run([str(IPTABLES_PATH), "-t", table] + rule_in) != 0
-        or simple_run([str(IPTABLES_PATH), "-t", table] + rule_out) != 0
+        simple_run([str(IPTABLES_PATH), "-t", table, *rule_in]) != 0
+        or simple_run([str(IPTABLES_PATH), "-t", table, *rule_out]) != 0
     ):
         return 1
 
     ensure_folder(NF_FORWARDING_RULES_PATH.parent)
-    with open(NF_FORWARDING_RULES_PATH, "w") as fh:
-        fh.write(f"*{table}\n{' '.join(rule_in)}\n{' '.join(rule_out)}\nCOMMIT\n")
+    NF_FORWARDING_RULES_PATH.write_text(
+        f"*{table}\n{' '.join(rule_in)}\n{' '.join(rule_out)}\nCOMMIT\n"
+    )
     return 0
 
 
 def disable_forwarding():
     """remove forwarding rule from persiting ruleset. No live-disabling"""
     ensure_folder(NF_FORWARDING_RULES_PATH.parent)
-    with open(NF_FORWARDING_RULES_PATH, "w") as fh:
-        fh.write("")
+    NF_FORWARDING_RULES_PATH.write_text("")
     return 0
 
 
@@ -594,7 +587,7 @@ def entrypoint():
     parser.add_argument("--spoof", dest="spoof", required=False, default="auto")
 
     kwargs = dict(parser.parse_args()._get_kwargs())
-    Config.set_debug(kwargs.get("debug"))
+    Config.set_debug(enabled=kwargs.get("debug"))
 
     try:
         sys.exit(main(**kwargs))

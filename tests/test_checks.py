@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Union
 
 import pytest
 from yaml import SafeLoader as Loader
@@ -78,11 +78,11 @@ def test_hostnames(hostname: str, should_pass: bool):
 
 def test_ipv4_api():
     assert is_valid_ipv4("192.168.1.1").passed
-    assert is_valid_ipv4("192.168.1.1", True).passed
-    assert is_valid_ipv4("192.168.1.1", True).passed
-    assert is_valid_ipv4("192.168.1.1", False).passed
-    assert not is_valid_ipv4("192.168.1.0", True).passed
-    assert is_valid_ipv4("192.168.1.0", False).passed
+    assert is_valid_ipv4("192.168.1.1", usable=True).passed
+    assert is_valid_ipv4("192.168.1.1", usable=True).passed
+    assert is_valid_ipv4("192.168.1.1", usable=False).passed
+    assert not is_valid_ipv4("192.168.1.0", usable=True).passed
+    assert is_valid_ipv4("192.168.1.0", usable=False).passed
     assert is_valid_ipv4(ip_addr="192.168.1.1").passed
     assert is_valid_ipv4(ip_addr="192.168.1.1", usable=True).passed
     assert is_valid_ipv4(ip_addr="192.168.1.1", usable=False).passed
@@ -114,7 +114,7 @@ def test_ipv4_api():
     ],
 )
 def test_ipv4(address: str, usable: bool, should_pass: bool):
-    check = is_valid_ipv4(address, usable)
+    check = is_valid_ipv4(address, usable=usable)
     assert check.passed == should_pass
 
 
@@ -146,8 +146,8 @@ def test_is_valid_ethernet_config_api():
 def test_is_valid_ethernet_config(
     network_type: str,
     address: str,
-    routers: List[str],
-    dns: List[str],
+    routers: list[str],
+    dns: list[str],
     should_pass: bool,
 ):
     check = is_valid_ethernet_config(
@@ -589,7 +589,7 @@ def test_is_valid_compose_minimal():
     ],
 )
 def test_is_valid_compose_ports(
-    port: str, required_ports: List[int], should_pass: bool
+    port: str, required_ports: list[int], should_pass: bool
 ):
     compose = {
         "services": {
