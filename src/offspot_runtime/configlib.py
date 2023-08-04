@@ -4,10 +4,10 @@ import pathlib
 import re
 import subprocess
 import sys
-from dataclasses import dataclass, field
 from typing import Optional
 
 import yaml
+from attrs import define, field
 
 try:
     from yaml import CDumper as Dumper
@@ -36,7 +36,7 @@ logging.basicConfig(
 )
 
 
-@dataclass
+@define
 class Config:
     name: str = "-"
     debug: bool = False

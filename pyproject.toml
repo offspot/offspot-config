@@ -30,6 +30,7 @@ dependencies = [
     "tzdata==2023.3",
     "iso3166==2.1.1",
     "xmltodict==0.13.0",
+    "attrs==23.1.0",
 ]
 dynamic = ["version"]
 
@@ -88,7 +89,7 @@ features = ["dev"]
 features = ["scripts", "test"]
 
 [[tool.hatch.envs.test.matrix]]
-python = ["3.9"]
+python = ["3.9", "3.10", "3.11"]
 
 [tool.hatch.envs.test.scripts]
 run = "inv test --args '{args}'"
@@ -251,6 +252,6 @@ exclude_lines = [
 include = ["src", "tests", "tasks.py"]
 exclude = [".env/**", ".venv/**"]
 extraPaths = ["src"]
-pythonVersion = "3.11"
+pythonVersion = "3.9"
 typeCheckingMode="basic"
 reportImplicitStringConcatenation=false
