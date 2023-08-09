@@ -27,11 +27,12 @@ class File:
 
     kind: str = "file"  # Item interface
 
-    unpack_formats: list[str] = SUPPORTED_UNPACKING_FORMATS
+    unpack_formats: list[str]
 
     def __init__(self, payload: dict[str, str | int]):
+        self.unpack_formats = ["direct", *SUPPORTED_UNPACKING_FORMATS]
         self.url: urllib.parse.ParseResult | None = None
-        self.content: str | None = str(payload["content"]) if "content" else None
+        self.content: str | None = str(payload.get("content", "")) or None
 
         if not self.content:
             try:
@@ -44,7 +45,7 @@ class File:
             raise ValueError(f"{self.to} not a descendent of {DATA_PART_PATH}")
 
         self.via = payload.get("via", "direct")
-        if self.via not in ("direct", "unzip", "untar"):
+        if self.via not in self.unpack_formats:
             raise NotImplementedError(f"Unsupported handler `{self.via}`")
 
         # initialized has unknown
@@ -80,7 +81,7 @@ class File:
 
     def geturl(self) -> str:
         """URL as string"""
-        return self.url.geturl() if isinstance(self.url, str) else ""
+        return self.url.geturl() if self.url else ""
 
     def getpath(self) -> pathlib.Path:
         """URL as a local path"""
