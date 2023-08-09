@@ -9,9 +9,9 @@ class OCIImage:
     kind: str = "image"  # Item interface
 
     def __init__(
-        self, name: str, filesize: int, fullsize: int, url: Optional[str] = None
+        self, ident: str, filesize: int, fullsize: int, url: Optional[str] = None
     ):
-        self.oci: Image = Image.parse(name)
+        self.oci: Image = Image.parse(ident)
         self.url = url
         self.filesize = filesize
         self.fullsize = fullsize
@@ -44,4 +44,5 @@ class OCIImage:
             "ident": str(self.oci),
             "filesize": self.filesize,
             "fullsize": self.fullsize,
+            "url": self.url,
         }

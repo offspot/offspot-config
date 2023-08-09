@@ -107,7 +107,7 @@ class AppPackage(Package):
     @property
     def oci_image(self):
         return OCIImage(
-            name=self.image, filesize=self.image_filesize, fullsize=self.image_fullsize
+            ident=self.image, filesize=self.image_filesize, fullsize=self.image_fullsize
         )
 
     @property

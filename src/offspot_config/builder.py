@@ -102,7 +102,7 @@ class ConfigBuilder:
         self.with_dashboard = True
 
         image = OCIImage(
-            name="ghcr.io/offspot/dashboard:1.0",
+            ident="ghcr.io/offspot/dashboard:1.0",
             filesize=119941120,
             fullsize=119838811,
         )
@@ -156,7 +156,7 @@ class ConfigBuilder:
         self.with_reverseproxy = True
 
         image = OCIImage(
-            name="ghcr.io/offspot/reverse-proxy:1.0",
+            ident="ghcr.io/offspot/reverse-proxy:1.0",
             filesize=114974720,
             fullsize=114894424,
         )
@@ -181,7 +181,7 @@ class ConfigBuilder:
         self.with_captive_portal = True
 
         image = OCIImage(
-            name="ghcr.io/offspot/captive-portal:1.0",
+            ident="ghcr.io/offspot/captive-portal:1.0",
             filesize=187668480,
             fullsize=187604243,
         )
@@ -224,7 +224,7 @@ class ConfigBuilder:
 
         # add image
         image = OCIImage(
-            name="ghcr.io/offspot/hwclock:1.0",
+            ident="ghcr.io/offspot/hwclock:1.0",
             filesize=59412480,
             fullsize=59382985,
         )
@@ -262,7 +262,7 @@ class ConfigBuilder:
         self.with_kiwixserve = True
 
         image = OCIImage(
-            name="ghcr.io/offspot/kiwix-serve:3.4.0",
+            ident="ghcr.io/offspot/kiwix-serve:3.4.0",
             filesize=29194240,
             fullsize=29162475,
         )
@@ -339,7 +339,7 @@ class ConfigBuilder:
         # add image to compose
         if not self.with_files:
             image = OCIImage(
-                name="ghcr.io/offspot/file-browser:1.0",
+                ident="ghcr.io/offspot/file-browser:1.0",
                 filesize=47226880,
                 fullsize=47162907,
             )
