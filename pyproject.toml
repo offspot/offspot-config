@@ -63,13 +63,13 @@ dev = [
 "Donate" = "https://www.kiwix.org/en/support-us/"
 
 [project.scripts]
-offspot-config-ap = "offspot_runtime.ap:entrypoint"
-offspot-config-containers = "offspot_runtime.containers:entrypoint"
-offspot-config-ethernet = "offspot_runtime.ethernet:entrypoint"
-offspot-config-hostname = "offspot_runtime.hostname:entrypoint"
-offspot-config-timezone = "offspot_runtime.timezone:entrypoint"
+offspot-runtime-config-ap = "offspot_runtime.ap:entrypoint"
+offspot-runtime-config-containers = "offspot_runtime.containers:entrypoint"
+offspot-runtime-config-ethernet = "offspot_runtime.ethernet:entrypoint"
+offspot-runtime-config-hostname = "offspot_runtime.hostname:entrypoint"
+offspot-runtime-config-timezone = "offspot_runtime.timezone:entrypoint"
+offspot-runtime-config-fromfile = "offspot_runtime.fromfile:entrypoint"
 toggle-dnsmasq-spoof = "offspot_runtime.dnsmasqspoof:entrypoint"
-offspot-config-fromfile = "offspot_runtime.fromfile:entrypoint"
 
 [tool.hatch.version]
 path = "src/offspot_runtime/__about__.py"
