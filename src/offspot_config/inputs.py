@@ -38,7 +38,7 @@ class BaseConfig:
     source: Union[str, File]
     rootfs_size: Union[str, int]
 
-    def __post_init__(self):
+    def __attrs_post_init__(self):
         if self.rootfs_size and isinstance(self.rootfs_size, str):
             self.rootfs_size = parse_size(self.rootfs_size)
 
@@ -62,7 +62,7 @@ class FileConfig:
     via: Optional[str] = "direct"
     size: Optional[Union[str, int]] = -1
 
-    def __post_init__(self, *args, **kwargs):
+    def __attrs_post_init__(self):
         if self.via not in WAYS:
             raise ValueError(
                 f"Incorrect value `{self.via}` for {type(self).__name__}.via"
@@ -92,7 +92,7 @@ class OutputConfig:
     shrink: Optional[bool] = False
     compress: Optional[bool] = False
 
-    def __post_init__(self):
+    def __attrs_post_init__(self):
         self.parse_size()
 
     def parse_size(self):
@@ -125,7 +125,7 @@ class MainConfig:
     all_files: list[File] = field(factory=list)
     all_images: list[OCIImage] = field(factory=list)
 
-    def __post_init__(self, *args, **kwargs):
+    def __attrs_post_init__(self):
         if isinstance(self.base, dict):
             self.base = BaseConfig(**self.base)
 
