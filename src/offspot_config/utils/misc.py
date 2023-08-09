@@ -1,13 +1,19 @@
+from __future__ import annotations
+
 import datetime
+import inspect
 import lzma
 import os
 import pathlib
+import platform
 import re
 import shutil
 import tarfile
 import tempfile
 import zipfile
-from typing import Any, Optional
+from contextlib import suppress
+from functools import wraps
+from typing import Any, _SpecialForm, get_origin
 
 import humanfriendly
 
@@ -270,21 +276,17 @@ def supports_xattr(path: pathlib.Path) -> bool:
         return test_xattr(pathlib.Path(tmp.name))
 
 
-def is_dict(
-    value: Any, *, accepts_none: Optional[bool] = False  # noqa: ARG001
-) -> bool:
+def is_dict(value: Any, *, accepts_none: bool | None = False) -> bool:  # noqa: ARG001
     """whether value is a dict (shortcut)"""
     return isinstance(value, dict)
 
 
-def is_list(
-    value: Any, *, accepts_none: Optional[bool] = False  # noqa: ARG001
-) -> bool:
+def is_list(value: Any, *, accepts_none: bool | None = False) -> bool:  # noqa: ARG001
     """whether value is a list (shortcut)"""
     return isinstance(value, list)
 
 
-def is_list_of_dict(value: Any, *, accepts_none: Optional[bool] = False) -> bool:
+def is_list_of_dict(value: Any, *, accepts_none: bool | None = False) -> bool:
     """whether value is a list for which each element is a dict (shortcut)"""
     if not is_list(value, accepts_none=accepts_none):
         return False
@@ -304,3 +306,65 @@ def copy_file(src_path: pathlib.Path, dest_path: pathlib.Path):
 def is_http(url: str) -> bool:
     """whether this URL is using HTTP(s) protocol"""
     return bool(re.match(r"https?://", url))
+
+
+def over_py310():
+    return
+
+
+class IncorectTypeError(TypeError):
+    def __init__(self, where: str, field: str, expected: str, found: type):
+        self.where = where
+        self.field = field
+        self.expected = expected
+        self.found = found
+        super().__init__(f"{where}.{field} expects {expected}, not {found.__name__}")
+
+
+def enforce_types(callable_):
+    """decorator enforcing that declared types of params (func, class) matches"""
+    spec = inspect.getfullargspec(callable_)
+
+    def check_types(*args, **kwargs):
+        parameters = dict(zip(spec.args, args))
+        parameters.update(kwargs)
+        for name, value in parameters.items():
+            with suppress(KeyError):  # Assume un-annotated parameters can be any type
+                type_hint = spec.annotations[name]
+                if isinstance(type_hint, _SpecialForm):
+                    # No check for Any, Union, ClassVar
+                    # without parameters
+                    continue
+                actual_type = get_origin(type_hint) or type_hint
+                if isinstance(actual_type, _SpecialForm):
+                    # case of typing.Union[…] or typing.ClassVar[…]
+                    actual_type = type_hint.__args__
+                elif int(platform.python_version()[1]) >= 10:  # py3.10 unions as |
+                    from types import (
+                        UnionType,  # pyright: ignore [reportGeneralTypeIssues]
+                    )
+
+                    if isinstance(type_hint, UnionType):
+                        actual_type = type_hint.__args__
+
+                if not isinstance(value, actual_type):
+                    raise IncorectTypeError(
+                        where=callable_.__name__,
+                        field=name,
+                        expected=str(type_hint),
+                        found=type(value),
+                    )
+
+    def decorate(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            check_types(*args, **kwargs)
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    if inspect.isclass(callable_):
+        callable_.__init__ = decorate(callable_.__init__)
+        return callable_
+
+    return decorate(callable)
