@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import uuid
+from typing import Union
 
 from attrs import define, field
 from typeguard import typechecked
@@ -31,7 +32,9 @@ class Package:
     def get_url(self, fqdn: str, **kwargs) -> str:  # noqa: ARG002
         return ""
 
-    def get_download_url(self, download_fqdn: str) -> str | None:  # noqa: ARG002
+    def get_download_url(
+        self, download_fqdn: str  # noqa: ARG002
+    ) -> Union[str, None]:  # noqa: UP007 (typeguard bug)
         return None
 
     def get_download_size(self) -> int | None:

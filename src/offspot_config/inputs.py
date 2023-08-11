@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import re
-from typing import Optional, Union
+from typing import Any
 
 from attrs import asdict, define, field
 from typeguard import typechecked
@@ -35,8 +37,8 @@ class BlockStr(str):
 @typechecked
 @define(kw_only=True)
 class BaseConfig:
-    source: Union[str, File]
-    rootfs_size: Union[str, int]
+    source: str | File
+    rootfs_size: str | int
 
     def __attrs_post_init__(self):
         if self.rootfs_size and isinstance(self.rootfs_size, str):
@@ -47,20 +49,20 @@ class BaseConfig:
 @define(kw_only=True)
 class OCIImageConfig:
     ident: str
-    url: Optional[str] = None
+    url: str | None = None
     filesize: int
     fullsize: int
 
 
-@custom_yaml_repr
-@typechecked
 @define(kw_only=True)
+@typechecked
+@custom_yaml_repr
 class FileConfig:
     to: str
-    url: Optional[str] = None
-    content: Optional[BlockStr] = None
-    via: Optional[str] = "direct"
-    size: Optional[Union[str, int]] = -1
+    url: str | None = None
+    content: BlockStr | None = None
+    via: str | None = "direct"
+    size: str | int | None = -1
 
     def __attrs_post_init__(self):
         if self.via not in WAYS:
@@ -88,9 +90,9 @@ class FileConfig:
 @typechecked
 @define(kw_only=True)
 class OutputConfig:
-    size: Optional[Union[int, str]] = None
-    shrink: Optional[bool] = False
-    compress: Optional[bool] = False
+    size: int | str | None = None
+    shrink: bool | None = False
+    compress: bool | None = False
 
     def __attrs_post_init__(self):
         self.parse_size()
@@ -114,13 +116,13 @@ class OutputConfig:
 @typechecked
 @define(kw_only=True)
 class MainConfig:
-    base: Union[dict, BaseConfig]
-    base_file: Optional[File] = None
-    output: Optional[Union[dict, OutputConfig]] = field(factory=OutputConfig)
+    base: dict | BaseConfig
+    base_file: File | None = None
+    output: dict | OutputConfig | None = field(factory=OutputConfig)
     oci_images: list[OCIImageConfig]
     files: list[FileConfig]
-    write_config: Optional[bool] = False
-    offspot: Optional[dict] = field(factory=dict)
+    write_config: bool | None = False
+    offspot: dict[str, Any] | None = field(factory=dict)
 
     all_files: list[File] = field(factory=list)
     all_images: list[OCIImage] = field(factory=list)

@@ -1,11 +1,13 @@
+from __future__ import annotations
+
 import json
-from typing import Optional, cast
+from typing import cast
 
 from offspot_config.packages import AppPackage, FilesPackage, Package
 
 
 class Catalog(dict):
-    def __init__(self, content: Optional[str] = None):
+    def __init__(self, content: str | None = None):
         super().__init__()
         if content:
             self.update_from(content)

@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from docker_export import Image
 
@@ -9,7 +9,7 @@ class OCIImage:
     kind: str = "image"  # Item interface
 
     def __init__(
-        self, ident: str, filesize: int, fullsize: int, url: Optional[str] = None
+        self, ident: str, filesize: int, fullsize: int, url: str | None = None
     ):
         self.oci: Image = Image.parse(ident)
         self.url = url

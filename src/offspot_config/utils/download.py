@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import requests
 import requests.adapters
 from urllib3.util.retry import Retry

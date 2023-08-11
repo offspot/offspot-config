@@ -1,4 +1,6 @@
-from typing import Any, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from offspot_config.constants import CONTENT_TARGET_PATH
 from offspot_config.inputs import BaseConfig, BlockStr, FileConfig
@@ -13,13 +15,13 @@ class ConfigBuilder:
         *,
         base: BaseConfig,
         name: str = "My Offspot",
-        tld: Optional[str] = "offspot",
-        domain: Optional[str] = "my-offspot",
-        ssid: Optional[str] = "my-offspot",
-        passphrase: Optional[str] = None,
-        timezone: Optional[str] = "UTC",  # noqa: ARG002
-        as_gateway: Optional[bool] = False,
-        write_config: Optional[bool] = False,
+        tld: str | None = "offspot",
+        domain: str | None = "my-offspot",
+        ssid: str | None = "my-offspot",
+        passphrase: str | None = None,
+        timezone: str | None = "UTC",  # noqa: ARG002
+        as_gateway: bool | None = False,
+        write_config: bool | None = False,
     ):
         self.name = name
         self.config: dict[str, Any] = {
@@ -94,7 +96,7 @@ class ConfigBuilder:
     def set_output_size(self, size: int):
         self.config["output"]["size"] = size
 
-    def add_dashboard(self, *, allow_zim_downloads: Optional[bool] = False):
+    def add_dashboard(self, *, allow_zim_downloads: bool | None = False):
         self.dashboard_offers_zim_downloads = allow_zim_downloads
         if self.with_dashboard:
             return
@@ -371,7 +373,7 @@ class ConfigBuilder:
         to: str,
         via: str,
         size: int,
-        is_url: Optional[bool] = True,
+        is_url: bool | None = True,
     ):
         self.config["files"].append(
             FileConfig(
