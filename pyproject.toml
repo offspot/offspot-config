@@ -23,15 +23,14 @@ classifiers = [
 ]
 dependencies = [
     "PyYAML==6.0.1",
-    "docker-export==0.4",
-    "humanfriendly==10.0",
-    "requests==2.31.0",
-    "typeguard==4.1.0",
-    "tzdata==2023.3",
+    "docker-export[visual]>=1.0.0,<2.0",
+    "humanfriendly>=10.0",
+    "requests>=2.31.0,<3",
+    "typeguard>=4.1.0",
     "iso3166==2.1.1",
-    "xmltodict==0.13.0",
-    "attrs==23.1.0",
-    "urllib3==2.0.4",
+    "xmltodict>=0.13.0,<0.14",
+    "attrs>=23.1.0,<23.2",
+    "urllib3>=2.0.0,<3.0",
 ]
 dynamic = ["version"]
 
@@ -44,7 +43,7 @@ lint = [
   "ruff==0.0.282",
 ]
 check = [
-  "pyright==1.1.320",
+  "pyright==1.1.321",
 ]
 test = [
   "pytest==7.4.0",
@@ -85,6 +84,9 @@ packages = ["src/offspot_runtime", "src/offspot_config"]
 
 [tool.hatch.envs.default]
 features = ["dev"]
+
+[[tool.hatch.envs.default.matrix]]
+python = ["3.9"]
 
 [tool.hatch.envs.test]
 features = ["scripts", "test"]
