@@ -240,7 +240,7 @@ class ConfigBuilder:
             "read_only": True,
             "restart": "unless-stopped",
             "expose": ["80"],
-            "cap-add": ["CAP_SYS_TIME"],
+            "cap_add": ["CAP_SYS_TIME"],
             "privileged": True,
         }
 
