@@ -54,9 +54,9 @@ class OCIImageConfig:
     fullsize: int
 
 
-@define(kw_only=True)
-@typechecked
 @custom_yaml_repr
+@typechecked
+@define(kw_only=True)
 class FileConfig:
     to: str
     url: str | None = None
