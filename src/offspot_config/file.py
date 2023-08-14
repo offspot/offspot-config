@@ -94,7 +94,7 @@ class File:
     @property
     def is_plain(self) -> bool:
         """whether a plain text content to be written"""
-        return self.content is not None
+        return bool(self.content)
 
     @property
     def is_local(self) -> bool:
