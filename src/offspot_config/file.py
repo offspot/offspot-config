@@ -32,7 +32,7 @@ class File:
     def __init__(self, payload: dict[str, str | int]):
         self.unpack_formats = ["direct", *SUPPORTED_UNPACKING_FORMATS]
         self.url: urllib.parse.ParseResult | None = None
-        self.content: str | None = str(payload.get("content", "")) or None
+        self.content: str = str(payload.get("content", "") or "").strip()
 
         if not self.content:
             try:
@@ -104,7 +104,7 @@ class File:
     @property
     def is_remote(self) -> bool:
         """whether referencing a remote file"""
-        return self.content is None and bool(self.url) and self.url.scheme != "file"
+        return not self.content and bool(self.url) and self.url.scheme != "file"
 
     def mounted_to(self, mount_point: pathlib.Path):
         """destination (to) path inside mount-point"""
