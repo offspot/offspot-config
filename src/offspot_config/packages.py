@@ -160,7 +160,7 @@ class FilesPackage(Package):
 
     def as_fileconfig(self) -> FileConfig:
         return FileConfig(
-            to=str(CONTENT_TARGET_PATH / self.filename),
+            to=str(CONTENT_TARGET_PATH / "files" / self.filename),
             url=self.download_url,
             content=None,
             via=self.via,
