@@ -158,7 +158,7 @@ class ConfigBuilder:
         self.with_reverseproxy = True
 
         image = OCIImage(
-            ident="ghcr.io/offspot/reverse-proxy:1.0",
+            ident="ghcr.io/offspot/reverse-proxy:1.1",
             filesize=114974720,
             fullsize=114894424,
         )
@@ -264,7 +264,7 @@ class ConfigBuilder:
         self.with_kiwixserve = True
 
         image = OCIImage(
-            ident="ghcr.io/offspot/kiwix-serve:3.4.0",
+            ident="ghcr.io/offspot/kiwix-serve:3.5.0-2",
             filesize=29194240,
             fullsize=29162475,
         )
@@ -280,7 +280,7 @@ class ConfigBuilder:
             "volumes": [
                 {
                     "type": "bind",
-                    "source": "/data/contents/zims",
+                    "source": f"{CONTENT_TARGET_PATH}/zims",
                     "target": "/data",
                     "read_only": True,
                 }
@@ -357,7 +357,7 @@ class ConfigBuilder:
                 "volumes": [
                     {
                         "type": "bind",
-                        "source": "/data/contents/files",
+                        "source": f"{CONTENT_TARGET_PATH}/files",
                         "target": "/data",
                         "read_only": True,
                     }
