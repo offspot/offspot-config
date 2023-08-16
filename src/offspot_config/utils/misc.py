@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import fnmatch
 import inspect
 import lzma
 import os
@@ -17,7 +18,10 @@ from typing import Any, _SpecialForm, get_origin
 
 import humanfriendly
 
-from offspot_config.constants import SUPPORTED_UNPACKING_FORMATS
+from offspot_config.constants import (
+    POST_EXPANSION_UNWANTED_PATTERNS,
+    SUPPORTED_UNPACKING_FORMATS,
+)
 
 
 def format_size(size: int) -> str:
@@ -123,7 +127,18 @@ def expand_file(src: pathlib.Path, method: str, dest: pathlib.Path):
         if not path.is_relative_to(dest):
             raise OSError(f"{method} file contains out-of-bound member path: {name}")
 
-    return shutil.unpack_archive(src, dest, method)
+    shutil.unpack_archive(filename=src, extract_dir=dest, format=method)
+
+    # clean-up target ok known-unwanted files and folders
+    # resource-fork folder added by macOS's visual ZIP creation tool
+    for fpath in dest.rglob("__MACOSX"):
+        if fpath.is_dir():
+            rmtree(fpath)
+
+    for fpath in dest.rglob("*"):
+        for pattern in POST_EXPANSION_UNWANTED_PATTERNS:
+            if fnmatch.fnmatch(fpath.name, pattern):
+                fpath.unlink(missing_ok=True)
 
 
 class SimpleAttrs:
