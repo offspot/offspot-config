@@ -40,11 +40,11 @@ class File:
             except Exception as exc:
                 raise ValueError(f"URL “{payload.get('url')}” is incorrect") from exc
 
-        self.to = pathlib.Path(str(payload["to"])).resolve()
+        self.to: pathlib.Path = pathlib.Path(str(payload["to"])).resolve()
         if not self.to.is_relative_to(DATA_PART_PATH):
             raise ValueError(f"{self.to} not a descendent of {DATA_PART_PATH}")
 
-        self.via = payload.get("via", "direct")
+        self.via: str = str(payload.get("via", "direct"))
         if self.via not in self.unpack_formats:
             raise NotImplementedError(f"Unsupported handler `{self.via}`")
 
