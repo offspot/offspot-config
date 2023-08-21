@@ -1,13 +1,15 @@
-# offspot-runtime-config
+# offspot-config
 
-A collection of scripts for use within [offspot/base-image](https://github.com/offspot/base-image).
+A library to read/write an Offspot runtime config and a collection of scripts to use it within [offspot/base-image](https://github.com/offspot/base-image).
 
-[![CodeFactor](https://www.codefactor.io/repository/github/offspot/runtime-config/badge)](https://www.codefactor.io/repository/github/offspot/runtime-config)
+[![CodeFactor](https://www.codefactor.io/repository/github/offspot/offspot-config/badge)](https://www.codefactor.io/repository/github/offspot/offspot-config)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![PyPI version shields.io](https://img.shields.io/pypi/v/offspot-runtime-config.svg)](https://pypi.org/project/offspot-runtime-config/)
-[![codecov](https://codecov.io/gh/offspot/runtime-config/branch/main/graph/badge.svg)](https://codecov.io/gh/offspot/runtime-config)
+[![PyPI version shields.io](https://img.shields.io/pypi/v/offspot-config.svg)](https://pypi.org/project/offspot-config/)
+[![codecov](https://codecov.io/gh/offspot/offspot-config/branch/main/graph/badge.svg)](https://codecov.io/gh/offspot/offspot-config)
 
-Launched via `offspot-config-fromfile`, it:
+## Scripts Usage
+
+Launched via `offspot-runtime-config-fromfile`, it:
 
 - reads a YAML config file and changes the offspot configuration accordingly.
 - starts associated services
@@ -21,11 +23,8 @@ Its primary goal is to allow one to change some key offspot configuration upon n
 - it's a configuration tool that must be ran as root.
 
 
-## Usage
-
-
 ```sh
-offspot-config-fromfile --debug /boot/offspot.yaml
+offspot-runtime-config-fromfile --debug /boot/offspot.yaml
 ```
 
 - `--debug` will show you what exact parameters were passed to individual scripts so you can manually launch them should there be an issue.
@@ -41,13 +40,13 @@ offspot-config-fromfile --debug /boot/offspot.yaml
 apt install hostapd dnsmasq dhcpcd5 python3-yaml python3-pip
 systemctl unmask hostapd
 systemctl disable hostapd dnsmasq
-pip3 install offspot_runtime_config
+pip3 install offspot-config
 ```
 
 ## Library usage
 
 ```sh
-pip3 install offspot-runtime-config
+pip3 install offspot-config
 ```
 
 ```py
@@ -68,7 +67,7 @@ is_valid_ipv4("10.0.0.a").raise_for_status()
 
 ---
 
-# `offspot.yaml` format
+## `offspot.yaml` format
 
 `offspot.yaml` is composed of a single `object` with predefined candidate members.
 
@@ -76,7 +75,7 @@ is_valid_ipv4("10.0.0.a").raise_for_status()
 - Unknown members are simply ignored.
 - No relation between first-level members.
 
-## Valid first-level members
+### Valid first-level members
 
 | Member       | Kind      | Function   |
 |--------------|-----------|------------|
@@ -86,7 +85,7 @@ is_valid_ipv4("10.0.0.a").raise_for_status()
 | `ap`         | `object`  | Set WiFi AP configuration for wireless interface       |
 | `containers` | `object`  | Builds the docker-compose file                         |
 
-## `timezone`
+### `timezone`
 
 Must be a valid timezone. Get a complete list with:
 
@@ -104,7 +103,7 @@ timezone: Europe/Berlin
 ```
 
 
-## `hostname`
+### `hostname`
 
 Must be alphanumeric string up to 63 characters. Can be composed of multiple (max 64) of those, separated by a single dot. Total length must be under 256 characters.
 
@@ -117,7 +116,7 @@ hostname: library-lab-pi23
 
 **Note**: this is not the domain name on the network. See `ap` for this. `hostname` is mostly useless.
 
-## `ethernet`
+### `ethernet`
 
 `network` is itself a single `object`.
 
@@ -145,7 +144,7 @@ ethernet:
   dns: 192.168.5.200
 ```
 
-### Notes
+#### Notes
 
 If you need to mix this simple configuration tool with a more complex `dhcpcd.conf` file, use the following *armor* in your file:
 
@@ -158,7 +157,7 @@ The script will set its properties in-between those lines, keeping the rest of y
 
 Without an *armor*, configuration is appended at end of file, specifying `eth0` interface if missing (untouched `dhcpcd.conf`)
 
-## `ap`
+### `ap`
 
 `ap` is itself an `object`.
 
@@ -181,15 +180,15 @@ Without an *armor*, configuration is appended at end of file, specifying `eth0` 
 | `welcome`    | `string`   | no | Additional domain to direct to offspot. Defaults to `goto.kiwix` (resolved as `goto.generic.{tld}`               |
 | `spoof`      | `boolean`* | no | Whether to direct all DNS requests to the offspot. Useful for captive-portal without Internet bridge. Special value `auto` triggers it when the hotspot is offline and disables it when it is connected to Internet    |
 
-### notes
+#### notes
 
-- `iptables` is not persistent. `ap` will write rules to `/etc/iptables/*.rules`. If you don't use `offspot-config-fromfile` on start, manually reload them via a script or service:
+- `iptables` is not persistent. `ap` will write rules to `/etc/iptables/*.rules`. If you don't use `offspot-runtime-config-fromfile` on start, manually reload them via a script or service:
 
 ```sh
 /usr/bin/find /etc/iptables/ -name '*.rules' -exec /sbin/iptables-restore {} \;
 ```
 
-## `containers`
+### `containers`
 
 `containers` is the full docker-compose.yaml you want to use. It will be written to `/etc/docker/compose.yml`.
 
