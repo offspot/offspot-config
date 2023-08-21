@@ -107,7 +107,7 @@ def entrypoint():
     parser.add_argument("--debug", action="store_true", dest="debug")
 
     kwargs = dict(parser.parse_args()._get_kwargs())
-    Config.set_debug(enabled=kwargs.get("debug", False))
+    Config.set_debug(enabled=kwargs.pop("debug", False))
 
     try:
         sys.exit(main(**kwargs))

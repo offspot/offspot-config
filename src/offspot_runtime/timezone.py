@@ -54,7 +54,7 @@ def entrypoint():
     )
 
     kwargs = dict(parser.parse_args()._get_kwargs())
-    Config.set_debug(enabled=kwargs.get("debug", False))
+    Config.set_debug(enabled=kwargs.pop("debug", False))
 
     try:
         sys.exit(main(**kwargs))
