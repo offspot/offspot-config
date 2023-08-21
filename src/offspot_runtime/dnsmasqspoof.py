@@ -3,21 +3,15 @@
 """ Toggle dnsmasq's spoof mode when internet connection is offline """
 
 import argparse
-import inspect
 import pathlib
 import re
 import subprocess
 import sys
-from typing import Optional
 
-parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
-if parent not in sys.path:
-    sys.path.insert(0, str(parent))
-
-from configlib import (  # noqa: E402
+from offspot_runtime.__about__ import __version__
+from offspot_runtime.configlib import (
     DNSMASQ_SPOOF_CONFIG_PATH,
     Config,
-    __version__,
     ensure_folder,
     fail_error,
     get_progname,
@@ -33,12 +27,11 @@ Config.init(NAME)
 logger = Config.logger
 
 
-def toggle_dnsmasq(dnsmasq_conf_path: pathlib.Path, spoof: bool):
+def toggle_dnsmasq(dnsmasq_conf_path: pathlib.Path, *, spoof: bool):
     """wether spoof file has been changed"""
 
     ensure_folder(dnsmasq_conf_path.parent)
-    with open(dnsmasq_conf_path, "r") as fh:
-        content = fh.read()
+    content = dnsmasq_conf_path.read_text()
 
     is_spoof = False
     for line in content.splitlines():
@@ -67,8 +60,7 @@ def toggle_dnsmasq(dnsmasq_conf_path: pathlib.Path, spoof: bool):
                 content = f"# {line}\n"
                 break
 
-    with open(dnsmasq_conf_path, "w") as fh:
-        fh.write(content)
+    dnsmasq_conf_path.write_text(content)
 
     return True
 
@@ -77,13 +69,12 @@ def restart_dnsmasq():
     return subprocess.run(["/usr/bin/systemctl", "restart", "dnsmasq"]).returncode == 0
 
 
-def main(debug: Optional[bool] = False):
+def main() -> int:
     warn_unless_root()
 
     spoof = False
     try:
-        with open(INTERNET_STATUS_PATH, "r") as fh:
-            status = fh.read().strip()
+        status = INTERNET_STATUS_PATH.read_text().strip()
         spoof = status != "online"
     except Exception as exc:
         fail_error(
@@ -97,13 +88,14 @@ def main(debug: Optional[bool] = False):
             "unable to read/write dnsmasq spoof config "
             f"at {DNSMASQ_SPOOF_CONFIG_PATH}: {exc}"
         )
+        fixed = False
     if not fixed:
-        return
+        return 0
 
     if restart_service("dnsmasq") != 0:
         fail_error("failed to restart dnsmasq")
 
-    succeed("toggled spoof mode")
+    return succeed("toggled spoof mode")
 
 
 def entrypoint():
@@ -115,7 +107,7 @@ def entrypoint():
     parser.add_argument("--debug", action="store_true", dest="debug")
 
     kwargs = dict(parser.parse_args()._get_kwargs())
-    Config.set_debug(kwargs.get("debug"))
+    Config.set_debug(enabled=kwargs.pop("debug", False))
 
     try:
         sys.exit(main(**kwargs))

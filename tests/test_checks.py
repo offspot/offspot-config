@@ -1,6 +1,6 @@
-from typing import List, Union
+from typing import Union
 
-import pytest
+import pytest  # pyright: ignore [reportMissingImports]
 from yaml import SafeLoader as Loader
 from yaml import load as yaml_load
 
@@ -78,11 +78,11 @@ def test_hostnames(hostname: str, should_pass: bool):
 
 def test_ipv4_api():
     assert is_valid_ipv4("192.168.1.1").passed
-    assert is_valid_ipv4("192.168.1.1", True).passed
-    assert is_valid_ipv4("192.168.1.1", True).passed
-    assert is_valid_ipv4("192.168.1.1", False).passed
-    assert not is_valid_ipv4("192.168.1.0", True).passed
-    assert is_valid_ipv4("192.168.1.0", False).passed
+    assert is_valid_ipv4("192.168.1.1", usable=True).passed
+    assert is_valid_ipv4("192.168.1.1", usable=True).passed
+    assert is_valid_ipv4("192.168.1.1", usable=False).passed
+    assert not is_valid_ipv4("192.168.1.0", usable=True).passed
+    assert is_valid_ipv4("192.168.1.0", usable=False).passed
     assert is_valid_ipv4(ip_addr="192.168.1.1").passed
     assert is_valid_ipv4(ip_addr="192.168.1.1", usable=True).passed
     assert is_valid_ipv4(ip_addr="192.168.1.1", usable=False).passed
@@ -114,7 +114,7 @@ def test_ipv4_api():
     ],
 )
 def test_ipv4(address: str, usable: bool, should_pass: bool):
-    check = is_valid_ipv4(address, usable)
+    check = is_valid_ipv4(address, usable=usable)
     assert check.passed == should_pass
 
 
@@ -146,8 +146,8 @@ def test_is_valid_ethernet_config_api():
 def test_is_valid_ethernet_config(
     network_type: str,
     address: str,
-    routers: List[str],
-    dns: List[str],
+    routers: list[str],
+    dns: list[str],
     should_pass: bool,
 ):
     check = is_valid_ethernet_config(
@@ -368,7 +368,7 @@ def test_is_valid_domain(domain: str, should_pass: bool):
         ("MLI", False),
     ],
 )
-def test_is_valid_wifi_country_code(country_code: int, should_pass: bool):
+def test_is_valid_wifi_country_code(country_code: str, should_pass: bool):
     assert is_valid_wifi_country_code(country_code).passed == should_pass
 
 
@@ -510,7 +510,7 @@ def test_is_valid_compose_api():
 
 def test_is_valid_compose_minimal():
     # invalid compose
-    assert not is_valid_compose(None)
+    assert not is_valid_compose(None)  # type: ignore
     assert not is_valid_compose({})
 
     # services not a dict
@@ -569,6 +569,8 @@ def test_is_valid_compose_minimal():
 @pytest.mark.parametrize(
     "port, required_ports, should_pass",
     [
+        (80, [], True),
+        (80, [80], False),
         ("80", [80], False),
         ("81:80", [80], False),
         ("80:81", [80], True),
@@ -586,10 +588,11 @@ def test_is_valid_compose_minimal():
         ({"target": 81, "published": "70-90"}, [80], True),
         ({"target": 81, "published": 80, "protocol": "udp"}, [80], False),
         ({"target": 81, "published": 80, "protocol": "tcp"}, [80], True),
+        ({"target": 81, "published": 80, "protocol": "tcp"}, [8080], False),
     ],
 )
 def test_is_valid_compose_ports(
-    port: str, required_ports: List[int], should_pass: bool
+    port: str, required_ports: list[int], should_pass: bool
 ):
     compose = {
         "services": {

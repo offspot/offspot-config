@@ -6,20 +6,14 @@
     requested setting is valid, and set (or errored) or ignored.
     JSON config file is rewritten to remove applied setting """
 import argparse
-import inspect
 import pathlib
 import sys
-from typing import Dict, Optional
 
-parent = pathlib.Path(inspect.getfile(inspect.currentframe())).parent.resolve()
-if parent not in sys.path:
-    sys.path.insert(0, str(parent))
-
-from configlib import (  # noqa: E402
+from offspot_runtime.__about__ import __version__
+from offspot_runtime.configlib import (
     IPTABLES_DIR,
     SYSTEMCTL_PATH,
     Config,
-    __version__,
     colored,
     from_yaml,
     get_bin,
@@ -97,28 +91,28 @@ banner = """# This file allows changing this Offspot's configuration on boot.
 
 class Handlers:
     @staticmethod
-    def config_hostname(item: str, debug: bool) -> int:
+    def config_hostname(item: str) -> int:
         command = get_bin("hostname")
-        if debug:
+        if Config.debug:
             command += ["--debug"]
         command += [item]
         return simple_run(command)
 
     @staticmethod
-    def config_timezone(item: str, debug: bool) -> int:
+    def config_timezone(item: str) -> int:
         command = get_bin("timezone")
-        if debug:
+        if Config.debug:
             command += ["--debug"]
         command += [item]
         return simple_run(command)
 
     @staticmethod
-    def config_ethernet(item: Dict, debug: bool) -> int:
+    def config_ethernet(item: dict) -> int:
         if not isinstance(item, dict):
             return 2
 
         command = get_bin("ethernet")
-        if debug:
+        if Config.debug:
             command += ["--debug"]
         for key in ("type", "address"):
             if item.get(key):
@@ -133,7 +127,7 @@ class Handlers:
         return simple_run(command)
 
     @staticmethod
-    def config_ap(item: Dict, debug: bool) -> int:
+    def config_ap(item: dict) -> int:
         if not isinstance(item, dict):
             return 2
 
@@ -142,7 +136,7 @@ class Handlers:
 
         command = get_bin("ap")
 
-        if debug:
+        if Config.debug:
             command += ["--debug"]
 
         for key in (
@@ -176,14 +170,14 @@ class Handlers:
                 for entry in option:
                     command += [f"--{key}", entry]
 
-        command += [item.get("ssid")]
+        command += [item["ssid"]]
         return simple_run(command)
 
     @staticmethod
-    def config_containers(item: Dict, debug: bool) -> int:
+    def config_containers(item: dict) -> int:
         payload = to_yaml(item)
         command = get_bin("containers")
-        if debug:
+        if Config.debug:
             command += ["--debug"]
         command += ["-"]
         return simple_run(command, stdin=payload)
@@ -216,15 +210,14 @@ def start_ap_stack():
     )
 
 
-def main(config_path, debug: Optional[bool] = False):
+def main(config_path) -> int:
     config_path = pathlib.Path(config_path).expanduser().resolve()
     logger.info(f"Starting offspot-runtime-config off {config_path}")
     warn_unless_root()
     has_error = False
 
     try:
-        with open(config_path, "r") as fh:
-            config = from_yaml(fh.read())
+        config = from_yaml(config_path.read_text())
     except Exception as exc:
         logger.critical(
             colored(f"Unable to read/parse YAML config at {config_path}: {exc}", "red")
@@ -235,7 +228,7 @@ def main(config_path, debug: Optional[bool] = False):
     for key in ("timezone", "hostname", "ethernet", "ap", "containers"):
         if config.get(key):
             logger.debug(f"[{key}] config change requested")
-            returncode = getattr(Handlers, f"config_{key}")(config.get(key), debug)
+            returncode = getattr(Handlers, f"config_{key}")(config.get(key))
             if returncode == 0:
                 logger.info(f"[{key}] configuration applied")
                 config.pop(key)
@@ -252,13 +245,11 @@ def main(config_path, debug: Optional[bool] = False):
 
     if has_error:
         return 1
-    succeed("runtime-config applied successfuly")
+    return succeed("runtime-config applied successfuly")
 
 
-def save_config(config_path: pathlib.Path, config: Dict):
-    with open(config_path, "w") as fh:
-        fh.write(banner)
-        fh.write(to_yaml(config) if config else "---\n")
+def save_config(config_path: pathlib.Path, config: dict):
+    config_path.write_text(banner + to_yaml(config) if config else "---\n")
 
 
 def entrypoint():
@@ -272,7 +263,7 @@ def entrypoint():
     parser.add_argument(help="Offspot Config YAML file path.", dest="config_path")
 
     kwargs = dict(parser.parse_args()._get_kwargs())
-    Config.set_debug(kwargs.get("debug"))
+    Config.set_debug(enabled=kwargs.pop("debug", False))
 
     try:
         sys.exit(main(**kwargs))
