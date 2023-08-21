@@ -98,7 +98,7 @@ def simple_run(command: list[str], stdin: Optional[str] = None):
 
 def get_bin(name: str) -> list[str]:
     """full path of sub-command script"""
-    return ["/usr/bin/env", f"offspot-config-{name}"]
+    return ["/usr/bin/env", f"offspot-runtime-config-{name}"]
 
 
 def get_progname() -> str:
