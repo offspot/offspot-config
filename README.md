@@ -4,8 +4,9 @@ A library to read/write an Offspot runtime config and a collection of scripts to
 
 [![CodeFactor](https://www.codefactor.io/repository/github/offspot/offspot-config/badge)](https://www.codefactor.io/repository/github/offspot/offspot-config)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![PyPI version shields.io](https://img.shields.io/pypi/v/offspot-config.svg)](https://pypi.org/project/offspot-config/)
 [![codecov](https://codecov.io/gh/offspot/offspot-config/branch/main/graph/badge.svg)](https://codecov.io/gh/offspot/offspot-config)
+[![PyPI version shields.io](https://img.shields.io/pypi/v/offspot-config.svg)](https://pypi.org/project/offspot-config/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/offspot-config.svg)](https://pypi.org/project/offspot-config)
 
 ## Scripts Usage
 
