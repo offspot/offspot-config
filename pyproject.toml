@@ -26,7 +26,7 @@ dependencies = [
     "docker-export[visual]>=1.0.0,<2.0",
     "humanfriendly>=10.0",
     "requests>=2.31.0,<3",
-    "typeguard>=4.1.0",
+    "typeguard>=4.1.5",
     "iso3166==2.1.1",
     "xmltodict>=0.13.0,<0.14",
     "attrs>=23.1.0,<23.2",
@@ -43,7 +43,7 @@ lint = [
   "ruff==0.0.282",
 ]
 check = [
-  "pyright==1.1.321",
+  "pyright==1.1.327",
 ]
 test = [
   "pytest==7.4.0",
