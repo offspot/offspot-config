@@ -52,6 +52,7 @@ test = [
 dev = [
   "pre-commit==3.3.3",
   "debugpy==1.6.7",
+  "ipython",
   "offspot-config[scripts]",
   "offspot-config[lint]",
   "offspot-config[test]",
