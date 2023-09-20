@@ -103,7 +103,16 @@ class AppPackage(Package):
     download_size: int | None = None
     download_to: str | None = None
     download_via: str | None = "direct"
+    # map of global:local environ to pass from config to container
     environ_map: dict[str, str] | None = None
+    # custom static/dynamic environ for app
+    environ: dict[str, str] | None = None
+    # list of volumes to mount in host:container[:ro] format
+    volumes: list[str] | None = None
+    # list of links to services to add to hosts in service[:alias] format
+    links: list[str] | None = None
+    # map of subdomain to target (service-name:port) to add to reverse proxy
+    sub_services: dict[str, str] | None = None
 
     @property
     def oci_image(self):

@@ -59,7 +59,7 @@ class File:
         return self.geturl()
 
     @property
-    def size(self):  # Item interface
+    def size(self) -> int:  # Item interface
         if self._size < 0:
             return self.fetch_size()
         return self._size

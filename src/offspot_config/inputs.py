@@ -80,6 +80,10 @@ class FileConfig:
         if self.content and not isinstance(self.content, BlockStr):
             self.content = BlockStr(self.content)
 
+    @property
+    def file(self) -> File:
+        return File(asdict(self))
+
     @staticmethod
     def __yaml_repr__(dumper, data):
         return dumper.represent_dict(
@@ -149,6 +153,14 @@ class MainConfig:
             self.all_files.append(File(asdict(conf)))
         for conf in self.oci_images:
             self.all_images.append(OCIImage(**asdict(conf)))
+
+    @property
+    def rootfs_size(self) -> int:
+        if not isinstance(self.base, BaseConfig) or not isinstance(
+            self.base.rootfs_size, int
+        ):
+            raise OSError("Base not ready")
+        return self.base.rootfs_size
 
     @classmethod
     def read_from(cls, text: str):

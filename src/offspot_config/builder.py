@@ -2,10 +2,16 @@ from __future__ import annotations
 
 from typing import Any
 
+from offspot_config.catalog import get_app_path
 from offspot_config.constants import CONTENT_TARGET_PATH
 from offspot_config.inputs import BaseConfig, BlockStr, FileConfig
 from offspot_config.oci_images import OCIImage
 from offspot_config.packages import AppPackage, FilesPackage, ZimPackage
+from offspot_config.utils.sizes import (
+    get_margin_for,
+    get_min_image_size_for,
+    get_raw_content_size_for,
+)
 from offspot_config.utils.yaml import yaml_dump
 
 
@@ -21,9 +27,11 @@ class ConfigBuilder:
         passphrase: str | None = None,
         timezone: str | None = "UTC",  # noqa: ARG002
         as_gateway: bool | None = False,
+        environ: dict[str, str] | None = None,
         write_config: bool | None = False,
     ):
         self.name = name
+        self.environ = environ or {}
         self.config: dict[str, Any] = {
             "base": {"source": base.source, "rootfs_size": base.rootfs_size},
             "output": {"size": "auto"},
@@ -158,9 +166,9 @@ class ConfigBuilder:
         self.with_reverseproxy = True
 
         image = OCIImage(
-            ident="ghcr.io/offspot/reverse-proxy:1.1",
-            filesize=114974720,
-            fullsize=114894424,
+            ident="ghcr.io/offspot/reverse-proxy:1.2",
+            filesize=115722240,
+            fullsize=115645756,
         )
         self.config["oci_images"].add(image)
 
@@ -236,11 +244,14 @@ class ConfigBuilder:
         self.compose["services"]["hwclock"] = {
             "image": image.source,
             "container_name": "hwclock",
+            "environment": {
+                "ADMIN_USERNAME": self.environ.get("ADMIN_USERNAME", ""),
+                "ADMIN_PASSWORD": self.environ.get("ADMIN_PASSWORD", ""),
+            },
             "pull_policy": "never",
             "read_only": True,
             "restart": "unless-stopped",
             "expose": ["80"],
-            "cap_add": ["CAP_SYS_TIME"],
             "privileged": True,
         }
 
@@ -295,7 +306,7 @@ class ConfigBuilder:
 
         self.reversed_services.add("kiwix")
 
-    def add_app(self, package: AppPackage):
+    def add_app(self, package: AppPackage, environ: dict[str, str] | None = None):
         if package.kind != "app":
             raise ValueError(f"Package {package.ident} is not an app")
 
@@ -309,11 +320,73 @@ class ConfigBuilder:
         self.config["oci_images"].add(package.oci_image)
         self.compose["services"][package.ident] = {
             "image": package.oci_image.source,
+            "environment": {},
+            "volumes": [],
             "container_name": package.domain,
             "pull_policy": "never",
             "restart": "unless-stopped",
             "expose": ["80"],
         }
+        # add package-defined environ
+        if package.environ:
+            self.compose["services"][package.ident]["environment"].update(
+                {
+                    key: self.resolved_variable(value, package=package)
+                    for key, value in package.environ.items()
+                }
+            )
+
+        # pass-down expected environ from global environ
+        if package.environ_map:
+            for global_env, local_env in package.environ_map.items():
+                self.compose["services"][package.ident]["environment"].update(
+                    {
+                        local_env: self.resolved_variable(
+                            self.environ.get(global_env, ""), package=package
+                        )
+                    }
+                )
+        # apply custom environ
+        if environ:
+            self.compose["services"][package.ident]["environment"].update(
+                {
+                    key: self.resolved_variable(value, package=package)
+                    for key, value in environ.items()
+                }
+            )
+
+        # mount volumes
+        if package.volumes:
+            for volume in package.volumes:
+                parts = volume.split(":", 2)
+                host_path, container_path = parts[:2]
+                read_only = len(parts) == 3 and "ro" in parts[-1]
+
+                self.compose["services"][package.ident]["volumes"].append(
+                    {
+                        "type": "bind",
+                        "source": self.get_resolved_host_path(package, host_path),
+                        "target": container_path,
+                        "read_only": read_only,
+                    }
+                )
+
+        # links
+        if package.links:
+            self.compose["services"][package.ident]["links"] = [
+                self.resolved_variable(link, package=package) for link in package.links
+            ]
+
+        # add subdomain services to reverse proxy
+        if package.sub_services:
+            for sub_domain, sub_target in package.sub_services.items():
+                target, port = sub_target.split(":", 1)
+                self.reversed_services.add(
+                    self.resolved_variable(
+                        f"{sub_domain}.{package.domain}:{target}:{port}",
+                        package=package,
+                    )
+                )
 
         self.reversed_services.add(package.domain)
 
@@ -384,6 +457,36 @@ class ConfigBuilder:
                     "size": size,
                 }
             )
+        )
+
+    def resolved_variable(self, text: str, package: AppPackage) -> str:
+        """dynamic-variables resolved string"""
+        app_dir = get_app_path(package=package)
+        return (
+            text.replace("${APP_DIR}", app_dir)
+            .replace("${FQDN}", self.fqdn)
+            .replace("${PACKAGE_IDENT}", package.ident)
+            .replace("${PACKAGE_DOMAIN}", package.domain)
+            .replace("${PACKAGE_FQDN}", f"{package.domain}.{self.fqdn}")
+            .replace("${REVERSE_NAME}", "reverse-proxy")
+        )
+
+    def get_resolved_host_path(self, package: AppPackage, host_path: str) -> str:
+        """dynamic-variables resolved host path for package"""
+
+        return self.resolved_variable(text=host_path, package=package)
+
+    def get_min_size(self) -> int:
+        """minimum size in bytes of the resulting image"""
+        content_size = get_raw_content_size_for(
+            images=self.config["oci_images"],
+            files=[fc.file for fc in self.config["files"]],
+        )
+
+        return get_min_image_size_for(
+            rootfs_size=self.config["base"]["rootfs_size"],
+            content_size=content_size,
+            margin=get_margin_for(content_size),
         )
 
     def render(self) -> str:
