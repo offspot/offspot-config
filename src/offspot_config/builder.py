@@ -56,8 +56,6 @@ class ConfigBuilder:
         self.dashboard_offers_zim_downloads = True
         # every card the dashboard will display
         self.dashboard_entries = []
-        # all files that will be downloaded and places onto disk
-        self.file_entries = []
         # domain of services that must be reversed to (all but special cases)
         self.reversed_services = set()
         # domain: folder map of virtual services serving only files
@@ -83,23 +81,6 @@ class ConfigBuilder:
 
     def update_offspot_config(self, **kwargs):
         self.config["offspot"].update(kwargs)
-
-    # def add_package(self, ident: str):
-    #     try:
-    #         prefix, ident = ident.split(":", 1)
-    #     except Exception as exc:
-    #         raise ValueError(
-    #             f"Invalid prefix:ident value for package: {ident}"
-    #         ) from exc
-
-    #     if prefix == "zim":
-    #         return self.add_zim(ident)
-    #     if prefix == "app":
-    #         return self.add_app(ident)
-    #     if prefix == "file":
-    #         return self.add_files_package(ident)
-
-    #     raise ValueError(f"Invalid package prefix: {prefix}")
 
     def set_output_size(self, size: int):
         self.config["output"]["size"] = size
@@ -401,10 +382,6 @@ class ConfigBuilder:
             self.config["files"].append(package.as_fileconfig())
 
         self.add_files_service()
-
-        # add to package_entries to it gets its endpoint in reverse proxy
-        if package not in self.file_entries:
-            self.file_entries.append(package)
 
         self.files_mapping.update({package.domain: package.ident})
 
