@@ -113,6 +113,8 @@ class AppPackage(Package):
     links: list[str] | None = None
     # map of subdomain to target (service-name:port) to add to reverse proxy
     sub_services: dict[str, str] | None = None
+    # username, password to password-protect the service with
+    protected_by: tuple[str, str] | None = None
 
     @property
     def oci_image(self):

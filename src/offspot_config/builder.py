@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from offspot_config.catalog import get_app_path
@@ -13,6 +14,9 @@ from offspot_config.utils.sizes import (
     get_raw_content_size_for,
 )
 from offspot_config.utils.yaml import yaml_dump
+
+# matches $environ[XXX] where XXX is a builder-level environ to replace with
+RE_ENVIRON_VAR = re.compile(r"\$environ{(?P<var>[A-Za-z_\-0-9]+)}")
 
 
 class ConfigBuilder:
@@ -56,10 +60,14 @@ class ConfigBuilder:
         self.dashboard_offers_zim_downloads = True
         # every card the dashboard will display
         self.dashboard_entries = []
+
         # domain of services that must be reversed to (all but special cases)
-        self.reversed_services = set()
+        # either domain or domain:target-domain:target-port
+        self.reversed_services: set[str] = set()
         # domain: folder map of virtual services serving only files
-        self.files_mapping = {}
+        self.files_mapping: dict[str, str] = {}
+        # domain: (username, password) map of services to password protect
+        self.protected_services: dict[str, tuple[str, str]] = {}
 
         self.with_kiwixserve: bool = False
         self.with_files: bool = False
@@ -147,9 +155,9 @@ class ConfigBuilder:
         self.with_reverseproxy = True
 
         image = OCIImage(
-            ident="ghcr.io/offspot/reverse-proxy:1.2",
+            ident="ghcr.io/offspot/reverse-proxy:1.3",
             filesize=115722240,
-            fullsize=115645756,
+            fullsize=115649340,
         )
         self.config["oci_images"].add(image)
 
@@ -225,10 +233,6 @@ class ConfigBuilder:
         self.compose["services"]["hwclock"] = {
             "image": image.source,
             "container_name": "hwclock",
-            "environment": {
-                "ADMIN_USERNAME": self.environ.get("ADMIN_USERNAME", ""),
-                "ADMIN_PASSWORD": self.environ.get("ADMIN_PASSWORD", ""),
-            },
             "pull_policy": "never",
             "read_only": True,
             "restart": "unless-stopped",
@@ -236,6 +240,14 @@ class ConfigBuilder:
             "privileged": True,
         }
 
+        self.protected_services.update(
+            {
+                "hwclock": (
+                    self.environ.get("ADMIN_USERNAME", ""),
+                    self.environ.get("ADMIN_PASSWORD", ""),
+                )
+            }
+        )
         self.reversed_services.add("hwclock")
 
     def add_zim(self, zim: ZimPackage):
@@ -299,7 +311,7 @@ class ConfigBuilder:
             self.config["files"].append(package.as_fileconfig())
 
         self.config["oci_images"].add(package.oci_image)
-        self.compose["services"][package.ident] = {
+        self.compose["services"][package.domain] = {
             "image": package.oci_image.source,
             "environment": {},
             "volumes": [],
@@ -310,7 +322,7 @@ class ConfigBuilder:
         }
         # add package-defined environ
         if package.environ:
-            self.compose["services"][package.ident]["environment"].update(
+            self.compose["services"][package.domain]["environment"].update(
                 {
                     key: self.resolved_variable(value, package=package)
                     for key, value in package.environ.items()
@@ -320,7 +332,7 @@ class ConfigBuilder:
         # pass-down expected environ from global environ
         if package.environ_map:
             for global_env, local_env in package.environ_map.items():
-                self.compose["services"][package.ident]["environment"].update(
+                self.compose["services"][package.domain]["environment"].update(
                     {
                         local_env: self.resolved_variable(
                             self.environ.get(global_env, ""), package=package
@@ -329,7 +341,7 @@ class ConfigBuilder:
                 )
         # apply custom environ
         if environ:
-            self.compose["services"][package.ident]["environment"].update(
+            self.compose["services"][package.domain]["environment"].update(
                 {
                     key: self.resolved_variable(value, package=package)
                     for key, value in environ.items()
@@ -343,7 +355,7 @@ class ConfigBuilder:
                 host_path, container_path = parts[:2]
                 read_only = len(parts) == 3 and "ro" in parts[-1]
 
-                self.compose["services"][package.ident]["volumes"].append(
+                self.compose["services"][package.domain]["volumes"].append(
                     {
                         "type": "bind",
                         "source": self.get_resolved_host_path(package, host_path),
@@ -354,7 +366,7 @@ class ConfigBuilder:
 
         # links
         if package.links:
-            self.compose["services"][package.ident]["links"] = [
+            self.compose["services"][package.domain]["links"] = [
                 self.resolved_variable(link, package=package) for link in package.links
             ]
 
@@ -368,6 +380,21 @@ class ConfigBuilder:
                         package=package,
                     )
                 )
+
+        # handle password protection
+        if package.protected_by:
+            self.protected_services.update(
+                {
+                    package.domain: (
+                        self.resolved_variable(
+                            package.protected_by[0], package=package
+                        ),
+                        self.resolved_variable(
+                            package.protected_by[1], package=package
+                        ),
+                    )
+                }
+            )
 
         self.reversed_services.add(package.domain)
 
@@ -439,6 +466,12 @@ class ConfigBuilder:
     def resolved_variable(self, text: str, package: AppPackage) -> str:
         """dynamic-variables resolved string"""
         app_dir = get_app_path(package=package)
+
+        # replace $environ{XXX} mappings
+        match = RE_ENVIRON_VAR.search(text)
+        if match:
+            repl = self.environ[match.groupdict()["var"]]
+            text = RE_ENVIRON_VAR.sub(repl, text)
         return (
             text.replace("${APP_DIR}", app_dir)
             .replace("${FQDN}", self.fqdn)
@@ -484,6 +517,10 @@ class ConfigBuilder:
                 "FILES_MAPPING": ",".join(
                     f"{domain}:{folder}"
                     for domain, folder in self.files_mapping.items()
+                ),
+                "PROTECTED_SERVICES": ",".join(
+                    f"{svc}:{creds[0]}:{creds[1]}"
+                    for svc, creds in self.protected_services.items()
                 ),
             }
         )
