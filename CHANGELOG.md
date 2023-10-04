@@ -5,13 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2023-10-04
+
+### Added
+
+- Added Builder
+- Added Sizes computation
+- Using dashboard:1.1
+- Including JSON catalog in lib
+
 # [1.3.0] - 2023-08-21
 
 ### Added
 
 - Now bundling `offspot_config` module as well
 
-# [1.2.0] - 2023-03-07
+## [1.2.0] - 2023-03-07
 
 ### Added
 
@@ -43,6 +52,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `auto` option for `spoof` param in `ap` to adjust based on internet connectivity
 
-# [1.0.0] - 2022-10-05
+## [1.0.0] - 2022-10-05
 
 - initial version
