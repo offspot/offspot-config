@@ -1,0 +1,212 @@
+[
+    {
+        "ident": "contentfilter.offspot.kiwix.org",
+        "domain": "contentfilter",
+        "kind": "app",
+        "title": "Content Filter",
+        "description": "Manage URLs to filter out from this instance",
+        "languages": [
+            "eng"
+        ],
+        "tags": [
+            "admin"
+        ],
+        "icon": "https://drive.offspot.it/content-filter/content-filter.png",
+        "image": "ghcr.io/offspot/content-filter:1.0",
+        "image_filesize": 506767360,
+        "image_fullsize": 506645965
+    },
+    {
+        "ident": "wikifundi-fr.offspot.kiwix.org",
+        "domain": "wikifundi-fr",
+        "kind": "app",
+        "title": "WikiFundi",
+        "description": "Environnement qui vous permet de créer des articles Wikipédia hors-ligne (en français)",
+        "languages": [
+            "fra"
+        ],
+        "tags": [
+            "Wikipedia"
+        ],
+        "icon": "https://drive.offspot.it/wikifundi/wikifundi_logo.png",
+        "image": "ghcr.io/offspot/wikifundi:1.0",
+        "image_filesize": 1997875200,
+        "image_fullsize": 1997766122,
+        "download_url": "https://drive.offspot.it/wikifundi/fr_2021-12.tar",
+        "download_size": 4723138560,
+        "environ_map": {
+            "ADMIN_PASSWORD": "MEDIAWIKI_ADMIN_PASSWORD"
+        },
+        "environ": {
+            "URL": "http://${PACKAGE_FQDN}",
+            "RESTBASE_URL": "http://restbase.${PACKAGE_FQDN}/${PACKAGE_FQDN}/",
+            "MATHOID_URL": "http://mathoid.${PACKAGE_FQDN}/"
+        },
+        "volumes": [
+            "${APP_DIR}:/var/www/data"
+        ],
+        "links": [
+            "${REVERSE_NAME}:restbase.${PACKAGE_FQDN}"
+        ],
+        "sub_services": {
+            "restbase": "${PACKAGE_DOMAIN}:7231",
+            "mathoid": "${PACKAGE_DOMAIN}:10044"
+        },
+        "protected_by": ["renaud", "$environ{ADMIN_PASSWORD}"]
+    },
+    {
+        "ident": "wikifundi-en.offspot.kiwix.org",
+        "domain": "wikifundi-en",
+        "kind": "app",
+        "title": "WikiFundi",
+        "description": "Offline editable environment that provides a similar experience to editing Wikipedia online (in English)",
+        "languages": [
+            "eng"
+        ],
+        "tags": [
+            "Wikipedia"
+        ],
+        "icon": "https://drive.offspot.it/wikifundi/wikifundi_logo.png",
+        "image": "ghcr.io/offspot/wikifundi:1.0",
+        "image_filesize": 1997875200,
+        "image_fullsize": 1997766122,
+        "download_url": "https://drive.offspot.it/wikifundi/en_2021-12.tar",
+        "download_size": 5477140480,
+        "environ_map": {
+            "ADMIN_PASSWORD": "MEDIAWIKI_ADMIN_PASSWORD"
+        }
+    },
+    {
+        "ident": "wikifundi-es.offspot.kiwix.org",
+        "domain": "wikifundi-es",
+        "kind": "app",
+        "title": "WikiFundi",
+        "description": "Entorno editable sin conexión que brinda una experiencia similar a la edición de Wikipedia en línea (en español)",
+        "languages": [
+            "spa"
+        ],
+        "tags": [
+            "Wikipedia"
+        ],
+        "icon": "https://drive.offspot.it/wikifundi/wikifundi_logo.png",
+        "image": "ghcr.io/offspot/wikifundi:1.0",
+        "image_filesize": 1997875200,
+        "image_fullsize": 1997766122,
+        "download_url": "https://drive.offspot.it/wikifundi/es_2021-12.tar",
+        "download_size": 5842176000,
+        "environ_map": {
+            "ADMIN_PASSWORD": "MEDIAWIKI_ADMIN_PASSWORD"
+        }
+    },
+    {
+        "ident": "edupi.offspot.kiwix.org",
+        "domain": "edupi",
+        "kind": "app",
+        "title": "Ressources EduPi",
+        "description": "Accès à diverses ressources",
+        "languages": [
+            "mul"
+        ],
+        "tags": [
+            "files"
+        ],
+        "image": "ghcr.io/offspot/edupi:1.0",
+        "image_filesize": 591226880,
+        "image_fullsize": 591129543,
+        "environ_map": {
+            "ADMIN_USERNAME": "ADMIN_USERNAME",
+            "ADMIN_PASSWORD": "ADMIN_PASSWORD"
+        },
+        "volumes": [
+            "${APP_DIR}:/data",
+            "/data/branding/favicon.ico:/var/lib/edupi/favicon.ico:ro"
+        ]
+    },
+    {
+        "ident": "nomad.offspot.kiwix.org",
+        "domain": "nomad",
+        "kind": "files",
+        "title": "Nomad exercices du CP à la 3è",
+        "description": "Application Android",
+        "languages": [
+            "fra"
+        ],
+        "tags": [
+            "android"
+        ],
+        "icon": "https://drive.offspot.it/nomad/nomad_logo.png",
+        "download_url": "https://drive.offspot.it/nomad/nomadeducation_fr_android_2021-11.zip",
+        "download_size": 116444328,
+        "via": "zip"
+    },
+    {
+        "ident": "mathews.offspot.kiwix.org",
+        "domain": "mathews",
+        "kind": "files",
+        "title": "Chasse au trésor Math Mathews",
+        "description": "Un jeu pour faire des maths (6-9 ans)",
+        "languages": [
+            "fra"
+        ],
+        "tags": [
+            "android"
+        ],
+        "icon": "https://drive.offspot.it/mathews/mathmathews_logo.png",
+        "download_url": "https://drive.offspot.it/mathews/mathmathews_fr_android_1.6.zip",
+        "download_size": 35710192,
+        "via": "zip"
+    },
+    {
+        "ident": "africatik-en.offspot.kiwix.org",
+        "domain": "africatik-en",
+        "kind": "files",
+        "title": "Africatik Écoles numériques",
+        "description": "Applications éducatives adaptées au contexte culturel africain (version Écoles numériques)",
+        "languages": [
+            "fra"
+        ],
+        "tags": [
+            "android",
+            "windows"
+        ],
+        "icon": "https://drive.offspot.it/africatik/africatik_logo.png",
+        "download_url": "https://drive.offspot.it/africatik/africatik_fr_ecoles-numeriques_2023-02.zip",
+        "download_size": 13906969131,
+        "via": "zip"
+    },
+    {
+        "ident": "africatik-md.offspot.kiwix.org",
+        "domain": "africatik-md",
+        "kind": "files",
+        "title": "Africatik Maisons digitales",
+        "description": "Applications éducatives adaptées au contexte culturel africain (version Maisons digitales)",
+        "languages": [
+            "fra"
+        ],
+        "tags": [
+            "android",
+            "windows"
+        ],
+        "icon": "https://drive.offspot.it/africatik/africatik_logo.png",
+        "download_url": "https://drive.offspot.it/africatik/africatik_fr_maisons-digitales_2023-02.zip",
+        "download_size": 4394410977,
+        "via": "zip"
+    },
+    {
+        "ident": "fizziq-junior.offspot.kiwix.org",
+        "domain": "fizziq-junior",
+        "kind": "files",
+        "title": "Fizziq Junior",
+        "description": "App Android pour l'apprentissage des sciences et de l'investigation scientifique",
+        "languages": [
+            "fra"
+        ],
+        "tags": [
+            "android"
+        ],
+        "icon": "https://drive.offspot.it/fizziq/fizziq-junior.png",
+        "download_url": "https://drive.offspot.it/fizziq/fizziq_fr_junior_2023-03.zip",
+        "download_size": 128724719,
+        "via": "zip"
+    }
+]

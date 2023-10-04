@@ -42,6 +42,7 @@ def get_zim_package(ident: str):
         ).strftime("%Y-%m-%d")
 
         return ZimPackage(
+            kind="zim",
             ident=ident,
             name=entry["name"],
             title=entry["title"],
