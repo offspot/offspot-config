@@ -101,9 +101,9 @@ class ConfigBuilder:
         self.with_dashboard = True
 
         image = OCIImage(
-            ident="ghcr.io/offspot/dashboard:1.0",
-            filesize=119941120,
-            fullsize=119838811,
+            ident="ghcr.io/offspot/dashboard:1.1",
+            filesize=122357760,
+            fullsize=122255621,
         )
         self.config["oci_images"].add(image)
 
