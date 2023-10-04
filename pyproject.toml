@@ -43,7 +43,7 @@ lint = [
   "ruff==0.0.282",
 ]
 check = [
-  "pyright==1.1.327",
+  "pyright==1.1.329",
 ]
 test = [
   "pytest==7.4.0",
