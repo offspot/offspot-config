@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Fixed builder when not using reverse-proxy
+- Fixed based image URL when using version only
 
 ## [1.4.1] - 2023-10-13
 
