@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Hack around libkiwix#1004 when checking ZIM existence
+
 ### Changed
 
 - Fixed builder when not using reverse-proxy
