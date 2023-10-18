@@ -511,19 +511,20 @@ class ConfigBuilder:
 
         # update reverseproxy config
         # > domain to subfolder for all files packages + zim-dl
-        self.compose["services"]["reverse-proxy"]["environment"].update(
-            {
-                "SERVICES": ",".join(self.reversed_services),
-                "FILES_MAPPING": ",".join(
-                    f"{domain}:{folder}"
-                    for domain, folder in self.files_mapping.items()
-                ),
-                "PROTECTED_SERVICES": ",".join(
-                    f"{svc}:{creds[0]}:{creds[1]}"
-                    for svc, creds in self.protected_services.items()
-                ),
-            }
-        )
+        if self.with_reverseproxy:
+            self.compose["services"]["reverse-proxy"]["environment"].update(
+                {
+                    "SERVICES": ",".join(self.reversed_services),
+                    "FILES_MAPPING": ",".join(
+                        f"{domain}:{folder}"
+                        for domain, folder in self.files_mapping.items()
+                    ),
+                    "PROTECTED_SERVICES": ",".join(
+                        f"{svc}:{creds[0]}:{creds[1]}"
+                        for svc, creds in self.protected_services.items()
+                    ),
+                }
+            )
 
         # render compose
 
