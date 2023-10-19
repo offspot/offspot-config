@@ -9,6 +9,7 @@ import pathlib
 import platform
 import re
 import shutil
+import subprocess
 import tarfile
 import tempfile
 import zipfile
@@ -252,12 +253,34 @@ class SimpleAttrs:
         return list(self.iteritems())
 
 
+def get_mapper_device_for(dev_name: str) -> str:
+    """LVM device-mapper name (md-x) from an LVM device name"""
+    re_dmsetup_ls = re.compile(r"^(?P<name>[a-z0-9\-]+)\s+\((?P<dm>dm\-[0-9]+)\)$")
+    for line in subprocess.run(
+        ["/usr/bin/env", "dmsetup", "ls", "-o", "blkdevname"],
+        check=True,
+        capture_output=True,
+        text=True,
+        env=get_environ(),
+    ).stdout.splitlines():
+        match = re_dmsetup_ls.match(line.strip())
+        if match and match.groupdict()["name"] == dev_name:
+            return match.groupdict()["dm"]
+    raise OSError(f"No LVM Device Mapper Found for {dev_name}")
+
+
 def device_supports(dev_path: str, fs: str, option: str) -> bool:
     """whether device, mounted as `fs` has fs-option `option` enabled"""
+    fs_folder = pathlib.Path(f"/proc/fs/{fs}")
+    dev_name = pathlib.Path(dev_path).resolve().name
+    # mounts-listed device is not listed, probably an LVM-backed virtual device
+    if not fs_folder.joinpath(dev_name).exists():
+        try:
+            dev_name = get_mapper_device_for(dev_name)
+        except Exception:
+            return False
     try:
-        options = pathlib.Path(
-            f"/proc/fs/{fs}/{pathlib.Path(dev_path).resolve().name}/options"
-        ).read_text()
+        options = fs_folder.joinpath(dev_name).joinpath("options").read_text()
     except Exception:
         return False
     return bool(re.search(rf"^{option}", options, re.MULTILINE))
