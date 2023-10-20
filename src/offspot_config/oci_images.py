@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from docker_export import Image
 
-# See image-creator/utils/oci_images.py
-
 
 class OCIImage:
     kind: str = "image"  # Item interface
