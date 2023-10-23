@@ -115,6 +115,9 @@ class ConfigBuilder:
             "restart": "unless-stopped",
             "expose": ["80"],
             "volumes": [
+                # mandates presence of this file on host.
+                # added in render() conditionnaly (if dashboard)
+                # as it needs to list all content
                 {
                     "type": "bind",
                     "source": str(CONTENT_TARGET_PATH / "dashboard.yaml"),
@@ -206,6 +209,9 @@ class ConfigBuilder:
             "restart": "unless-stopped",
             "expose": ["2080", "2443"],
             "volumes": [
+                # mandates presence of this file on host
+                # it's a mandatory file to use captive-portal with.
+                # created in base-image
                 {
                     "type": "bind",
                     "source": "/var/run/internet",
@@ -282,6 +288,8 @@ class ConfigBuilder:
             "restart": "unless-stopped",
             "expose": ["80"],
             "volumes": [
+                # mandates presence of this folder on host
+                # thus created below via a placeholder
                 {
                     "type": "bind",
                     "source": f"{CONTENT_TARGET_PATH}/zims",
@@ -292,6 +300,15 @@ class ConfigBuilder:
             "command": '/bin/sh -c "kiwix-serve --blockexternal '
             '--port 80 --nodatealiases /data/*.zim"',
         }
+
+        # add placeholder file to host fs to ensure bind succeeds
+        self.add_file(
+            url_or_content="",
+            to=f"{CONTENT_TARGET_PATH}/zims/.touch",
+            size=0,
+            via="direct",
+            is_url=False,
+        )
 
         if self.dashboard_offers_zim_downloads:
             self.add_files_service()
@@ -355,6 +372,8 @@ class ConfigBuilder:
                 host_path, container_path = parts[:2]
                 read_only = len(parts) == 3 and "ro" in parts[-1]
 
+                # mandates presence of this folder on host
+                # thus creation via a placeholder below
                 self.compose["services"][package.domain]["volumes"].append(
                     {
                         "type": "bind",
@@ -362,6 +381,15 @@ class ConfigBuilder:
                         "target": container_path,
                         "read_only": read_only,
                     }
+                )
+
+                # add a placeholder file to host folder to ensure bind mount succeeds
+                self.add_file(
+                    url_or_content="",
+                    to=f"{self.get_resolved_host_path(package, host_path)}/.touch",
+                    size=0,
+                    via="direct",
+                    is_url=False,
                 )
 
         # links
@@ -432,6 +460,8 @@ class ConfigBuilder:
                 "restart": "unless-stopped",
                 "expose": ["80"],
                 "volumes": [
+                    # mandates presence of this folder on host
+                    # thus created below via a placeholder
                     {
                         "type": "bind",
                         "source": f"{CONTENT_TARGET_PATH}/files",
@@ -440,6 +470,15 @@ class ConfigBuilder:
                     }
                 ],
             }
+
+            # add placeholder file to host fs to ensure bind succeeds
+            self.add_file(
+                url_or_content="",
+                to=f"{CONTENT_TARGET_PATH}/files/.touch",
+                size=0,
+                via="direct",
+                is_url=False,
+            )
 
             self.with_files = True
 
