@@ -303,9 +303,9 @@ class ConfigBuilder:
 
         # add placeholder file to host fs to ensure bind succeeds
         self.add_file(
-            url_or_content="",
+            url_or_content="-",
             to=f"{CONTENT_TARGET_PATH}/zims/.touch",
-            size=0,
+            size=1,
             via="direct",
             is_url=False,
         )
@@ -385,9 +385,9 @@ class ConfigBuilder:
 
                 # add a placeholder file to host folder to ensure bind mount succeeds
                 self.add_file(
-                    url_or_content="",
+                    url_or_content="-",
                     to=f"{self.get_resolved_host_path(package, host_path)}/.touch",
-                    size=0,
+                    size=1,
                     via="direct",
                     is_url=False,
                 )
@@ -473,9 +473,9 @@ class ConfigBuilder:
 
             # add placeholder file to host fs to ensure bind succeeds
             self.add_file(
-                url_or_content="",
+                url_or_content="-",
                 to=f"{CONTENT_TARGET_PATH}/files/.touch",
-                size=0,
+                size=1,
                 via="direct",
                 is_url=False,
             )
