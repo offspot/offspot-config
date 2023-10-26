@@ -15,7 +15,7 @@ Launched via `offspot-runtime-config-fromfile`, it:
 - reads a YAML config file and changes the offspot configuration accordingly.
 - starts associated services
 
-Its primary goal is to allow one to change some key offspot configuration upon next boot by changing one file (stored in FAT32 `/boot` –so writable anywhere), following a descriptive format.
+Its primary goal is to allow one to change some key offspot configuration upon next boot by changing one file (stored in FAT32 `/boot/firmware` –so writable anywhere), following a descriptive format.
 
 **Notes**:
 
@@ -25,7 +25,7 @@ Its primary goal is to allow one to change some key offspot configuration upon n
 
 
 ```sh
-offspot-runtime-config-fromfile --debug /boot/offspot.yaml
+offspot-runtime-config-fromfile --debug /boot/firmware/offspot.yaml
 ```
 
 - `--debug` will show you what exact parameters were passed to individual scripts so you can manually launch them should there be an issue.

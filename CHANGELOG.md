@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Builder now accepts `shrink` option
+- Default read-from location for offspot.yaml in `/boot/firmware` (base-image 1.2)
 
 ## [1.4.5] - 2023-10-24
 

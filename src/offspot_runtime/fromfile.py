@@ -26,7 +26,7 @@ from offspot_runtime.configlib import (
 )
 
 NAME = pathlib.Path(__file__).stem
-DEFAULT_CONFIG_PATH = pathlib.Path("/boot/offspot.yaml")
+DEFAULT_CONFIG_PATH = pathlib.Path("/boot/firmware/offspot.yaml")
 Config.init(NAME)
 logger = Config.logger
 banner = """# This file allows changing this Offspot's configuration on boot.
