@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `utils.sizes.get_sd_hardware_margin_for()` for std SDcard margin use
+- `utils.sizes.ONE_GB` and `utils.sizes.ONE_GiB`
+
 ### Changed
 
 - Builder now accepts `shrink` option

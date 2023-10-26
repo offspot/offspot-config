@@ -1,8 +1,13 @@
 from __future__ import annotations
 
+import math
+
 from offspot_config.file import File
 from offspot_config.inputs import MainConfig
 from offspot_config.oci_images import OCIImage
+
+ONE_GB = int(1e9)
+ONE_GiB = 2**30
 
 
 def round_for_cluster(size: int, cluster_size: int = 512) -> int:
@@ -10,6 +15,11 @@ def round_for_cluster(size: int, cluster_size: int = 512) -> int:
     if size % cluster_size == 0:
         return size
     return size - (size % cluster_size) + cluster_size
+
+
+def get_sd_hardware_margin_for(size: int) -> int:
+    """number of bytes we must keep free as the HW might not support it"""
+    return math.ceil(size * 0.03 if size / ONE_GB <= 16 else 0.04)
 
 
 def get_margin_for(content_size: int) -> int:
