@@ -33,12 +33,13 @@ class ConfigBuilder:
         as_gateway: bool | None = False,
         environ: dict[str, str] | None = None,
         write_config: bool | None = False,
+        shrink: bool = False,
     ):
         self.name = name
         self.environ = environ or {}
         self.config: dict[str, Any] = {
             "base": {"source": base.source, "rootfs_size": base.rootfs_size},
-            "output": {"size": "auto"},
+            "output": {"size": "auto", "shrink": shrink},
             "oci_images": set(),
             "files": [],
             "write_config": write_config,
