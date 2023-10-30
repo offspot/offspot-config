@@ -83,6 +83,7 @@ def simple_run(command: list[str], stdin: Optional[str] = None):
             command,
             text=True,
             input=stdin,
+            check=False,
         )
     except Exception as exc:
         if Config.debug:
@@ -98,7 +99,7 @@ def simple_run(command: list[str], stdin: Optional[str] = None):
 
 def get_bin(name: str) -> list[str]:
     """full path of sub-command script"""
-    return ["/usr/bin/env", f"offspot-runtime-config-{name}"]
+    return [sys.executable, f"{sys.prefix}/bin/offspot-runtime-config-{name}"]
 
 
 def get_progname() -> str:
