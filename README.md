@@ -35,7 +35,7 @@ offspot-runtime-config-fromfile --debug /boot/firmware/offspot.yaml
 
 ## Installation
 
-**⚠️ Warning**: only tested on offspot base-image (raspiOS bullseye)
+**⚠️ Warning**: only tested on offspot base-image (raspiOS bookworm)
 
 ```sh
 apt install hostapd dnsmasq dhcpcd5 python3-yaml python3-pip

@@ -510,9 +510,9 @@ def entrypoint():
 
     parser.add_argument(
         "--country",
-        help="Country-code to apply frequencies limitations for. Defaults to 00",
+        help="Country-code to apply frequencies limitations for. Defaults to US",
         dest="country_code",
-        default="00",
+        default="US",
         required=False,
     )
 

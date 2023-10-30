@@ -363,7 +363,8 @@ def test_is_valid_domain(domain: str, should_pass: bool):
     [
         (0, False),
         ("", False),
-        ("00", True),
+        ("00", False),
+        ("US", True),
         ("ML", True),
         ("MLI", False),
     ],
