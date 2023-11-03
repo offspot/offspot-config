@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Default read-from location for offspot.yaml in `/boot/firmware` (base-image 1.2)
 - Changed get_bin() in offspot_runtime to accomodate in-venv offspot-runtime
 - Country Code `00` for `ap` not accepted anymore (hostapd). Defaults to `US`
+- Dashboard entry now contains `ident` of package as well
 
 ## [1.4.5] - 2023-10-24
 

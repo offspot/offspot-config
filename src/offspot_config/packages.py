@@ -20,6 +20,7 @@ from offspot_config.oci_images import OCIImage
 @typechecked
 @define(kw_only=True)
 class Package:
+    ident: str
     kind: str
     domain: str
     title: str
@@ -39,6 +40,7 @@ class Package:
 
     def to_dashboard_entry(self, fqdn: str, download_fqdn: str | None):
         entry = {
+            "ident": self.ident,
             "kind": self.kind,
             "title": self.title,
             "description": self.description,
