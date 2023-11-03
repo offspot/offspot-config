@@ -385,7 +385,7 @@ def test_is_valid_ap_config():
         "domain": "generic",
         "welcome": "goto.generic",
         "channel": 11,
-        "country": "00",
+        "country": "US",
         "interface": "wlan0",
         "dhcp_range": "192.168.2.2,192.168.2.254,255.255.255.0,1h",
         "network": "192.168.2.0/24",

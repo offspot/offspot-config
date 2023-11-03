@@ -13,6 +13,7 @@ RE_TIMEZONE = re.compile(r"^([a-zA-Z0-9\-\_\/]){1,80}$")
 RE_SSID = re.compile(r'^[^!#;+\]/"\t][^+\]/"\t]{0,31}$')
 RE_PASSPHRASE = re.compile(r"^[\u0020-\u007e]{8,63}$")  # Basic Latin
 RE_IFACE_NAME = re.compile(r"^[a-z][a-z0-9]+[0-9]+$")
+RE_COUNTRY_CODE = re.compile(r"[a-zA-Z]{2}")
 
 
 def port_in_range(range_or_port: str, expected: Union[str, int]) -> bool:
@@ -310,8 +311,8 @@ def is_valid_wifi_country_code(country_code: str) -> CheckResponse:
     if not isinstance(country_code, str):
         return CheckResponse(False, "Incorrect type")
 
-    if country_code == "00":
-        return CheckResponse(True)
+    if not RE_COUNTRY_CODE.match(country_code):
+        return CheckResponse(False, "Country code must be 2 letters")
 
     if country_code not in [country.alpha2 for country in iso3166.countries]:
         return CheckResponse(False, f"Country code `{country_code}` not found")
