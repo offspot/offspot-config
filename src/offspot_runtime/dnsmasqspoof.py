@@ -66,7 +66,12 @@ def toggle_dnsmasq(dnsmasq_conf_path: pathlib.Path, *, spoof: bool):
 
 
 def restart_dnsmasq():
-    return subprocess.run(["/usr/bin/systemctl", "restart", "dnsmasq"]).returncode == 0
+    return (
+        subprocess.run(
+            ["/usr/bin/systemctl", "restart", "dnsmasq"], check=False
+        ).returncode
+        == 0
+    )
 
 
 def main() -> int:

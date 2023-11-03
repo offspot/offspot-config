@@ -169,6 +169,7 @@ def unblock_wireless():
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
+            check=False,
         )
         logger.debug(f"rfkill status:\n{ps.stdout}\n---")
 
