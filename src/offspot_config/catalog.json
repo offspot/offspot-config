@@ -208,5 +208,37 @@
         "download_url": "https://drive.offspot.it/fizziq/fizziq_fr_junior_2023-03.zip",
         "download_size": 128724719,
         "via": "zip"
+    },
+    {
+        "ident": "eleda.offspot.kiwix.org",
+        "domain": "eleda",
+        "kind": "files",
+        "title": "Les mathématiques du primaire",
+        "description": "Les mathématiques pour l'école primaire avec plus 600 activités randomisées du CP au CM2.",
+        "languages": [
+            "fra"
+        ],
+        "tags": [],
+        "icon": "https://drive.offspot.it/eleda/icon_zim.png",
+        "download_url": "https://drive.offspot.it/eleda/eleda_fr_fo-offline_2023-10.zip",
+        "download_size": 83684857,
+        "via": "zip"
+    }
+    {
+        "ident": "eleda-android.offspot.kiwix.org",
+        "domain": "eleda-android",
+        "kind": "files",
+        "title": "Les mathématiques du primaire",
+        "description": "App Android avec 600 activités de mathématiques",
+        "languages": [
+            "fra"
+        ],
+        "tags": [
+            "android"
+        ],
+        "icon": "https://drive.offspot.it/eleda/icon_zim.png",
+        "download_url": "https://drive.offspot.it/eleda/eleda_fr_android_2023-10.zip",
+        "download_size": 49364213,
+        "via": "zip"
     }
 ]
