@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `utils.sizes.get_sd_hardware_margin_for()` for std SDcard margin use
 - `utils.sizes.ONE_GB` and `utils.sizes.ONE_GiB`
+- Eleda packages (files and android) to catalog
 
 ### Changed
 
@@ -19,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Country Code `00` for `ap` not accepted anymore (hostapd). Defaults to `US`
 - Dashboard entry now contains `ident` of package as well
 - Now developping on py3.11 as its default on base-image (bookworm)
+- Using updated images (captive-portal:1.1 and kiwix-serve:3.6.0)
 
 ## [1.4.5] - 2023-10-24
 

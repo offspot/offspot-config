@@ -183,9 +183,9 @@ class ConfigBuilder:
         self.with_captive_portal = True
 
         image = OCIImage(
-            ident="ghcr.io/offspot/captive-portal:1.0",
-            filesize=187668480,
-            fullsize=187604243,
+            ident="ghcr.io/offspot/captive-portal:1.1",
+            filesize=192000000,
+            fullsize=191933439,
         )
         self.config["oci_images"].add(image)
 
@@ -274,9 +274,9 @@ class ConfigBuilder:
         self.with_kiwixserve = True
 
         image = OCIImage(
-            ident="ghcr.io/offspot/kiwix-serve:3.5.0-2",
-            filesize=29194240,
-            fullsize=29162475,
+            ident="ghcr.io/offspot/kiwix-serve:3.6.0",
+            filesize=62351360,
+            fullsize=62313418,
         )
         self.config["oci_images"].add(image)
 
