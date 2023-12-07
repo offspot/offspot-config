@@ -95,7 +95,6 @@ class FileConfig:
 @define(kw_only=True)
 class OutputConfig:
     size: int | str | None = None
-    shrink: bool | None = False
     compress: bool | None = False
 
     def __attrs_post_init__(self):
