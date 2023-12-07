@@ -8,7 +8,7 @@ authors = [
   { name = "Kiwix", email = "dev@kiwix.org" },
 ]
 keywords = ["offspot"]
-# target is Debian Bullseye which offers python 3.9.2
+# target is (was) Debian Bullseye which offers python 3.9.2
 requires-python = ">=3.9"
 description = "Offspot Config helpers"
 readme = "README.md"
@@ -40,11 +40,11 @@ scripts = [
   "invoke==2.2.0",
 ]
 lint = [
-  "black==23.7.0",
-  "ruff==0.1.3",
+  "black==23.11.0",
+  "ruff==0.1.7",
 ]
 check = [
-  "pyright==1.1.334",
+  "pyright==1.1.339",
 ]
 test = [
   "pytest==7.4.3",
