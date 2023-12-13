@@ -554,6 +554,7 @@ class ConfigBuilder:
             self.compose["services"]["reverse-proxy"]["environment"].update(
                 {
                     "SERVICES": ",".join(self.reversed_services),
+                    "NO_HOME_SERVICES": "kiwix",
                     "FILES_MAPPING": ",".join(
                         f"{domain}:{folder}"
                         for domain, folder in self.files_mapping.items()
