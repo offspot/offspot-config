@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `write_config` now handled, adding config to /data/image.yaml
+
 ### Changed
 
 - Fixed typo in JSON catalog

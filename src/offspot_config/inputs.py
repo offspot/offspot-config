@@ -168,6 +168,18 @@ class MainConfig:
         # parse YAML (Dict) will be our input to MainConfig
         payload = yaml_load(text)
 
+        # handle write_config request:
+        # add raw config content to image.yaml on disk (before config parsing)
+        if payload.get("write_config"):
+            payload["files"].append(
+                {
+                    "to": str(DATA_PART_PATH / "image.yaml"),
+                    "content": text,
+                    "via": "direct",
+                    "size": len(text.encode("utf-8")),
+                }
+            )
+
         # build SubPolicies first (args of the main Policy)
         for name, sub_config_cls in {
             "oci_images": OCIImageConfig,
