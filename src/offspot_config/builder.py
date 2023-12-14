@@ -143,10 +143,11 @@ class ConfigBuilder:
             ],
         }
 
+        yaml_str = yaml_dump(payload)
         self.add_file(
-            url_or_content=BlockStr(yaml_dump(payload)),
+            url_or_content=BlockStr(yaml_str),
             to=str(CONTENT_TARGET_PATH / "dashboard.yaml"),
-            size=0,
+            size=len(yaml_str.encode("utf-8")),
             via="direct",
             is_url=False,
         )
