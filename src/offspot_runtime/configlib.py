@@ -97,9 +97,14 @@ def simple_run(command: list[str], stdin: Optional[str] = None):
     return ps.returncode
 
 
-def get_bin(name: str) -> list[str]:
+def get_runtime_bin(name: str) -> list[str]:
     """full path of sub-command script"""
-    return [sys.executable, f"{sys.prefix}/bin/offspot-runtime-config-{name}"]
+    return get_bin(f"offspot-runtime-config-{name}")
+
+
+def get_bin(name: str) -> list[str]:
+    """full path of script in environment"""
+    return [sys.executable, f"{sys.prefix}/bin/{name}"]
 
 
 def get_progname() -> str:
@@ -148,11 +153,11 @@ def install_dnsmasq_spoof_service(*, remove: bool):
         return 0
 
     svcunit_path.write_text(
-        """[Unit]
+        f"""[Unit]
 Description=Toggle dnsmasq spoof mode based on internet connectivity
 
 [Service]
-ExecStart=toggle-dnsmasq-spoof
+ExecStart={" ".join(get_bin("toggle-dnsmasq-spoof"))}
 """
     )
 

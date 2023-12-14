@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed typo in JSON catalog
 - Builder now disables kiwix-serve homepage (redirect to fqdn)
+- Fixed installed dnsmasq-spoof service (was not using venv-aware path)
 
 ## [1.4.6] - 2023-12-07
 

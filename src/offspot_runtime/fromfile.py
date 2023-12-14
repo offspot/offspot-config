@@ -16,8 +16,8 @@ from offspot_runtime.configlib import (
     Config,
     colored,
     from_yaml,
-    get_bin,
     get_progname,
+    get_runtime_bin,
     restart_service,
     simple_run,
     succeed,
@@ -92,7 +92,7 @@ banner = """# This file allows changing this Offspot's configuration on boot.
 class Handlers:
     @staticmethod
     def config_hostname(item: str) -> int:
-        command = get_bin("hostname")
+        command = get_runtime_bin("hostname")
         if Config.debug:
             command += ["--debug"]
         command += [item]
@@ -100,7 +100,7 @@ class Handlers:
 
     @staticmethod
     def config_timezone(item: str) -> int:
-        command = get_bin("timezone")
+        command = get_runtime_bin("timezone")
         if Config.debug:
             command += ["--debug"]
         command += [item]
@@ -111,7 +111,7 @@ class Handlers:
         if not isinstance(item, dict):
             return 2
 
-        command = get_bin("ethernet")
+        command = get_runtime_bin("ethernet")
         if Config.debug:
             command += ["--debug"]
         for key in ("type", "address"):
@@ -134,7 +134,7 @@ class Handlers:
         if not item.get("ssid"):
             return 2
 
-        command = get_bin("ap")
+        command = get_runtime_bin("ap")
 
         if Config.debug:
             command += ["--debug"]
@@ -176,7 +176,7 @@ class Handlers:
     @staticmethod
     def config_containers(item: dict) -> int:
         payload = to_yaml(item)
-        command = get_bin("containers")
+        command = get_runtime_bin("containers")
         if Config.debug:
             command += ["--debug"]
         command += ["-"]
