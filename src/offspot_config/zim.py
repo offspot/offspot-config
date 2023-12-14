@@ -16,15 +16,9 @@ def get_zim_package(ident: str):
 
     publisher, name, flavour = ident.split(":", 2)
 
-    # temp hack to bypass https://github.com/kiwix/libkiwix/issues/1004
-    req_name = name.split(".", 1)[0] if "." in name else name
-    req_name = req_name.split("-", 1)[0] if "-" in req_name else req_name
-
     catalog_url = "https://library.kiwix.org"
     resp = requests.get(
-        f"{catalog_url}/catalog/v2/entries",
-        params={"name": req_name, "count": "-1"},
-        timeout=60,
+        f"{catalog_url}/catalog/v2/entries", params={"name": name}, timeout=60
     )
     resp.raise_for_status()
     opds = xmltodict.parse(resp.content)
@@ -40,8 +34,6 @@ def get_zim_package(ident: str):
         if catalog_flavour != flavour:
             continue
         if catalog_publisher != publisher:
-            continue
-        if entry.get("name", "") != name:
             continue
 
         links = {link["@type"]: link for link in entry["link"]}

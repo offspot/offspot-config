@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [builder] Dashboard yaml config size properly reported
 - [builder] now disables kiwix-serve homepage (redirect to fqdn)
 - [builder] enabling captive portal now sets dhcp-range automatically
+- [zim] removed hack to circumvent libkiwix#1004 which has been fixed
 
 ## [1.4.6] - 2023-12-07
 
