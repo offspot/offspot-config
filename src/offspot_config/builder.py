@@ -178,10 +178,25 @@ class ConfigBuilder:
         }
 
     def add_captive_portal(self):
+        """enable captive-portal feature. WARN: check doc if you use custom network"""
         if self.with_captive_portal:
             return
 
         self.with_captive_portal = True
+
+        # use dedicated dhcp-range (that we'll capture)
+        # we purposedly work on a /24 network over wlan AP so every client can reach Pi
+        # but we assign dhcp addresses in the .128/25 network (comprised in the /24 one)
+        # so packets coming from AP clients can be identified in Pi's router and
+        # treated specially (for the captive portal)
+        wlan0_address = "192.168.2.1"
+        self.config["offspot"]["ap"].update(
+            {
+                "dhcp-range": "192.168.2.129,192.168.2.254,255.255.255.0,1h",
+                "network": "192.168.2.0/24",
+                "address": wlan0_address,
+            }
+        )
 
         image = OCIImage(
             ident="ghcr.io/offspot/captive-portal:1.1",
@@ -200,7 +215,7 @@ class ConfigBuilder:
             ],
             "environment": {
                 "HOTSPOT_NAME": self.name,
-                "HOTSPOT_IP": "192.168.2.1",
+                "HOTSPOT_IP": wlan0_address,
                 "HOTSPOT_FQDN": self.fqdn,
                 "CAPTURED_NETWORKS": "192.168.2.128/25",
                 "TIMEOUT": "60",
