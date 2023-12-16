@@ -52,7 +52,8 @@ def get_zim_package(ident: str):
             flavour=flavour,
             download_size=int(links["application/x-zim"]["@length"]),
             download_url=re.sub(r".meta4$", "", links["application/x-zim"]["@href"]),
-            icon=catalog_url + links["image/png;width=48;height=48;scale=1"]["@href"],
+            icon_url=catalog_url
+            + links["image/png;width=48;height=48;scale=1"]["@href"],
             version=version,
         )
 

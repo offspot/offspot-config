@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import base64
+
 import requests
 import requests.adapters
 from urllib3.util.retry import Retry
@@ -50,3 +52,10 @@ def get_online_rsc_size(url: str) -> int:
         return int(resp.headers.get("Content-Length") or -1)
     except Exception:
         return -2
+
+
+def get_base64_from(url: str) -> str:
+    try:
+        return base64.b64encode(session.get(url).content).decode("ASCII")
+    except Exception:
+        return ""

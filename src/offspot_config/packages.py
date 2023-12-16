@@ -9,6 +9,7 @@ from typeguard import typechecked
 from offspot_config.constants import CONTENT_TARGET_PATH
 from offspot_config.inputs import FileConfig
 from offspot_config.oci_images import OCIImage
+from offspot_config.utils.download import get_base64_from
 
 # @typechecked
 # @define(kw_only=True)
@@ -27,7 +28,7 @@ class Package:
     description: str
     tags: list[str] = field(kw_only=True, factory=list)
     languages: list[str] | None = None
-    icon: str | None = None
+    icon_url: str | None = None
 
     def get_url(self, fqdn: str, **kwargs) -> str:  # noqa: ARG002
         return ""
@@ -47,6 +48,7 @@ class Package:
             "languages": self.languages,
             "tags": self.tags,
             "url": self.get_url(fqdn),
+            "icon": get_base64_from(self.icon_url) if self.icon_url else "",
         }
         if self.get_download_url(str(download_fqdn)) and self.get_download_size():
             entry.update(

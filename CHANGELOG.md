@@ -9,15 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `write_config` now handled, adding config to /data/image.yaml
+- [config] `write_config` now handled, adding config to /data/image.yaml
 
 ### Changed
 
-- Fixed typo in JSON catalog
-- Fixed installed dnsmasq-spoof service (was not using venv-aware path)
+- [runtime] Fixed installed dnsmasq-spoof service (was not using venv-aware path)
+- [catalog] Fixed typo in JSON rendering catalog unreadable
+- [catalog] Renamed `icon` to `icon_url` to make it clearer about expected content
 - [builder] Dashboard yaml config size properly reported
 - [builder] now disables kiwix-serve homepage (redirect to fqdn)
 - [builder] enabling captive portal now sets dhcp-range automatically
+- [builder] writting base64-encoded icon to dashboard yaml
 - [zim] removed hack to circumvent libkiwix#1004 which has been fixed
 
 ## [1.4.6] - 2023-12-07

@@ -11,7 +11,7 @@
         "tags": [
             "admin"
         ],
-        "icon": "https://drive.offspot.it/content-filter/content-filter.png",
+        "icon_url": "https://drive.offspot.it/content-filter/content-filter.png",
         "image": "ghcr.io/offspot/content-filter:1.0",
         "image_filesize": 506767360,
         "image_fullsize": 506645965
@@ -28,7 +28,7 @@
         "tags": [
             "Wikipedia"
         ],
-        "icon": "https://drive.offspot.it/wikifundi/wikifundi_logo.png",
+        "icon_url": "https://drive.offspot.it/wikifundi/wikifundi_logo.png",
         "image": "ghcr.io/offspot/wikifundi:1.0",
         "image_filesize": 1997875200,
         "image_fullsize": 1997766122,
@@ -66,7 +66,7 @@
         "tags": [
             "Wikipedia"
         ],
-        "icon": "https://drive.offspot.it/wikifundi/wikifundi_logo.png",
+        "icon_url": "https://drive.offspot.it/wikifundi/wikifundi_logo.png",
         "image": "ghcr.io/offspot/wikifundi:1.0",
         "image_filesize": 1997875200,
         "image_fullsize": 1997766122,
@@ -88,7 +88,7 @@
         "tags": [
             "Wikipedia"
         ],
-        "icon": "https://drive.offspot.it/wikifundi/wikifundi_logo.png",
+        "icon_url": "https://drive.offspot.it/wikifundi/wikifundi_logo.png",
         "image": "ghcr.io/offspot/wikifundi:1.0",
         "image_filesize": 1997875200,
         "image_fullsize": 1997766122,
@@ -134,7 +134,7 @@
         "tags": [
             "android"
         ],
-        "icon": "https://drive.offspot.it/nomad/nomad_logo.png",
+        "icon_url": "https://drive.offspot.it/nomad/nomad_logo.png",
         "download_url": "https://drive.offspot.it/nomad/nomadeducation_fr_android_2021-11.zip",
         "download_size": 116444328,
         "via": "zip"
@@ -151,7 +151,7 @@
         "tags": [
             "android"
         ],
-        "icon": "https://drive.offspot.it/mathews/mathmathews_logo.png",
+        "icon_url": "https://drive.offspot.it/mathews/mathmathews_logo.png",
         "download_url": "https://drive.offspot.it/mathews/mathmathews_fr_android_1.6.zip",
         "download_size": 35710192,
         "via": "zip"
@@ -169,7 +169,7 @@
             "android",
             "windows"
         ],
-        "icon": "https://drive.offspot.it/africatik/africatik_logo.png",
+        "icon_url": "https://drive.offspot.it/africatik/africatik_logo.png",
         "download_url": "https://drive.offspot.it/africatik/africatik_fr_ecoles-numeriques_2023-02.zip",
         "download_size": 13906969131,
         "via": "zip"
@@ -187,7 +187,7 @@
             "android",
             "windows"
         ],
-        "icon": "https://drive.offspot.it/africatik/africatik_logo.png",
+        "icon_url": "https://drive.offspot.it/africatik/africatik_logo.png",
         "download_url": "https://drive.offspot.it/africatik/africatik_fr_maisons-digitales_2023-02.zip",
         "download_size": 4394410977,
         "via": "zip"
@@ -204,7 +204,7 @@
         "tags": [
             "android"
         ],
-        "icon": "https://drive.offspot.it/fizziq/fizziq-junior.png",
+        "icon_url": "https://drive.offspot.it/fizziq/fizziq-junior.png",
         "download_url": "https://drive.offspot.it/fizziq/fizziq_fr_junior_2023-03.zip",
         "download_size": 128724719,
         "via": "zip"
@@ -219,7 +219,7 @@
             "fra"
         ],
         "tags": [],
-        "icon": "https://drive.offspot.it/eleda/icon_zim.png",
+        "icon_url": "https://drive.offspot.it/eleda/icon_zim.png",
         "download_url": "https://drive.offspot.it/eleda/eleda_fr_fo-offline_2023-10.zip",
         "download_size": 83684857,
         "via": "zip"
@@ -236,7 +236,7 @@
         "tags": [
             "android"
         ],
-        "icon": "https://drive.offspot.it/eleda/icon_zim.png",
+        "icon_url": "https://drive.offspot.it/eleda/icon_zim.png",
         "download_url": "https://drive.offspot.it/eleda/eleda_fr_android_2023-10.zip",
         "download_size": 49364213,
         "via": "zip"
