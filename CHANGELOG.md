@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [builder] now disables kiwix-serve homepage (redirect to fqdn)
 - [builder] enabling captive portal now sets dhcp-range automatically and enabled as-gateway
 - [builder] writting base64-encoded icon to dashboard yaml
+- [builder] fixed zim-download subservice to `zim-download.{FQDN}`
+- [builder] Files Packages now copied to /data/content (was /data/content/files)
+- [builder] Files service now bound to /data/content (was /data/content/files)
 - [zim] removed hack to circumvent libkiwix#1004 which has been fixed
 
 ## [1.4.6] - 2023-12-07

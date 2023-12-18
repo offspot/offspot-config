@@ -17,6 +17,8 @@ from offspot_config.utils.yaml import yaml_dump
 
 # matches $environ[XXX] where XXX is a builder-level environ to replace with
 RE_ENVIRON_VAR = re.compile(r"\$environ{(?P<var>[A-Za-z_\-0-9]+)}")
+# service subdomain for ZIM downloads, when enabled
+ZIMDL_PREFIX = "zim-download"
 
 
 class ConfigBuilder:
@@ -131,7 +133,7 @@ class ConfigBuilder:
         """Generate and add YAML config file for dashboard, based on entries"""
 
         if self.dashboard_offers_zim_downloads:
-            download_fqdn = f"download-zims.{self.fqdn}"
+            download_fqdn = f"{ZIMDL_PREFIX}.{self.fqdn}"
         else:
             download_fqdn = None
 
@@ -329,7 +331,7 @@ class ConfigBuilder:
 
         if self.dashboard_offers_zim_downloads:
             self.add_files_service()
-            self.files_mapping.update({"zim-downloads": "zims"})
+            self.files_mapping.update({ZIMDL_PREFIX: "zims"})
 
         self.reversed_services.add("kiwix")
 
@@ -455,7 +457,7 @@ class ConfigBuilder:
 
         self.add_files_service()
 
-        self.files_mapping.update({package.domain: package.ident})
+        self.files_mapping.update({package.domain: f"files/{package.ident}"})
 
         self.reversed_services.add("files")
 
@@ -481,7 +483,7 @@ class ConfigBuilder:
                     # thus created below via a placeholder
                     {
                         "type": "bind",
-                        "source": f"{CONTENT_TARGET_PATH}/files",
+                        "source": f"{CONTENT_TARGET_PATH}",
                         "target": "/data",
                         "read_only": True,
                     }
@@ -491,7 +493,7 @@ class ConfigBuilder:
             # add placeholder file to host fs to ensure bind succeeds
             self.add_file(
                 url_or_content="-",
-                to=f"{CONTENT_TARGET_PATH}/files/.touch",
+                to=f"{CONTENT_TARGET_PATH}/.touch",
                 size=1,
                 via="direct",
                 is_url=False,
