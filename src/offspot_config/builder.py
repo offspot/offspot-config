@@ -195,6 +195,7 @@ class ConfigBuilder:
                 "dhcp-range": "192.168.2.129,192.168.2.254,255.255.255.0,1h",
                 "network": "192.168.2.0/24",
                 "address": wlan0_address,
+                "as-gateway": True,
             }
         )
 

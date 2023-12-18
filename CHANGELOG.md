@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [catalog] Renamed `icon` to `icon_url` to make it clearer about expected content
 - [builder] Dashboard yaml config size properly reported
 - [builder] now disables kiwix-serve homepage (redirect to fqdn)
-- [builder] enabling captive portal now sets dhcp-range automatically
+- [builder] enabling captive portal now sets dhcp-range automatically and enabled as-gateway
 - [builder] writting base64-encoded icon to dashboard yaml
 - [zim] removed hack to circumvent libkiwix#1004 which has been fixed
 
