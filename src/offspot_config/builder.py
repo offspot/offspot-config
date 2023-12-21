@@ -129,7 +129,7 @@ class ConfigBuilder:
             "environment": {
                 "KIWIX_READER_LINK_TPL": "//kiwix.{fqdn}/viewer#{zim_name}",
                 "KIWIX_DOWNLOAD_LINK_TPL": (
-                    f"//{ZIMDL_PREFIX}." "{fqdn}/{zim_filename}"  # noqa: ISC001
+                    f"//{ZIMDL_PREFIX}." + "{fqdn}/{zim_filename}"
                 ),
             },
             "volumes": [
