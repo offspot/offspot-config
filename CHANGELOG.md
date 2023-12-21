@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [builder] fixed zim-download subservice to `zim-download.{FQDN}`
 - [builder] Files Packages now copied to /data/content (was /data/content/files)
 - [builder] Files service now bound to /data/content (was /data/content/files)
+- [builder] Using dashboard 1.2 (with ZIM discovery and healthcheck)
+- [builder] Added metrics support
 - [zim] removed hack to circumvent libkiwix#1004 which has been fixed
 
 ## [1.4.6] - 2023-12-07

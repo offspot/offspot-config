@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from pathlib import PurePath as Path
 from typing import Any
 
 from offspot_config.catalog import get_app_path
@@ -17,8 +18,16 @@ from offspot_config.utils.yaml import yaml_dump
 
 # matches $environ[XXX] where XXX is a builder-level environ to replace with
 RE_ENVIRON_VAR = re.compile(r"\$environ{(?P<var>[A-Za-z_\-0-9]+)}")
+
 # service subdomain for ZIM downloads, when enabled
 ZIMDL_PREFIX = "zim-download"
+# on-host path to dashboard config
+DASHBOARD_CONFIG_PATH = CONTENT_TARGET_PATH / "dashboard.yaml"
+# on-host metrics persistent data folder
+METRICS_DATA_PATH = CONTENT_TARGET_PATH / "metrics"
+# on-host metrics transient (tmpfs) log folders (caddy-created)
+METRICS_VAR_LOG_PATH_HOST = Path("/var/log/metrics")
+METRICS_VAR_LOG_PATH_CONT = Path("/var/log/host/metrics")
 
 
 class ConfigBuilder:
@@ -77,6 +86,7 @@ class ConfigBuilder:
         self.with_dashboard: bool = False
         self.with_captive_portal: bool = False
         self.with_hwclock: bool = False
+        self.with_metrics: bool = False
 
     @property
     def compose(self):
@@ -103,9 +113,9 @@ class ConfigBuilder:
         self.with_dashboard = True
 
         image = OCIImage(
-            ident="ghcr.io/offspot/dashboard:1.1",
-            filesize=122357760,
-            fullsize=122255621,
+            ident="ghcr.io/offspot/dashboard:1.2",
+            filesize=124334080,
+            fullsize=124246163,
         )
         self.config["oci_images"].add(image)
 
@@ -122,9 +132,9 @@ class ConfigBuilder:
                 # as it needs to list all content
                 {
                     "type": "bind",
-                    "source": str(CONTENT_TARGET_PATH / "dashboard.yaml"),
+                    "source": str(DASHBOARD_CONFIG_PATH),
                     "target": "/src/home.yaml",
-                    "read_only": True,
+                    "read_only": False,
                 }
             ],
         }
@@ -173,10 +183,24 @@ class ConfigBuilder:
             "container_name": "reverse-proxy",
             "environment": {
                 "FQDN": self.fqdn,
+                "METRICS_LOGS_DIR": str(METRICS_VAR_LOG_PATH_CONT),
             },
             "pull_policy": "never",
             "restart": "unless-stopped",
             "ports": ["80:80", "443:443"],
+            "volumes": [
+                # we are not binding METRICS_VAR_LOG_PATH directly because it resides
+                # inside /var/log on host as this is a tmpfs so created on start, empty
+                # and we want to keep it a tmpsfs, reachable from proxy and metrics.
+                # So we bind /var/log (mostly empty on systemd anyway) and the proxy
+                # will create the subfolder to write logs into
+                {
+                    "type": "bind",
+                    "source": str(METRICS_VAR_LOG_PATH_HOST.parent),
+                    "target": str(METRICS_VAR_LOG_PATH_CONT),
+                    "read_only": False,
+                }
+            ],
         }
 
     def add_captive_portal(self):
@@ -239,6 +263,78 @@ class ConfigBuilder:
                 }
             ],
         }
+
+    def add_metrics(self):
+        if self.with_metrics:
+            return
+
+        # metrics requires dashboard (as it provides/updates list of packages)
+        if not self.with_dashboard:
+            self.add_dashboard()
+
+        image = OCIImage(
+            ident="ghcr.io/offspot/metrics:dev",
+            filesize=259215360,
+            fullsize=259106990,
+        )
+        self.config["oci_images"].add(image)
+
+        in_container_packages_path = "/conf/packages.yaml"
+        in_container_data = "/data"
+        in_container_logwatcher_dir = f"{in_container_data}/logwatcher"
+        in_container_db_path = f"{in_container_data}/database.db"
+        self.compose["services"]["metrics"] = {
+            "image": image.source,
+            "container_name": "metrics",
+            "depends_on": {
+                "home": {"condition": "service_healthy", "restart": True}
+            },  # depends on dashboard's rewriting of packages YAML
+            "environment": {
+                "ALLOWED_ORIGINS": f"http://metrics|http://metrics.{self.fqdn}",
+                "PACKAGE_CONF_FILE": in_container_packages_path,
+                "DATABASE_URL": f"sqlite+pysqlite:///{in_container_db_path}",
+                "LOGWATCHER_DATA_FOLDER": in_container_logwatcher_dir,
+                "REVERSE_PROXY_LOGS_LOCATION": str(METRICS_VAR_LOG_PATH_CONT),
+                "PROCESSING_DISABLED": "True",  # DEBUGGGGGGGGGGGGGGGG
+            },
+            "pull_policy": "never",
+            "restart": "unless-stopped",
+            "expose": ["80"],
+            "volumes": [
+                # mandates presence of this folder on host (see reverse-proxy conf)
+                {
+                    "type": "bind",
+                    "source": str(METRICS_VAR_LOG_PATH_HOST.parent),
+                    "target": str(METRICS_VAR_LOG_PATH_CONT),
+                    "read_only": False,
+                },
+                # mandates presence of this folder on host beforehand
+                {
+                    "type": "bind",
+                    "source": str(METRICS_DATA_PATH),
+                    "target": in_container_data,
+                    "read_only": False,
+                },
+                # mandates its presence on host. taken care of by dashboard
+                {
+                    "type": "bind",
+                    "source": str(DASHBOARD_CONFIG_PATH),
+                    "target": in_container_packages_path,
+                    "read_only": True,
+                },
+            ],
+        }
+
+        # add persistent metrics (and its logwatcher subfolder) to host for docker bind
+        self.add_file(
+            url_or_content="-",
+            to=f"{METRICS_DATA_PATH}/logwatcher/.touch",
+            size=1,
+            via="direct",
+            is_url=False,
+        )
+
+        self.reversed_services.add("metrics")
 
     def add_hwclock(self):
         if self.with_hwclock:
