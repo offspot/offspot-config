@@ -126,6 +126,12 @@ class ConfigBuilder:
             "pull_policy": "never",
             "restart": "unless-stopped",
             "expose": ["80"],
+            "environment": {
+                "KIWIX_READER_LINK_TPL": "//kiwix.{fqdn}/viewer#{zim_name}",
+                "KIWIX_DOWNLOAD_LINK_TPL": (
+                    f"//{ZIMDL_PREFIX}." "{fqdn}/{zim_filename}"  # noqa: ISC001
+                ),
+            },
             "volumes": [
                 # mandates presence of this file on host.
                 # added in render() conditionnaly (if dashboard)
@@ -273,9 +279,9 @@ class ConfigBuilder:
             self.add_dashboard()
 
         image = OCIImage(
-            ident="ghcr.io/offspot/metrics:dev",
-            filesize=259215360,
-            fullsize=259106990,
+            ident="ghcr.io/offspot/metrics:0.1.0",
+            filesize=259235840,
+            fullsize=259124913,
         )
         self.config["oci_images"].add(image)
 
@@ -295,7 +301,6 @@ class ConfigBuilder:
                 "DATABASE_URL": f"sqlite+pysqlite:///{in_container_db_path}",
                 "LOGWATCHER_DATA_FOLDER": in_container_logwatcher_dir,
                 "REVERSE_PROXY_LOGS_LOCATION": str(METRICS_VAR_LOG_PATH_CONT),
-                "PROCESSING_DISABLED": "True",  # DEBUGGGGGGGGGGGGGGGG
             },
             "pull_policy": "never",
             "restart": "unless-stopped",

@@ -78,7 +78,7 @@ class ZimPackage(Package):
 
     @property
     def url_path(self):
-        return self.ident.split(":", 2)[1]
+        return self.name
 
     @property
     def filename(self):
