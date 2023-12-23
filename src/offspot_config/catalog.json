@@ -52,7 +52,7 @@
         "sub_services": {
             "restbase": "${PACKAGE_DOMAIN}:7231",
             "mathoid": "${PACKAGE_DOMAIN}:10044"
-        },
+        }
     },
     {
         "ident": "wikifundi-en.offspot.kiwix.org",
@@ -90,7 +90,7 @@
         "sub_services": {
             "restbase": "${PACKAGE_DOMAIN}:7231",
             "mathoid": "${PACKAGE_DOMAIN}:10044"
-        },
+        }
     },
     {
         "ident": "wikifundi-es.offspot.kiwix.org",
@@ -128,7 +128,7 @@
         "sub_services": {
             "restbase": "${PACKAGE_DOMAIN}:7231",
             "mathoid": "${PACKAGE_DOMAIN}:10044"
-        },
+        }
     },
     {
         "ident": "edupi.offspot.kiwix.org",
