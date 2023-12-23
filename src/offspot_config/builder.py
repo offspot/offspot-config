@@ -177,9 +177,9 @@ class ConfigBuilder:
         self.with_reverseproxy = True
 
         image = OCIImage(
-            ident="ghcr.io/offspot/reverse-proxy:1.3",
-            filesize=115722240,
-            fullsize=115649340,
+            ident="ghcr.io/offspot/reverse-proxy:1.4",
+            filesize=120872960,
+            fullsize=120805757,
         )
         self.config["oci_images"].add(image)
 
@@ -232,9 +232,9 @@ class ConfigBuilder:
         )
 
         image = OCIImage(
-            ident="ghcr.io/offspot/captive-portal:1.1",
-            filesize=192000000,
-            fullsize=191933439,
+            ident="ghcr.io/offspot/captive-portal:1.2",
+            filesize=184524800,
+            fullsize=184452164,
         )
         self.config["oci_images"].add(image)
 
@@ -349,9 +349,9 @@ class ConfigBuilder:
 
         # add image
         image = OCIImage(
-            ident="ghcr.io/offspot/hwclock:1.0",
-            filesize=59412480,
-            fullsize=59382985,
+            ident="ghcr.io/offspot/hwclock:1.1",
+            filesize=58951680,
+            fullsize=58922432,
         )
         self.config["oci_images"].add(image)
 
@@ -566,9 +566,9 @@ class ConfigBuilder:
         # add image to compose
         if not self.with_files:
             image = OCIImage(
-                ident="ghcr.io/offspot/file-browser:1.0",
-                filesize=47226880,
-                fullsize=47162907,
+                ident="ghcr.io/offspot/file-browser:1.1",
+                filesize=13629440,
+                fullsize=13598399,
             )
 
             # add to compose

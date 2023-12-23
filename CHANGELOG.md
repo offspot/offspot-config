@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.5.0] - 2023-12-23
 
 ### Added
 
@@ -24,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [builder] Files Packages now copied to /data/content (was /data/content/files)
 - [builder] Files service now bound to /data/content (was /data/content/files)
 - [builder] Using dashboard 1.2 (with ZIM discovery and healthcheck)
+- [builder] Using reverse-proxy 1.4
+- [builder] Using captive-portal 1.2
+- [builder] Using hwclock 1.1
+- [builder] Using filebrowser 1.1
 - [builder] Added metrics support
 - [zim] removed hack to circumvent libkiwix#1004 which has been fixed
 
