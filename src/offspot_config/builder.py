@@ -28,6 +28,7 @@ METRICS_DATA_PATH = CONTENT_TARGET_PATH / "metrics"
 # on-host metrics transient (tmpfs) log folders (caddy-created)
 METRICS_VAR_LOG_PATH_HOST = Path("/var/log/metrics")
 METRICS_VAR_LOG_PATH_CONT = Path("/var/log/host/metrics")
+KIWIX_ZIM_LOAD_BALANCER_URL = "https://download.kiwix.org/zim/"
 
 
 class ConfigBuilder:
@@ -44,6 +45,7 @@ class ConfigBuilder:
         as_gateway: bool | None = False,
         environ: dict[str, str] | None = None,
         write_config: bool | None = False,
+        kiwix_zim_mirror: str | None = None,
     ):
         self.name = name
         self.environ = environ or {}
@@ -67,6 +69,8 @@ class ConfigBuilder:
             },
         }
 
+        # Kiwix mirror URL (/ ending) to replace load-balancer URL with for ZIM download
+        self.kiwix_zim_mirror = kiwix_zim_mirror
         # whether dashboard will offer downloads for ZIM files
         self.dashboard_offers_zim_downloads = True
         # every card the dashboard will display
@@ -377,6 +381,13 @@ class ConfigBuilder:
         self.reversed_services.add("hwclock")
 
     def add_zim(self, zim: ZimPackage):
+        if self.kiwix_zim_mirror and zim.download_url.startswith(
+            KIWIX_ZIM_LOAD_BALANCER_URL
+        ):
+            zim.download_url = (
+                f"{self.kiwix_zim_mirror}"
+                f"{zim.download_url[len(KIWIX_ZIM_LOAD_BALANCER_URL):]}"
+            )
         if zim not in self.dashboard_entries:
             self.dashboard_entries.append(zim)
 

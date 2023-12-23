@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [builder] Ability to specify mirror URL for ZIM downloads
+
 ### Changed
 
-- Fixed WikiFundi catalog entries: file extract, removed dev protect and applied FR conf to all
+- [catalog] Fixed WikiFundi entries: file extract, removed dev protect and applied FR conf to all
 
 ## [1.5.0] - 2023-12-23
 
