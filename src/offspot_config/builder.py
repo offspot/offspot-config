@@ -56,7 +56,9 @@ class ConfigBuilder:
             "files": [],
             "write_config": write_config,
             "offspot": {
-                "containers": {"name": "offspot", "services": {}},
+                "timezone": "UTC",
+                "hostname": domain,
+                "ethernet": {"type": "dhcp"},
                 "ap": {
                     "domain": domain,
                     "tld": tld,
@@ -64,8 +66,7 @@ class ConfigBuilder:
                     "passphrase": passphrase,
                     "as-gateway": as_gateway,
                 },
-                "ethernet": {"type": "dhcp"},
-                "timezone": "UTC",
+                "containers": {"name": "offspot", "services": {}},
             },
         }
 
