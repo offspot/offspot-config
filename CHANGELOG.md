@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - [builder] Setting default `hostname` on runtime-config using `domain`
+- [builder] Fixed missing dashboard entries for catalog apps
 
 ## [1.5.2] - 2023-12-23
 

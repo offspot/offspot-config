@@ -452,6 +452,10 @@ class ConfigBuilder:
         if package.kind != "app":
             raise ValueError(f"Package {package.ident} is not an app")
 
+        if package in self.dashboard_entries:
+            return
+        self.dashboard_entries.append(package)
+
         if package.ident in self.compose["services"]:
             return
 
