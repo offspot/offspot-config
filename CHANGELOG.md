@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [catalog] Added Magoe App
 - [catalog] Added an icon for Edupi App
 - [catalog] Updated Nomad Files app
+- [tests] Added basic JSON parsing test for catalog
 
 ## [1.5.2] - 2023-12-23
 
