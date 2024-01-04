@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [builder] Setting default `hostname` on runtime-config using `domain`
 - [builder] Fixed missing dashboard entries for catalog apps
+- [catalog] Fixed WikiFundis missing a link to self via proxy for visualeditor
 
 ## [1.5.2] - 2023-12-23
 
