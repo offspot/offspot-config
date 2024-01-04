@@ -157,8 +157,7 @@
             "ADMIN_PASSWORD": "ADMIN_PASSWORD"
         },
         "volumes": [
-            "${APP_DIR}:/data",
-            "/data/branding/favicon.ico:/var/lib/edupi/favicon.ico:ro"
+            "${APP_DIR}:/data"
         ]
     },
     {
