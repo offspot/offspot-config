@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [builder] Setting default `hostname` on runtime-config using `domain`
 - [builder] Fixed missing dashboard entries for catalog apps
+- [builder] Updated Captive Portal to 1.3
 - [catalog] Fixed WikiFundis missing a link to self via proxy for visualeditor
 - [catalog] Added Magoe App
 - [catalog] Added an icon for Edupi App

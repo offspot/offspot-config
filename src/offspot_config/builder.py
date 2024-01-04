@@ -237,9 +237,9 @@ class ConfigBuilder:
         )
 
         image = OCIImage(
-            ident="ghcr.io/offspot/captive-portal:1.2",
-            filesize=184524800,
-            fullsize=184452164,
+            ident="ghcr.io/offspot/captive-portal:1.3",
+            filesize=184545280,
+            fullsize=184474177,
         )
         self.config["oci_images"].add(image)
 
