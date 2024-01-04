@@ -149,9 +149,9 @@
             "files"
         ],
         "icon_url": "https://drive.offspot.it/edupi/edupi.png",
-        "image": "ghcr.io/offspot/edupi:1.0",
-        "image_filesize": 591226880,
-        "image_fullsize": 591129543,
+        "image": "ghcr.io/offspot/edupi:1.2",
+        "image_filesize": 646809600,
+        "image_fullsize": 646714840,
         "environ_map": {
             "ADMIN_USERNAME": "ADMIN_USERNAME",
             "ADMIN_PASSWORD": "ADMIN_PASSWORD"
