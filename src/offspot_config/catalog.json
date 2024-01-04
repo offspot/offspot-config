@@ -148,6 +148,7 @@
         "tags": [
             "files"
         ],
+        "icon_url": "https://drive.offspot.it/edupi/edupi.png",
         "image": "ghcr.io/offspot/edupi:1.0",
         "image_filesize": 591226880,
         "image_fullsize": 591129543,
@@ -173,8 +174,8 @@
             "android"
         ],
         "icon_url": "https://drive.offspot.it/nomad/nomad_logo.png",
-        "download_url": "https://drive.offspot.it/nomad/nomadeducation_fr_android_2021-11.zip",
-        "download_size": 116444328,
+        "download_url": "https://drive.offspot.it/nomad/nomadeducation_fr_android_2023-11.zip",
+        "download_size": 151606771,
         "via": "zip"
     },
     {
@@ -278,5 +279,29 @@
         "download_url": "https://drive.offspot.it/eleda/eleda_fr_android_2023-10.zip",
         "download_size": 49364213,
         "via": "zip"
+    },
+    {
+        "ident": "magoe.offspot.kiwix.org",
+        "domain": "magoe",
+        "kind": "app",
+        "title": "Magoé Éducation",
+        "description": "Application de révision en ligne et de renforcement de capacité",
+        "languages": [
+            "fra"
+        ],
+        "tags": [],
+        "image": "ghcr.io/offspot/magoe:1.0",
+        "image_filesize": 44042240,
+        "image_fullsize": 43998922,
+        "environ": {
+            "MAGOE_URL": "http://${PACKAGE_FQDN}"
+        },
+        "volumes": [
+            "${APP_DIR}:/var/www/magoe"
+        ],
+        "icon_url": "https://drive.offspot.it/magoe/magoe.png",
+        "download_url": "https://drive.offspot.it/magoe/magoe_fr_app_2023-12.zip",
+        "download_size": 301348117,
+        "download_via": "zip"
     }
 ]
