@@ -354,9 +354,9 @@ class ConfigBuilder:
 
         # add image
         image = OCIImage(
-            ident="ghcr.io/offspot/hwclock:1.1",
+            ident="ghcr.io/offspot/hwclock:1.2",
             filesize=58951680,
-            fullsize=58922432,
+            fullsize=58922600,
         )
         self.config["oci_images"].add(image)
 

@@ -291,7 +291,7 @@
         "tags": [],
         "image": "ghcr.io/offspot/magoe:1.0",
         "image_filesize": 44042240,
-        "image_fullsize": 43998922,
+        "image_fullsize": 43998764,
         "environ": {
             "MAGOE_URL": "http://${PACKAGE_FQDN}"
         },
