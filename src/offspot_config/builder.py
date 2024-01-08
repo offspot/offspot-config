@@ -85,6 +85,8 @@ class ConfigBuilder:
         # domain: (username, password) map of services to password protect
         self.protected_services: dict[str, tuple[str, str]] = {}
 
+        self.touched_path: set[Path] = set()
+
         self.with_kiwixserve: bool = False
         self.with_files: bool = False
         self.with_reverseproxy: bool = False
@@ -109,6 +111,18 @@ class ConfigBuilder:
 
     def set_output_size(self, size: int):
         self.config["output"]["size"] = size
+
+    def ensure_host_path(self, path: Path):
+        if path not in self.touched_path:
+            self.touched_path.add(path)
+
+            self.add_file(
+                url_or_content="-",
+                to=f"{path}/.touch",
+                size=1,
+                via="direct",
+                is_url=False,
+            )
 
     def add_dashboard(self, *, allow_zim_downloads: bool | None = False):
         self.dashboard_offers_zim_downloads = allow_zim_downloads
@@ -336,13 +350,7 @@ class ConfigBuilder:
         }
 
         # add persistent metrics (and its logwatcher subfolder) to host for docker bind
-        self.add_file(
-            url_or_content="-",
-            to=f"{METRICS_DATA_PATH}/logwatcher/.touch",
-            size=1,
-            via="direct",
-            is_url=False,
-        )
+        self.ensure_host_path(METRICS_DATA_PATH / "logwatcher")
 
         self.reversed_services.add("metrics")
 
@@ -434,13 +442,7 @@ class ConfigBuilder:
         }
 
         # add placeholder file to host fs to ensure bind succeeds
-        self.add_file(
-            url_or_content="-",
-            to=f"{CONTENT_TARGET_PATH}/zims/.touch",
-            size=1,
-            via="direct",
-            is_url=False,
-        )
+        self.ensure_host_path(CONTENT_TARGET_PATH / "zims")
 
         if self.dashboard_offers_zim_downloads:
             self.add_files_service()
@@ -520,12 +522,8 @@ class ConfigBuilder:
                 )
 
                 # add a placeholder file to host folder to ensure bind mount succeeds
-                self.add_file(
-                    url_or_content="-",
-                    to=f"{self.get_resolved_host_path(package, host_path)}/.touch",
-                    size=1,
-                    via="direct",
-                    is_url=False,
+                self.ensure_host_path(
+                    Path(self.get_resolved_host_path(package, host_path))
                 )
 
         # links
@@ -608,13 +606,7 @@ class ConfigBuilder:
             }
 
             # add placeholder file to host fs to ensure bind succeeds
-            self.add_file(
-                url_or_content="-",
-                to=f"{CONTENT_TARGET_PATH}/.touch",
-                size=1,
-                via="direct",
-                is_url=False,
-            )
+            self.ensure_host_path(CONTENT_TARGET_PATH)
 
             self.with_files = True
 
