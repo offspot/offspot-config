@@ -160,7 +160,13 @@ class ConfigBuilder:
                     "source": str(DASHBOARD_CONFIG_PATH),
                     "target": "/src/home.yaml",
                     "read_only": False,
-                }
+                },
+                {
+                    "type": "bind",
+                    "source": f"{CONTENT_TARGET_PATH}/zims",
+                    "target": "/data/zims",
+                    "read_only": True,
+                },
             ],
         }
 
