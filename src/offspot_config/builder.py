@@ -84,7 +84,7 @@ class ConfigBuilder:
         self.files_mapping: dict[str, str] = {}
         # domain: (username, password) map of services to password protect
         self.protected_services: dict[str, tuple[str, str]] = {}
-
+        # list(set) of paths we've added a .touch file for
         self.touched_path: set[Path] = set()
 
         self.with_kiwixserve: bool = False
@@ -132,9 +132,9 @@ class ConfigBuilder:
         self.with_dashboard = True
 
         image = OCIImage(
-            ident="ghcr.io/offspot/dashboard:1.2",
+            ident="ghcr.io/offspot/dashboard:1.3",
             filesize=124334080,
-            fullsize=124246163,
+            fullsize=124248725,
         )
         self.config["oci_images"].add(image)
 
@@ -169,6 +169,9 @@ class ConfigBuilder:
                 },
             ],
         }
+
+        # add placeholder file to host fs to ensure bind succeeds
+        self.ensure_host_path(CONTENT_TARGET_PATH / "zims")
 
     def gen_dashboard_config(self):
         """Generate and add YAML config file for dashboard, based on entries"""

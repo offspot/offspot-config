@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [builder] Setting default `hostname` on runtime-config using `domain`
 - [builder] Fixed missing dashboard entries for catalog apps
-- [builder] Updated Captive Portal to 1.3, hwclock to 1.2
+- [builder] Updated Captive Portal to 1.3, hwclock to 1.2, dashboard to 1.3
 - [builder] Shared handling of touched files
 - [builder] Fixed ZIM auto-discovery: folder not mounted
 - [catalog] Fixed WikiFundis missing a link to self via proxy for visualeditor
