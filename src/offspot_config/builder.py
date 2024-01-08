@@ -459,6 +459,40 @@ class ConfigBuilder:
 
         self.reversed_services.add("kiwix")
 
+        image = OCIImage(
+            ident="ghcr.io/offspot/file-manager:1.0",
+            filesize=42209280,
+            fullsize=42158614,
+        )
+        self.config["oci_images"].add(image)
+
+        # add to compose
+        self.compose["services"]["zim-manager"] = {
+            "image": image.source,
+            "container_name": "zim-manager",
+            "pull_policy": "never",
+            "restart": "unless-stopped",
+            "expose": ["80"],
+            "environment": {
+                "ACCESS_MODE": "manager",
+                "ADMIN_USERNAME": self.environ.get("ADMIN_USERNAME", ""),
+                "ADMIN_PASSWORD": self.environ.get("ADMIN_PASSWORD", ""),
+                "APP_URL": f"http://zim-manager.{self.fqdn}",
+            },
+            "volumes": [
+                # mandates presence of this folder on host
+                # thus created above via a placeholder
+                {
+                    "type": "bind",
+                    "source": f"{CONTENT_TARGET_PATH}/zims",
+                    "target": "/data",
+                    "read_only": False,
+                }
+            ],
+        }
+
+        self.reversed_services.add("zim-manager")
+
     def add_app(self, package: AppPackage, environ: dict[str, str] | None = None):
         if package.kind != "app":
             raise ValueError(f"Package {package.ident} is not an app")
