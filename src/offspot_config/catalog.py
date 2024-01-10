@@ -22,12 +22,12 @@ class AppCatalog(dict):
 
     def get_apppackage(self, ident: str) -> AppPackage:
         if ident not in self or not isinstance(self.get(ident, ""), AppPackage):
-            raise KeyError("No app matching {ident}")
+            raise KeyError(f"No app matching {ident}")
         return self[ident]
 
     def get_filespackage(self, ident: str) -> FilesPackage:
         if ident not in self or not isinstance(self.get(ident, ""), FilesPackage):
-            raise KeyError("No files matching {ident}")
+            raise KeyError(f"No files matching {ident}")
         return self[ident]
 
 
