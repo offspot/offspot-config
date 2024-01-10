@@ -139,7 +139,7 @@ class AppPackage(Package):
         ) or uuid.uuid4().hex
 
     def get_url(self, fqdn: str, **kwargs) -> str:  # noqa: ARG002
-        return f"//{self.domain}.{fqdn}/{self.ident}"
+        return f"//{self.domain}.{fqdn}/"
 
     def has_file(self) -> bool:
         return bool(self.download_url)
