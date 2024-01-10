@@ -137,11 +137,11 @@
         }
     },
     {
-        "ident": "edupi.offspot.kiwix.org",
-        "domain": "edupi",
+        "ident": "file-manager.offspot.kiwix.org",
+        "domain": "resources",
         "kind": "app",
-        "title": "Ressources EduPi",
-        "description": "Accès à diverses ressources",
+        "title": "File Resources",
+        "description": "View and download resources",
         "languages": [
             "mul"
         ],
@@ -149,9 +149,9 @@
             "files"
         ],
         "icon_url": "https://drive.offspot.it/edupi/edupi.png",
-        "image": "ghcr.io/offspot/edupi:1.2",
-        "image_filesize": 646809600,
-        "image_fullsize": 646714840,
+        "image": "ghcr.io/offspot/file-manager:1.0",
+        "image_filesize": 42209280,
+        "image_fullsize": 42158614,
         "environ_map": {
             "ADMIN_USERNAME": "ADMIN_USERNAME",
             "ADMIN_PASSWORD": "ADMIN_PASSWORD"

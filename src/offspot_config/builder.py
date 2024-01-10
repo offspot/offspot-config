@@ -4,7 +4,7 @@ import re
 from pathlib import PurePath as Path
 from typing import Any
 
-from offspot_config.catalog import get_app_path
+from offspot_config.catalog import app_catalog, get_app_path
 from offspot_config.constants import CONTENT_TARGET_PATH
 from offspot_config.inputs import BaseConfig, BlockStr, FileConfig
 from offspot_config.oci_images import OCIImage
@@ -18,6 +18,7 @@ from offspot_config.utils.yaml import yaml_dump
 
 # matches $environ[XXX] where XXX is a builder-level environ to replace with
 RE_ENVIRON_VAR = re.compile(r"\$environ{(?P<var>[A-Za-z_\-0-9]+)}")
+RE_SPECIFIC_APP_DIR = re.compile(r"\${APP_DIR:(?P<ident>[a-z\.\-]+)}")
 
 # service subdomain for ZIM downloads, when enabled
 ZIMDL_PREFIX = "zim-download"
@@ -662,6 +663,14 @@ class ConfigBuilder:
         size: int,
         is_url: bool | None = True,
     ):
+        # @to param can reference a specific package's home
+        app_dir_match = RE_SPECIFIC_APP_DIR.match(to)
+        if app_dir_match:
+            ident = app_dir_match.groupdict()["ident"]
+            to = to.replace(
+                "${APP_DIR:" + ident + "}", get_app_path(package=app_catalog[ident])
+            )
+
         self.config["files"].append(
             FileConfig(
                 **{
