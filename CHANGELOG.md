@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - [catalog] App `file-manager.offspot.kiwix.org` to replace Edupi
+- [catalog] FilesApp TrailSense
+- [catalog] FilesApp Survival Manual
+- [catalog] FilesApp The Life
 - [builder] `add_file()`'s `to` can now use `${APP_DIR:<ident>}` to target any app's home
 
 ### Removed

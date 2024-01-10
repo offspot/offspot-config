@@ -302,5 +302,56 @@
         "download_url": "https://drive.offspot.it/magoe/magoe_fr_app_2023-12.zip",
         "download_size": 301348117,
         "download_via": "zip"
+    },
+    {
+        "ident": "com.kylecorry.trail_sense.offspot.kiwix.org",
+        "domain": "com.kylecorry.trail_sense",
+        "kind": "files",
+        "title": "Trail Sense",
+        "description": "Use your phone's sensors to assist with wilderness treks",
+        "languages": [
+            "eng"
+        ],
+        "tags": [
+            "android"
+        ],
+        "icon_url": "https://drive.offspot.it/f-droid/com.kylecorry.trail_sense.png",
+        "download_url": "https://drive.offspot.it/f-droid/com.kylecorry.trail_sense_111.zip",
+        "download_size": 7171835,
+        "via": "zip"
+    },
+    {
+        "ident": "org.ligi.survivalmanual.offspot.kiwix.org",
+        "domain": "org.ligi.survivalmanual",
+        "kind": "files",
+        "title": "Survival Manual",
+        "description": "Learn how to survive",
+        "languages": [
+            "eng"
+        ],
+        "tags": [
+            "android"
+        ],
+        "icon_url": "https://drive.offspot.it/f-droid/org.ligi.survivalmanual.png",
+        "download_url": "https://drive.offspot.it/f-droid/org.ligi.survivalmanual_428.zip",
+        "download_size": 5528415,
+        "via": "zip"
+    },
+    {
+        "ident": "org.hlwd.bible_multi_the_life.offspot.kiwix.org",
+        "domain": "org.hlwd.bible_multi_the_life",
+        "kind": "files",
+        "title": "The Life",
+        "description": "Bible multi languages, free, offline, no advertising.",
+        "languages": [
+            "eng"
+        ],
+        "tags": [
+            "android"
+        ],
+        "icon_url": "https://drive.offspot.it/f-droid/org.hlwd.bible_multi_the_life.png",
+        "download_url": "https://drive.offspot.it/f-droid/org.hlwd.bible_multi_the_life_20230823.zip",
+        "download_size": 59891151,
+        "via": "zip"
     }
 ]
