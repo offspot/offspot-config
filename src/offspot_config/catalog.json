@@ -152,6 +152,10 @@
         "image": "ghcr.io/offspot/file-manager:1.0",
         "image_filesize": 42209280,
         "image_fullsize": 42158614,
+        "environ": {
+            "APP_URL": "http://${PACKAGE_FQDN}/",
+            "ACCESS_MODE": "mixed"
+        },
         "environ_map": {
             "ADMIN_USERNAME": "ADMIN_USERNAME",
             "ADMIN_PASSWORD": "ADMIN_PASSWORD"
