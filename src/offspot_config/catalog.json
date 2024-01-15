@@ -149,9 +149,9 @@
             "files"
         ],
         "icon_url": "https://drive.offspot.it/edupi/edupi.png",
-        "image": "ghcr.io/offspot/file-manager:1.0",
+        "image": "ghcr.io/offspot/file-manager:1.1",
         "image_filesize": 42209280,
-        "image_fullsize": 42158614,
+        "image_fullsize": 42158625,
         "environ": {
             "APP_URL": "http://${PACKAGE_FQDN}/",
             "ACCESS_MODE": "mixed"
