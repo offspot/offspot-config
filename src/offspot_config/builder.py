@@ -206,9 +206,9 @@ class ConfigBuilder:
         self.with_reverseproxy = True
 
         image = OCIImage(
-            ident="ghcr.io/offspot/reverse-proxy:1.4",
+            ident="ghcr.io/offspot/reverse-proxy:1.5",
             filesize=120872960,
-            fullsize=120805757,
+            fullsize=120804729,
         )
         self.config["oci_images"].add(image)
 
