@@ -31,6 +31,55 @@ METRICS_VAR_LOG_PATH_HOST = Path("/var/log/metrics")
 METRICS_VAR_LOG_PATH_CONT = Path("/var/log/host/metrics")
 KIWIX_ZIM_LOAD_BALANCER_URL = "https://download.kiwix.org/zim/"
 
+# data source for “internal images” (out of catalog)
+INTERNAL_IMAGES = {
+    "captive-portal": {
+        "source": "ghcr.io/offspot/captive-portal:1.3",
+        "filesize": 184545280,
+        "fullsize": 184474177,
+    },
+    "dashboard": {
+        "source": "ghcr.io/offspot/dashboard:1.3",
+        "filesize": 124334080,
+        "fullsize": 124248725,
+    },
+    "file-browser": {
+        "source": "ghcr.io/offspot/file-browser:1.1",
+        "filesize": 13629440,
+        "fullsize": 13598399,
+    },
+    "hwclock": {
+        "source": "ghcr.io/offspot/hwclock:1.2",
+        "filesize": 58951680,
+        "fullsize": 58922600,
+    },
+    "kiwix-serve": {
+        "source": "ghcr.io/offspot/kiwix-serve:3.6.0",
+        "filesize": 62351360,
+        "fullsize": 62313418,
+    },
+    "metrics": {
+        "source": "ghcr.io/offspot/metrics:0.2.1",
+        "filesize": 167321600,
+        "fullsize": 167205680,
+    },
+    "reverse-proxy": {
+        "source": "ghcr.io/offspot/reverse-proxy:1.5",
+        "filesize": 120872960,
+        "fullsize": 120804729,
+    },
+}
+
+
+def get_internal_image(ident: str) -> OCIImage:
+    """OCI Image from special key identifying internal image"""
+    if ident == "file-manager":
+        return app_catalog.get_apppackage("file-manager.offspot.kiwix.org").oci_image
+    entry = INTERNAL_IMAGES[ident]
+    return OCIImage(
+        ident=entry["source"], filesize=entry["filesize"], fullsize=entry["fullsize"]
+    )
+
 
 class ConfigBuilder:
     def __init__(
@@ -132,11 +181,7 @@ class ConfigBuilder:
 
         self.with_dashboard = True
 
-        image = OCIImage(
-            ident="ghcr.io/offspot/dashboard:1.3",
-            filesize=124334080,
-            fullsize=124248725,
-        )
+        image = get_internal_image("dashboard")
         self.config["oci_images"].add(image)
 
         # add to compose
@@ -205,11 +250,7 @@ class ConfigBuilder:
 
         self.with_reverseproxy = True
 
-        image = OCIImage(
-            ident="ghcr.io/offspot/reverse-proxy:1.5",
-            filesize=120872960,
-            fullsize=120804729,
-        )
+        image = get_internal_image("reverse-proxy")
         self.config["oci_images"].add(image)
 
         # add to compose
@@ -260,11 +301,7 @@ class ConfigBuilder:
             }
         )
 
-        image = OCIImage(
-            ident="ghcr.io/offspot/captive-portal:1.3",
-            filesize=184545280,
-            fullsize=184474177,
-        )
+        image = get_internal_image("captive-portal")
         self.config["oci_images"].add(image)
 
         # add to compose
@@ -307,11 +344,7 @@ class ConfigBuilder:
         if not self.with_dashboard:
             self.add_dashboard()
 
-        image = OCIImage(
-            ident="ghcr.io/offspot/metrics:0.2.1",
-            filesize=167321600,
-            fullsize=167205680,
-        )
+        image = get_internal_image("metrics")
         self.config["oci_images"].add(image)
 
         in_container_packages_path = "/conf/packages.yaml"
@@ -371,11 +404,7 @@ class ConfigBuilder:
         self.with_hwclock = True
 
         # add image
-        image = OCIImage(
-            ident="ghcr.io/offspot/hwclock:1.2",
-            filesize=58951680,
-            fullsize=58922600,
-        )
+        image = get_internal_image("hwclock")
         self.config["oci_images"].add(image)
 
         # add to compose
@@ -423,11 +452,7 @@ class ConfigBuilder:
 
         self.with_kiwixserve = True
 
-        image = OCIImage(
-            ident="ghcr.io/offspot/kiwix-serve:3.6.0",
-            filesize=62351360,
-            fullsize=62313418,
-        )
+        image = get_internal_image("kiwix-serve")
         self.config["oci_images"].add(image)
 
         # add to compose
@@ -460,11 +485,7 @@ class ConfigBuilder:
 
         self.reversed_services.add("kiwix")
 
-        image = OCIImage(
-            ident="ghcr.io/offspot/file-manager:1.0",
-            filesize=42209280,
-            fullsize=42158614,
-        )
+        image = get_internal_image("file-manager")
         self.config["oci_images"].add(image)
 
         # add to compose
@@ -623,13 +644,8 @@ class ConfigBuilder:
     def add_files_service(self):
         # add image to compose
         if not self.with_files:
-            image = OCIImage(
-                ident="ghcr.io/offspot/file-browser:1.1",
-                filesize=13629440,
-                fullsize=13598399,
-            )
-
             # add to compose
+            image = get_internal_image("file-browser")
             self.config["oci_images"].add(image)
             self.compose["services"]["files"] = {
                 "image": image.source,
