@@ -363,6 +363,7 @@ class ConfigBuilder:
                 "DATABASE_URL": f"sqlite+pysqlite:///{in_container_db_path}",
                 "LOGWATCHER_DATA_FOLDER": in_container_logwatcher_dir,
                 "REVERSE_PROXY_LOGS_LOCATION": str(METRICS_VAR_LOG_PATH_CONT),
+                "REVERSE_PROXY_LOGS_PATTERN": "metrics*.json",
             },
             "pull_policy": "never",
             "restart": "unless-stopped",
