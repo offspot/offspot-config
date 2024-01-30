@@ -30,6 +30,10 @@ class Package:
     languages: list[str] | None = None
     icon_url: str | None = None
 
+    @property
+    def size(self) -> int:
+        raise NotImplementedError()
+
     def get_url(self, fqdn: str, **kwargs) -> str:  # noqa: ARG002
         return ""
 
@@ -83,6 +87,10 @@ class ZimPackage(Package):
     @property
     def filename(self):
         return f"{self.url_path}.zim"
+
+    @property
+    def size(self) -> int:
+        return self.download_size
 
     def get_url(
         self, fqdn: str, kiwix_domain: str | None = "kiwix", **kwargs  # noqa: ARG002
@@ -138,6 +146,10 @@ class AppPackage(Package):
             + re.sub(r"[^a-zA-Z0-9_.-]+", "", ident[1:])
         ) or uuid.uuid4().hex
 
+    @property
+    def size(self) -> int:
+        return self.image_fullsize + (self.download_size or 0)
+
     def get_url(self, fqdn: str, **kwargs) -> str:  # noqa: ARG002
         return f"//{self.domain}.{fqdn}/"
 
@@ -167,6 +179,10 @@ class FilesPackage(Package):
     @property
     def filename(self):
         return self.target if self.target else self.ident
+
+    @property
+    def size(self) -> int:
+        return self.download_size or 0
 
     def get_url(self, fqdn: str, **kwargs) -> str:  # noqa: ARG002
         return f"//{self.domain}.{fqdn}/"
