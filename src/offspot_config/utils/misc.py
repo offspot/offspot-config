@@ -160,24 +160,24 @@ class SimpleAttrs:
         return re.sub(r"^user.", "", name)
 
     def get(self, name: str) -> str:
-        return os.getxattr(  # pyright: ignore [reportGeneralTypeIssues] (linux only)
+        return os.getxattr(  # pyright: ignore [reportAttributeAccessIssue] (linux only)
             self.path, self.usered(name)
         ).decode("UTF-8")
 
-    def set(self, name: str, value: str):  # noqa: A003
-        os.setxattr(  # pyright: ignore [reportGeneralTypeIssues] (linux only)
+    def set(self, name: str, value: str):
+        os.setxattr(  # pyright: ignore [reportAttributeAccessIssue] (linux only)
             self.path, self.usered(name), value.encode("UTF-8")
         )
 
     def remove(self, name: str):
-        os.removexattr(  # pyright: ignore [reportGeneralTypeIssues] (linux only)
+        os.removexattr(  # pyright: ignore [reportAttributeAccessIssue] (linux only)
             self.path, self.usered(name)
         )
 
-    def list(self) -> list[str]:  # noqa: A003
+    def list(self) -> list[str]:
         return [
             self.unusered(name)
-            for name in os.listxattr(  # pyright: ignore [reportGeneralTypeIssues]
+            for name in os.listxattr(  # pyright: ignore [reportAttributeAccessIssue]
                 self.path
             )
         ]
@@ -379,7 +379,7 @@ def enforce_types(callable_):
                     actual_type = type_hint.__args__
                 elif int(platform.python_version()[1]) >= 10:  # py3.10 unions as |
                     from types import (
-                        UnionType,  # pyright: ignore [reportGeneralTypeIssues]
+                        UnionType,  # pyright: ignore [reportAttributeAccessIssue]
                     )
 
                     if isinstance(type_hint, UnionType):
