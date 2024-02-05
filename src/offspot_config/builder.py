@@ -59,9 +59,9 @@ INTERNAL_IMAGES = {
         "fullsize": 62313418,
     },
     "metrics": {
-        "source": "ghcr.io/offspot/metrics:0.2.1",
-        "filesize": 167321600,
-        "fullsize": 167205680,
+        "source": "ghcr.io/offspot/metrics:0.3.0",
+        "filesize": 167311360,
+        "fullsize": 167202612,
     },
     "reverse-proxy": {
         "source": "ghcr.io/offspot/reverse-proxy:1.5",
