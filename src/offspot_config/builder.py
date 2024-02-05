@@ -64,9 +64,9 @@ INTERNAL_IMAGES = {
         "fullsize": 167202612,
     },
     "reverse-proxy": {
-        "source": "ghcr.io/offspot/reverse-proxy:1.5",
-        "filesize": 120872960,
-        "fullsize": 120804729,
+        "source": "ghcr.io/offspot/reverse-proxy:1.6",
+        "filesize": 120350720,
+        "fullsize": 120278906,
     },
 }
 
