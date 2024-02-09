@@ -10,11 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - [builder] Welcome FQDN properly set (goto.kiwix)
+- [catalog] file-manager URL (no trailing slash)
 
 ### Changed
 
 - [builder] Using captive-portal:1.4 with offline fix
 - [builder] Using reverse-proxy:1.7 with welcome_fqdn
+- [catalog] Using file-manager:1.3 with metrics headers
 
 ## [1.9.0] - 2024-02-09
 
