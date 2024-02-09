@@ -42,7 +42,7 @@ RFKILL_PATH = pathlib.Path("/usr/sbin/rfkill")
 IPTABLES_PATH = pathlib.Path("/usr/sbin/iptables")
 DEFAULT_CHANNEL = 11
 DEFAULT_ADDRESS = "192.168.2.1"
-DEFAULT_CAPTURED_ADDRESS = "192.51.100.1"
+DEFAULT_CAPTURED_ADDRESS = "198.51.100.1"
 DEFAULT_DNS = ["8.8.8.8", "1.1.1.1"]
 DEFAULT_TLD = "offspot"
 DEFAULT_DOMAIN = "generic"
@@ -108,13 +108,6 @@ no-hosts
 no-resolv
 dhcp-authoritative
 conf-file={DNSMASQ_SPOOF_CONFIG_PATH}
-"""
-DNSMASQ_SPOOF_CONF_TEMPLATE = """
-## use similar ## prefix for manual comments as switcher toggles regular (`# `) ones
-{% if not spoof %}# {% endif %}address=/#/{captured_address}
-{% for server in servers %}
-{% if spoof %}# {% endif %}server={server}
-{% endfor %}
 """
 INTERFACES_CONF = """
 allow-hotplug {interface}
@@ -208,7 +201,19 @@ def write_dnsmasq_spoof_conf(dnsmasq_spoof_conf_path: pathlib.Path, **kwargs) ->
     at this stage, we only enable spoof if spoof was unconditionaly requested.
     auto-spoof would be triggered externaly"""
 
-    dnsmasq_spoof_conf_path.write_text(DNSMASQ_SPOOF_CONF_TEMPLATE.format(**kwargs))
+    lines = ["## use similar ## prefix for manual comments"]
+    line = "" if kwargs["spoof"] else "# "  # address is enabled on spoof
+    line += f"address=/#/{kwargs['captured_address']}"
+    lines.append(line)
+
+    for server in kwargs["servers"]:
+        line = "# " if kwargs["spoof"] else ""  # servers are disabled on spoof
+        line += f"server={server}"
+        lines.append(line)
+
+    lines.append("")  # end fine on a new line
+
+    dnsmasq_spoof_conf_path.write_text("\n".join(lines))
 
     return 0
 
@@ -236,12 +241,6 @@ def write_dnsmasq_conf(dnsmasq_conf_path: pathlib.Path, **kwargs) -> int:
     kwargs["nodhcp_interfaces_lines"] = "\n".join(
         [f"no-dhcp-interface={iface}" for iface in kwargs["nodhcp_interfaces"]]
     )
-
-    if kwargs["as_gateway"]:
-        kwargs["servers"] = kwargs["dns"]
-    # no internet, no need for DNS
-    else:
-        kwargs["servers"] = []
 
     # additional, static/local records
     kwargs["fqdn"] = f"{kwargs['domain']}.{kwargs['tld']}"
@@ -371,6 +370,12 @@ def main(**kwargs) -> int:
     if set_ip_address(kwargs["interface"], kwargs["address"]) != 0:
         fail_error("failed to set {kwargs['address']=} on {kwargs['interface']=}")
     logger.debug("ip-address set")
+
+    if kwargs["as_gateway"]:
+        kwargs["servers"] = kwargs["dns"]
+    # no internet, no need for DNS
+    else:
+        kwargs["servers"] = []
 
     _str_spoof = str(kwargs["spoof"]).strip().lower()
     kwargs["auto_spoof"] = _str_spoof == "auto"
