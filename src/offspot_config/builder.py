@@ -34,9 +34,9 @@ KIWIX_ZIM_LOAD_BALANCER_URL = "https://download.kiwix.org/zim/"
 # data source for “internal images” (out of catalog)
 INTERNAL_IMAGES = {
     "captive-portal": {
-        "source": "ghcr.io/offspot/captive-portal:1.3",
-        "filesize": 184545280,
-        "fullsize": 184474177,
+        "source": "ghcr.io/offspot/captive-portal:1.4",
+        "filesize": 184627200,
+        "fullsize": 184559684,
     },
     "dashboard": {
         "source": "ghcr.io/offspot/dashboard:1.3",
@@ -64,9 +64,9 @@ INTERNAL_IMAGES = {
         "fullsize": 167202612,
     },
     "reverse-proxy": {
-        "source": "ghcr.io/offspot/reverse-proxy:1.6",
+        "source": "ghcr.io/offspot/reverse-proxy:1.7",
         "filesize": 120350720,
-        "fullsize": 120278906,
+        "fullsize": 120279091,
     },
 }
 
@@ -261,6 +261,10 @@ class ConfigBuilder:
             "container_name": "reverse-proxy",
             "environment": {
                 "FQDN": self.fqdn,
+                "WELCOME_FQDN": (
+                    f'{self.config["offspot"]["ap"]["welcome"]}.'
+                    f'{self.config["offspot"]["ap"]["tld"]}'
+                ),
                 "METRICS_LOGS_DIR": str(METRICS_VAR_LOG_PATH_CONT),
             },
             "pull_policy": "never",
