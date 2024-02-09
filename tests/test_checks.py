@@ -390,6 +390,7 @@ def test_is_valid_ap_config():
         "dhcp_range": "192.168.2.2,192.168.2.254,255.255.255.0,1h",
         "network": "192.168.2.0/24",
         "dns": ["8.8.8.8", "1.1.1.1"],
+        "captured_address": "192.168.0.1",
         "other_interfaces": [],
         "except_interfaces": [],
         "nodhcp_interfaces": [],
