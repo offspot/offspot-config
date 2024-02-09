@@ -468,6 +468,7 @@ def is_valid_ap_config(
     dhcp_range: str,
     network: str,
     dns: list[str],
+    captured_address: str,
     other_interfaces: list[str],
     except_interfaces: list[str],
     nodhcp_interfaces: list[str],
@@ -531,6 +532,9 @@ def is_valid_ap_config(
         check = is_valid_ipv4(server)
         if not check.passed:
             return CheckResponse(False, f"DNS #{index}: {check.help_text}")
+
+    if not is_valid_ipv4(captured_address):
+        return CheckResponse(False, "Invalid IPv4 captured_address")
 
     if not isinstance(other_interfaces, list):
         return CheckResponse(False, "Other-interfaces: Incorrect type")

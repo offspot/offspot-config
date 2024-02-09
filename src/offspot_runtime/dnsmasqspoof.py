@@ -46,21 +46,21 @@ def toggle_dnsmasq(dnsmasq_conf_path: pathlib.Path, *, spoof: bool):
     logger.info(f"toggling from {is_spoof=} into {spoof=}")
 
     # turning non-spoof into spoof by removing comment on address
-    if spoof and not is_spoof:
-        for line in content.splitlines():
-            m = re.match(r"^\s*#\s+(?P<line>address=/#/.+)$", line)
-            if m:
-                content = f"{m.groupdict()['line']}\n"
-                break
+    fixed_lines = []
+    for line in content.splitlines():
+        # keep manual comments as-is
+        if line.startswith("##"):
+            fixed_lines.append(line)
+            continue
 
-    # turning spoof into non-spoof
-    else:
-        for line in content.splitlines():
-            if line.startswith("address=/#/"):
-                content = f"# {line}\n"
-                break
+        # uncomment commented lines
+        comment_match = re.match(r"^#\s(?P<line>.+)$", line)
+        if comment_match:
+            fixed_lines.append(comment_match.groupdict()["line"])
+        else:
+            fixed_lines.append(f"# {line}")
 
-    dnsmasq_conf_path.write_text(content)
+    dnsmasq_conf_path.write_text("\n".join(fixed_lines))
 
     return True
 

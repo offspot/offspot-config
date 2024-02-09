@@ -162,24 +162,27 @@ Without an *armor*, configuration is appended at end of file, specifying `eth0` 
 
 `ap` is itself an `object`.
 
-| Member       | Kind       | Required | Function   |
-|--------------|----------- |----------|------------|
-| `ssid    `   | `string`   | **yes**  | SSID (Network Name)                                                                                        |
-| `passphrase` | `string`   | no | Passphrase/password to connect to the network. Defaults to Open Network                                          |
-| `address`    | `string`   | no | IP address to set on the wireless interface. Defaults to 192.168.2.1                                             |
-| `channel`    | `integer`  | no | WiFi channel to use for the network (1-14). Defaults to `11`.                                                    |
-| `country`    | `string`   | no | Country-code to apply frequencies limitations for. Defaults to `FR`                                              |
-| `hide`       | `boolean`  | no | Hide SSID (Clients must know and enter its name to connect)                                                      |
-| `interface`  | `string`   | no | Interface to configure AP for. Defaults to `wlan0`                                                               |
-| `dhcp-range` | `string`   | no | IP range for AP clients. `start,end,subnet,ttl` format. Default: `.100-.240` from address                        |
-| `network`    | `[string]` | no | Network to advertise DHCP on. Defaults to `.0/24` from address                                                   |
-| `nodhcp-interfaces` | `[string]` | no | Interfaces where the DHCP server will not run |
-| `dns`        | `[string]` | no | DNS to set via DHCP when working as Internet gateway. Defaults to `8.8.8.8`, `1.1.1.1`                           |
-| `as-gateway` | `boolean`  | no | Make this device act as a gateway to Internet (wired) for AP (wireless) clients (when/if `eth0` has connectivity)|
-| `tld`        | `string`   | no | Search (top-level) *domain* to set via DHCP. Defaults to `offspot`                                               |
-| `domain`     | `string`   | no | Domain name to direct to the offspot. Defaults to `generic` (resolved as `generic.{tld}`                         |
-| `welcome`    | `string`   | no | Additional domain to direct to offspot. Defaults to `goto.kiwix` (resolved as `goto.generic.{tld}`               |
-| `spoof`      | `boolean`* | no | Whether to direct all DNS requests to the offspot. Useful for captive-portal without Internet bridge. Special value `auto` triggers it when the hotspot is offline and disables it when it is connected to Internet    |
+| Member              | Kind       | Required | Function                                                                                                         |
+|---------------------|----------- |----------|------------------------------------------------------------------------------------------------------------------|
+| `ssid    `          | `string`   | **yes**  | SSID (Network Name)                                                                                              |
+| `passphrase`        | `string`   | no       | Passphrase/password to connect to the network. Defaults to Open Network                                          |
+| `address`           | `string`   | no       | IP address to set on the wireless interface. Defaults to 192.168.2.1                                             |
+| `channel`           | `integer`  | no       | WiFi channel to use for the network (1-14). Defaults to `11`.                                                    |
+| `country`           | `string`   | no       | Country-code to apply frequencies limitations for. Defaults to `FR`                                              |
+| `hide`              | `boolean`  | no       | Hide SSID (Clients must know and enter its name to connect)                                                      |
+| `interface`         | `string`   | no       | Interface to configure AP for. Defaults to `wlan0`                                                               |
+| `dhcp-range`        | `string`   | no       | IP range for AP clients. `start,end,subnet,ttl` format. Default: `.100-.240` from address                        |
+| `network`           | `[string]` | no       | Network to advertise DHCP on. Defaults to `.0/24` from address                                                   |
+| `nodhcp-interfaces` | `[string]` | no       | Interfaces where the DHCP server will not run                                                                    |
+| `dns`               | `[string]` | no       | DNS to set via DHCP when working as Internet gateway. Defaults to `8.8.8.8`, `1.1.1.1`                           |
+| `captured-address`  | `string`   | no       | IP address to set DNS fallback to when offline (all domains but locals are sent to it). Default:  `192.51.100.1` |
+| `as-gateway`        | `boolean`  | no       | Make this device act as a gateway to Internet (wired) for AP (wireless) clients (when/if `eth0` has connectivity)|
+| `tld`               | `string`   | no       | Search (top-level) *domain* to set via DHCP. Defaults to `offspot`                                               |
+| `domain`            | `string`   | no       | Domain name to direct to the offspot. Defaults to `generic` (resolved as `generic.{tld}`                         |
+| `welcome`           | `string`   | no       | Additional domain to direct to offspot. Defaults to `goto.kiwix` (resolved as `goto.generic.{tld}`               |
+| `spoof`             | `boolean`* | no       | Whether to direct all DNS requests to the offspot. Useful for captive-portal without Internet bridge^1.          |
+
+- ^1: Special value `auto` triggers it when the hotspot is offline and disables it when it is connected to Internet
 
 #### notes
 

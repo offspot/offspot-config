@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - [builder] AP welcome_domain now settable (defaulting to `goto.kiwix`)
+- [ap] `captured-address` allows setting the DNS fallback target for when offline
+
+## Changed
+
+- [ap] Auto `spoof` dnsmasq switcher now toggles by uncommenting what's commented and commenting what's not.
+- [ap] `no-resolv` and `dhcp-athoritative` added to DNSmasq config
+- [ap] Upstream `server` for DNSmasq only set when Online
 
 ## [1.8.2] - 2024-02-05
 

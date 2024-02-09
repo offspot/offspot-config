@@ -42,6 +42,7 @@ RFKILL_PATH = pathlib.Path("/usr/sbin/rfkill")
 IPTABLES_PATH = pathlib.Path("/usr/sbin/iptables")
 DEFAULT_CHANNEL = 11
 DEFAULT_ADDRESS = "192.168.2.1"
+DEFAULT_CAPTURED_ADDRESS = "192.51.100.1"
 DEFAULT_DNS = ["8.8.8.8", "1.1.1.1"]
 DEFAULT_TLD = "offspot"
 DEFAULT_DOMAIN = "generic"
@@ -102,11 +103,18 @@ expand-hosts
 bogus-priv
 domain={tld},{network},local
 
-address=/{welcome_fqdn}/{address}
-address=/{fqdn}/{address}
-{servers}
+address=/{welcome_fqdn}/{fqdn}/{address}
 no-hosts
+no-resolv
+dhcp-authoritative
 conf-file={DNSMASQ_SPOOF_CONFIG_PATH}
+"""
+DNSMASQ_SPOOF_CONF_TEMPLATE = """
+## use similar ## prefix for manual comments as switcher toggles regular (`# `) ones
+{% if not spoof %}# {% endif %}address=/#/{captured_address}
+{% for server in servers %}
+{% if spoof %}# {% endif %}server={server}
+{% endfor %}
 """
 INTERFACES_CONF = """
 allow-hotplug {interface}
@@ -197,13 +205,10 @@ def write_hostapd_conf(hostapd_conf_path: pathlib.Path, **kwargs) -> int:
 def write_dnsmasq_spoof_conf(dnsmasq_spoof_conf_path: pathlib.Path, **kwargs) -> int:
     """std-returncode writing dnsmasq-spoof.conf
 
-    at this stage, we only enable spoof is spoof was unconditionaly requested.
+    at this stage, we only enable spoof if spoof was unconditionaly requested.
     auto-spoof would be triggered externaly"""
-    line = "address=/#/1.1.1.1"
-    if not kwargs["spoof"]:
-        line = f"# {line}"
 
-    dnsmasq_spoof_conf_path.write_text(f"{line}\n")
+    dnsmasq_spoof_conf_path.write_text(DNSMASQ_SPOOF_CONF_TEMPLATE.format(**kwargs))
 
     return 0
 
@@ -233,10 +238,10 @@ def write_dnsmasq_conf(dnsmasq_conf_path: pathlib.Path, **kwargs) -> int:
     )
 
     if kwargs["as_gateway"]:
-        kwargs["servers"] = "\n".join([f"server={server}" for server in kwargs["dns"]])
+        kwargs["servers"] = kwargs["dns"]
     # no internet, no need for DNS
     else:
-        kwargs["servers"] = ""
+        kwargs["servers"] = []
 
     # additional, static/local records
     kwargs["fqdn"] = f"{kwargs['domain']}.{kwargs['tld']}"
@@ -341,6 +346,7 @@ def main(**kwargs) -> int:
         dhcp_range=kwargs["dhcp_range"],
         network=kwargs["network"],
         dns=kwargs["dns"],
+        captured_address=kwargs["captured_address"],
         other_interfaces=kwargs["other_interfaces"],
         except_interfaces=kwargs["except_interfaces"],
         nodhcp_interfaces=kwargs["nodhcp_interfaces"],
@@ -550,6 +556,14 @@ def entrypoint():
         default=[],
         required=False,
         action="append",
+    )
+
+    parser.add_argument(
+        "--captured-address",
+        help="IP address to send all HTTP/s traffic to when offline",
+        dest="captured_address",
+        required=False,
+        default=DEFAULT_CAPTURED_ADDRESS,
     )
 
     parser.add_argument(

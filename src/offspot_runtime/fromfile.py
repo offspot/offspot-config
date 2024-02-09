@@ -151,6 +151,7 @@ class Handlers:
             "dhcp-range",
             "network",
             "spoof",
+            "captured-address",
         ):
             if item.get(key) is not None:
                 command += [f"--{key}", str(item.get(key))]
