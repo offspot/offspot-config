@@ -89,6 +89,7 @@ class ConfigBuilder:
         name: str = "My Offspot",
         tld: str | None = "offspot",
         domain: str | None = "my-offspot",
+        welcome_domain: str | None = "goto.kiwix",
         ssid: str | None = "my-offspot",
         passphrase: str | None = None,
         timezone: str | None = "UTC",  # noqa: ARG002
@@ -111,6 +112,7 @@ class ConfigBuilder:
                 "ethernet": {"type": "dhcp"},
                 "ap": {
                     "domain": domain,
+                    "welcome": welcome_domain,
                     "tld": tld,
                     "ssid": ssid,
                     "passphrase": passphrase,
