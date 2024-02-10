@@ -78,13 +78,55 @@ is_valid_ipv4("10.0.0.a").raise_for_status()
 
 ### Valid first-level members
 
-| Member       | Kind      | Function   |
-|--------------|-----------|------------|
+| Member       | Kind      | Function                                               |
+|--------------|-----------|--------------------------------------------------------|
+| `firmware`   | `string`  | Set WiFi firmware to use                               |
 | `timezone`   | `string`  | Set Host timezone                                      |
 | `hostname`   | `string`  | Set machine's hostname (not domain, see `ap`).         |
 | `ethernet`   | `object`  | Set network configuration for ethernet interface       |
 | `ap`         | `object`  | Set WiFi AP configuration for wireless interface       |
 | `containers` | `object`  | Builds the docker-compose file                         |
+
+### `firmware`
+
+`firmware` is itself a single `object`.
+
+| Member       | Kind      | Required | Function                                             |
+|--------------|-----------|----------|------------------------------------------------------|
+| `brcm43455`  | `string`  | no       | Firmware to use for `brcm43455` chipset (Pi 3B+/4/5) |
+| `brcm43430`  | `string`  | no       | Firmware to use for `brcm43430 ` chipset (Pi 0W/3    |
+
+Chipsets included in RaspiOS have limitations on the number of WiFi clients that can connect to it.
+Using this, you can change the version of the firmware to use for your chipset.
+
+Each chipset supports a different set of firmwares.
+
+#### `brcm43455` chipset firmwares
+
+| Firmware                            | Comment                                                                        |
+|-------------------------------------|--------------------------------------------------------------------------------|
+| `raspios`                           | Supports 4/5 clients. Came with RaspiOS                                        |
+| `supports-19_2021-11-30`            | Supports 19 clients. Can be used in AP+STA mode (not supported in Hotspot yet) |
+| `supports-24_2021-10-05_noap+sta`   | Supports 24 clients. Can **not** be used in `AP+STA` mode                      |
+| `supports-32_2015-03-01_unreliable` | Supports 32 clients. **Unreliable**. Available for tests only                  |
+
+#### `brcm43430` chipset firmwares
+
+| Firmware                            | Comment                                                                        |
+|-------------------------------------|--------------------------------------------------------------------------------|
+| `raspios`                           | Supports 4/5 clients. Came with RaspiOS                                        |
+| `supports-30_2018-09-28`            | Supports 30 clients.                                                           |
+
+**⚠️ Warning**: WiFi firmware update **requires a reboot** to be effective.
+
+Example:
+
+```yaml
+---
+firmware:
+  brcm43455: raspios
+  brcm43430: supports-30_2018-09-28
+```
 
 ### `timezone`
 

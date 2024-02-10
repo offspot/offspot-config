@@ -14,6 +14,15 @@ RE_SSID = re.compile(r'^[^!#;+\]/"\t][^+\]/"\t]{0,31}$')
 RE_PASSPHRASE = re.compile(r"^[\u0020-\u007e]{8,63}$")  # Basic Latin
 RE_IFACE_NAME = re.compile(r"^[a-z][a-z0-9]+[0-9]+$")
 RE_COUNTRY_CODE = re.compile(r"[a-zA-Z]{2}")
+FIRMWARES = {  # chipset: firmwares list
+    "brcm43455": [
+        "raspios",
+        "supports-19_2021-11-30",
+        "supports-24_2021-10-05_noap+sta",
+        "supports-32_2015-03-01_unreliable",
+    ],
+    "brcm43430": ["raspios", "supports-30_2018-09-28"],
+}
 
 
 def port_in_range(range_or_port: str, expected: Union[str, int]) -> bool:
@@ -560,5 +569,18 @@ def is_valid_ap_config(
             return CheckResponse(
                 False, f"NoDHCPD-interfaces #{index}: {check.help_text}"
             )
+
+    return CheckResponse(True)
+
+
+def is_valid_firmware_for(chipset: str, firmware: str) -> CheckResponse:
+    """whether name represents a valid Timezone value"""
+    if chipset not in FIRMWARES.keys():
+        return CheckResponse(False, "Incorrect WiFi chipset “{chipset}”")
+
+    if firmware not in FIRMWARES[chipset]:
+        return CheckResponse(
+            False, "Incorrect firmware “{firmware}” for {chipset} chipset"
+        )
 
     return CheckResponse(True)
