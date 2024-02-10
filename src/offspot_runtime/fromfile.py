@@ -10,6 +10,7 @@ import pathlib
 import sys
 
 from offspot_runtime.__about__ import __version__
+from offspot_runtime.checks import FIRMWARES
 from offspot_runtime.configlib import (
     IPTABLES_DIR,
     SYSTEMCTL_PATH,
@@ -183,6 +184,20 @@ class Handlers:
         command += ["-"]
         return simple_run(command, stdin=payload)
 
+    @staticmethod
+    def config_firmware(item: dict) -> int:
+        if not isinstance(item, dict):
+            return 2
+
+        command = get_runtime_bin("firmware")
+        if Config.debug:
+            command += ["--debug"]
+        for key in FIRMWARES.keys():
+            if item.get(key):
+                command += [f"--{key}", item.get(key)]
+
+        return simple_run(command, failsafe=True)
+
 
 def restore_iptables():
     """restore *persistent* iptables rules using iptables-restore
@@ -226,11 +241,11 @@ def main(config_path) -> int:
         start_ap_stack()
         return 1
 
-    for key in ("timezone", "hostname", "ethernet", "ap", "containers"):
+    for key in ("firmware", "timezone", "hostname", "ethernet", "ap", "containers"):
         if config.get(key):
             logger.debug(f"[{key}] config change requested")
             returncode = getattr(Handlers, f"config_{key}")(config.get(key))
-            if returncode == 0:
+            if returncode in (0, 100):  # 100 is special code requesting reboot
                 logger.info(f"[{key}] configuration applied")
                 config.pop(key)
                 save_config(config_path, config)
@@ -240,6 +255,12 @@ def main(config_path) -> int:
                 else:
                     logger.critical(f"[{key}] error applying configuration.")
                 has_error = True
+            if returncode == 100:
+                logger.info(
+                    colored("Mandatory reboot requested. rebooting now.", "red")
+                )
+                simple_run(["/usr/sbin/shutdown", "-r", "now"])
+
         elif key == "ap":
             if start_ap_stack() != 0:
                 has_error = True

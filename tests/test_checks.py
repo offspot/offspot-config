@@ -11,6 +11,7 @@ from offspot_runtime.checks import (
     is_valid_dhcp_range,
     is_valid_domain,
     is_valid_ethernet_config,
+    is_valid_firmware_for,
     is_valid_hostname,
     is_valid_interface_name,
     is_valid_ipv4,
@@ -73,6 +74,30 @@ def test_timezones(timezone: str, should_pass: bool):
 )
 def test_hostnames(hostname: str, should_pass: bool):
     check = is_valid_hostname(hostname)
+    assert check.passed == should_pass
+
+
+@pytest.mark.parametrize(
+    "chipset, firmware, should_pass",
+    [
+        (1, "raspios", False),
+        ("", "raspios", False),
+        ("brcm43455", 1, False),
+        ("brcm43455", "", False),
+        ("brcm43455", "raspios", True),
+        ("brcm43455", "supports-19_2021-11-30", True),
+        ("brcm43455", "supports-24_2021-10-05_noap+sta", True),
+        ("brcm43455", "supports-32_2015-03-01_unreliable", True),
+        ("brcm43430", "raspios", True),
+        ("brcm43430", "supports-30_2018-09-28", True),
+        ("brcm43455", "supports-30_2018-09-28", False),
+        ("brcm43430", "supports-19_2021-11-30", False),
+        ("brcm43430", "supports-24_2021-10-05_noap+sta", False),
+        ("brcm43430", "supports-32_2015-03-01_unreliable", False),
+    ],
+)
+def test_firmwares(chipset: str, firmware: str, should_pass: bool):
+    check = is_valid_firmware_for(chipset=chipset, firmware=firmware)
     assert check.passed == should_pass
 
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [firmware] New `firmware` top level config for runtime to change WiFi firmware
+
 ### Fixed
 
 - [builder] Welcome FQDN properly set (goto.kiwix)

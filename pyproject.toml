@@ -71,6 +71,7 @@ offspot-runtime-config-hostname = "offspot_runtime.hostname:entrypoint"
 offspot-runtime-config-timezone = "offspot_runtime.timezone:entrypoint"
 offspot-runtime-config-fromfile = "offspot_runtime.fromfile:entrypoint"
 toggle-dnsmasq-spoof = "offspot_runtime.dnsmasqspoof:entrypoint"
+offspot-runtime-config-firmware = "offspot_runtime.firmware:entrypoint"
 
 [tool.hatch.version]
 path = "src/offspot_runtime/__about__.py"

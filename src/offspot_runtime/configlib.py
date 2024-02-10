@@ -75,7 +75,9 @@ def warn_unless_root():
         Config.logger.warning(f"you are not root! uid={os.getuid()}")
 
 
-def simple_run(command: list[str], stdin: Optional[str] = None):
+def simple_run(
+    command: list[str], stdin: Optional[str] = None, *, failsafe: bool = False
+):
     """returncode from running passed command, optionnaly passing str as stdin"""
     Config.logger.debug(f"{command=}")
     try:
@@ -91,7 +93,7 @@ def simple_run(command: list[str], stdin: Optional[str] = None):
         else:
             Config.logger.error(exc)
         return 1
-    if ps.returncode != 0:
+    if ps.returncode != 0 and not failsafe:
         Config.logger.error(f"{ps.args} failed with returncode {ps.returncode}")
         return 1
     return ps.returncode
