@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [zim] `to_ident()` and `from_ident()` functions to consistently work on idents
 - [zim] `ZimIdentTuple` type, returned by `from_ident()`
 
+### Changed
+
+- [packages] `ZimPackage.filename` now returns an ident-based one preventing conflicts on files with different flavours
 
 ## [1.10.1] - 2024-02-12
 

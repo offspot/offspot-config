@@ -4,6 +4,7 @@ import re
 import uuid
 
 from attrs import define, field
+from pathvalidate import sanitize_filename
 from typeguard import typechecked
 
 from offspot_config.constants import CONTENT_TARGET_PATH
@@ -86,7 +87,11 @@ class ZimPackage(Package):
 
     @property
     def filename(self):
-        return f"{self.url_path}.zim"
+        from offspot_config.zim import from_ident
+
+        info = from_ident(self.ident)
+        fname = sanitize_filename(f"{info.publisher}_{info.name}_{info.flavour}")
+        return f"{fname}.zim"
 
     @property
     def size(self) -> int:
