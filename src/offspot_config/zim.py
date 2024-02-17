@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 import re
+from typing import NamedTuple
 
 import requests
 import xmltodict
@@ -9,12 +10,29 @@ import xmltodict
 from offspot_config.packages import ZimPackage
 
 
+class ZimIdentTuple(NamedTuple):
+    publisher: str
+    name: str
+    flavour: str = ""
+
+
+def to_ident(publisher: str, name: str, flavour: str = "") -> str:
+    """An ident from required information"""
+    return f"{publisher}:{name}:{flavour}"
+
+
+def from_ident(ident: str) -> ZimIdentTuple:
+    """basic information from a ZIM ident"""
+    publisher, name, flavour = ident.split(":", 2)
+    return ZimIdentTuple(publisher=publisher, name=name, flavour=flavour)
+
+
 def get_zim_package(ident: str):
     """retrieve package from its ID
 
     works off a full copy of the official catalog"""
 
-    publisher, name, flavour = ident.split(":", 2)
+    publisher, name, flavour = from_ident(ident)
 
     catalog_url = "https://library.kiwix.org"
     resp = requests.get(
