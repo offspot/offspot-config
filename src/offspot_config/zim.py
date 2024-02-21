@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 import re
+import unicodedata
 from typing import NamedTuple
 
 import requests
@@ -76,3 +77,36 @@ def get_zim_package(ident: str):
         )
 
     raise OSError(f"Not Found: ZIM with ident {ident}")
+
+
+def get_libkiwix_humanid(filename: str) -> str:
+    """libkiwix HumanID from a ZIM filename
+
+    Equivalent to kiwix-serve “BookName” used in URLs and built from filename
+
+    Implemented from libkiwix@86100b39"""
+
+    def _remove_accents(text: str) -> str:
+        """unaccented version of text as in kiwix::removeAccents"""
+
+        # equivalent to ICU's Transliterator wkth "Lower; NFD; [:M:] remove; NFC"
+        return unicodedata.normalize(
+            "NFC",
+            "".join(
+                char
+                for char in unicodedata.normalize("NFD", text.lower())
+                if unicodedata.category(char) != "Mn"
+            ),
+        )
+
+    ident = _remove_accents(filename)
+
+    for replacement, pattern in [
+        ("", r"^.*/"),  # remove leading path (we may not need this)
+        ("", r"\.zim[a-z]*$"),  # remove suffix
+        ("_", r" "),  # replace space with underscope
+        ("plus", r"\+"),  # replace + with literal plus
+    ]:
+        ident = re.sub(pattern, replacement, ident)
+
+    return ident

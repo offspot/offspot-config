@@ -100,7 +100,10 @@ class ZimPackage(Package):
     def get_url(
         self, fqdn: str, kiwix_domain: str | None = "kiwix", **kwargs  # noqa: ARG002
     ) -> str:
-        return f"//{kiwix_domain}.{fqdn}/viewer#{self.url_path}"
+        # this assumes that the ZIM is stored using self.filename
+        from offspot_config.zim import get_libkiwix_humanid
+
+        return f"//{kiwix_domain}.{fqdn}/viewer#{get_libkiwix_humanid(self.filename)}"
 
     def get_download_url(self, download_fqdn: str) -> str:
         return f"//{download_fqdn}/{self.filename}"
