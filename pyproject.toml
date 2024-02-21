@@ -236,11 +236,11 @@ testpaths = ["tests"]
 pythonpath = [".", "src"]
 
 [tool.coverage.paths]
-great_project = ["src/offspot_config", "src/offspot_runtime"]
+offspot_config = ["src/offspot_config", "src/offspot_runtime"]
 tests = ["tests"]
 
 [tool.coverage.run]
-source_pkgs = ["offspot_runtime"]
+source_pkgs = ["offspot_runtime", "offspot_config"]
 branch = true
 parallel = true
 omit = [
