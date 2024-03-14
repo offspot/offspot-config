@@ -303,8 +303,8 @@
             "${APP_DIR}:/var/www/magoe"
         ],
         "icon_url": "https://drive.offspot.it/magoe/magoe.png",
-        "download_url": "https://drive.offspot.it/magoe/magoe_fr_app_2023-12.zip",
-        "download_size": 301348117,
+        "download_url": "https://drive.offspot.it/magoe/magoe_fr_app_2024-03.zip",
+        "download_size": 295323137,
         "download_via": "zip"
     },
     {
