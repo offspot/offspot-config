@@ -9,6 +9,7 @@ from offspot_config.constants import CONTENT_TARGET_PATH
 from offspot_config.inputs import BaseConfig, BlockStr, FileConfig
 from offspot_config.oci_images import OCIImage
 from offspot_config.packages import AppPackage, FilesPackage, ZimPackage
+from offspot_config.utils.dashboard import Link, Reader
 from offspot_config.utils.sizes import (
     get_margin_for,
     get_min_image_size_for,
@@ -27,6 +28,7 @@ DASHBOARD_CONFIG_PATH = CONTENT_TARGET_PATH / "dashboard.yaml"
 # on-host metrics persistent data folder
 METRICS_DATA_PATH = CONTENT_TARGET_PATH / "metrics"
 # on-host metrics transient (tmpfs) log folders (caddy-created)
+KIWIXSERVE_DATA_PATH = CONTENT_TARGET_PATH / "zims"
 METRICS_VAR_LOG_PATH_HOST = Path("/var/log/metrics")
 METRICS_VAR_LOG_PATH_CONT = Path("/var/log/host/metrics")
 KIWIX_ZIM_LOAD_BALANCER_URL = "https://download.kiwix.org/zim/"
@@ -126,6 +128,10 @@ class ConfigBuilder:
         self.kiwix_zim_mirror = kiwix_zim_mirror
         # whether dashboard will offer downloads for ZIM files
         self.dashboard_offers_zim_downloads = True
+        # list of reader entries to include in dashboard config
+        self.dashboard_readers: list[Reader] = []
+        # list of arbitrary links to display in dashboard
+        self.dashboard_links: list[Link] = []
         # every card the dashboard will display
         self.dashboard_entries = []
 
@@ -176,12 +182,35 @@ class ConfigBuilder:
                 is_url=False,
             )
 
-    def add_dashboard(self, *, allow_zim_downloads: bool | None = False):
-        self.dashboard_offers_zim_downloads = allow_zim_downloads
+    def add_dashboard(
+        self,
+        *,
+        allow_zim_downloads: bool | None = None,
+        readers: list[Reader] | None = None,
+        links: list[Link] | None = None,
+    ):
+        # only override options if set to a value (might have been set before)
+        if allow_zim_downloads is not None:
+            self.dashboard_offers_zim_downloads = allow_zim_downloads
+        if readers is not None:
+            self.dashboard_readers = readers
+        if links is not None:
+            self.dashboard_links = links
+
         if self.with_dashboard:
             return
 
         self.with_dashboard = True
+
+        # Add files for requested readers
+        for reader in self.dashboard_readers:
+            self.add_file(
+                url_or_content=reader.download_url,
+                to=str(KIWIXSERVE_DATA_PATH / reader.filename),
+                via="direct",
+                size=reader.size,
+                is_url=True,
+            )
 
         image = get_internal_image("dashboard")
         self.config["oci_images"].add(image)
@@ -219,7 +248,7 @@ class ConfigBuilder:
         }
 
         # add placeholder file to host fs to ensure bind succeeds
-        self.ensure_host_path(CONTENT_TARGET_PATH / "zims")
+        self.ensure_host_path(KIWIXSERVE_DATA_PATH)
 
     def gen_dashboard_config(self):
         """Generate and add YAML config file for dashboard, based on entries"""
@@ -236,6 +265,18 @@ class ConfigBuilder:
                 for package in self.dashboard_entries
             ],
         }
+
+        if self.dashboard_readers:
+            payload["readers"] = [
+                reader.to_dict()
+                for reader in sorted(self.dashboard_readers, key=Reader.sort)
+            ]
+
+        if self.dashboard_links:
+            payload["links"] = [link.to_dict() for link in self.dashboard_links]
+            # resolve variables in link (for FQDN mostly)
+            for link in payload["links"]:
+                link["url"] = self.resolved_variable(text=link["url"])
 
         yaml_str = yaml_dump(payload)
         self.add_file(
@@ -448,7 +489,7 @@ class ConfigBuilder:
 
         self.add_file(
             url_or_content=zim.download_url,
-            to=str(CONTENT_TARGET_PATH / "zims" / zim.filename),
+            to=str(KIWIXSERVE_DATA_PATH / zim.filename),
             via="direct",
             size=zim.download_size,
             is_url=True,
@@ -484,7 +525,7 @@ class ConfigBuilder:
         }
 
         # add placeholder file to host fs to ensure bind succeeds
-        self.ensure_host_path(CONTENT_TARGET_PATH / "zims")
+        self.ensure_host_path(KIWIXSERVE_DATA_PATH)
 
         if self.dashboard_offers_zim_downloads:
             self.add_files_service()
@@ -705,23 +746,26 @@ class ConfigBuilder:
             )
         )
 
-    def resolved_variable(self, text: str, package: AppPackage) -> str:
+    def resolved_variable(self, text: str, package: AppPackage | None = None) -> str:
         """dynamic-variables resolved string"""
-        app_dir = get_app_path(package=package)
 
         # replace $environ{XXX} mappings
         match = RE_ENVIRON_VAR.search(text)
         if match:
             repl = self.environ[match.groupdict()["var"]]
             text = RE_ENVIRON_VAR.sub(repl, text)
-        return (
-            text.replace("${APP_DIR}", app_dir)
-            .replace("${FQDN}", self.fqdn)
-            .replace("${PACKAGE_IDENT}", package.ident)
-            .replace("${PACKAGE_DOMAIN}", package.domain)
-            .replace("${PACKAGE_FQDN}", f"{package.domain}.{self.fqdn}")
-            .replace("${REVERSE_NAME}", "reverse-proxy")
+        resolved = text.replace("${FQDN}", self.fqdn).replace(
+            "${REVERSE_NAME}", "reverse-proxy"
         )
+        if package:
+            app_dir = get_app_path(package=package)
+            resolved = (
+                resolved.replace("${APP_DIR}", app_dir)
+                .replace("${PACKAGE_IDENT}", package.ident)
+                .replace("${PACKAGE_DOMAIN}", package.domain)
+                .replace("${PACKAGE_FQDN}", f"{package.domain}.{self.fqdn}")
+            )
+        return resolved
 
     def get_resolved_host_path(self, package: AppPackage, host_path: str) -> str:
         """dynamic-variables resolved host path for package"""

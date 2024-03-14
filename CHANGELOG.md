@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- [utils.dashboard] Reader struct to ease passing `readers` to dashboard YAML
+- [utils.dashboard] Link struct to ease passing `links` to dashboard YAML
+- [builder] `add_dashboard()` param: `readers` to automatically add and offer Kiwix readers in dashboard (1.4+)
+- [builder] `add_dashboard()` param: `links` to add arbitrary links to dashboard (1.4+)
+
+## Changed
+
+- [builder] `resolved_variable()` can now be used without a Package
+
 ## [1.12.2] - 2024-03-14
 
 ### Fixed
