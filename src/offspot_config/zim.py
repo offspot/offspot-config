@@ -8,7 +8,9 @@ from typing import NamedTuple
 import requests
 import xmltodict
 
+from offspot_config.inputs import Checksum
 from offspot_config.packages import ZimPackage
+from offspot_config.utils.download import read_checksum_from
 
 
 class ZimIdentTuple(NamedTuple):
@@ -59,6 +61,7 @@ def get_zim_package(ident: str):
         version = datetime.datetime.fromisoformat(
             re.sub(r"[A-Z]$", "", entry["updated"])
         ).strftime("%Y-%m-%d")
+        url = re.sub(r".meta4$", "", links["application/x-zim"]["@href"])
 
         return ZimPackage(
             kind="zim",
@@ -70,7 +73,10 @@ def get_zim_package(ident: str):
             tags=entry["tags"].split(";"),
             flavour=flavour,
             download_size=int(links["application/x-zim"]["@length"]),
-            download_url=re.sub(r".meta4$", "", links["application/x-zim"]["@href"]),
+            download_url=url,
+            download_checksum=Checksum(
+                algo="md5", value=read_checksum_from(f"{url}.md5")
+            ),
             icon_url=catalog_url
             + links["image/png;width=48;height=48;scale=1"]["@href"],
             version=version,

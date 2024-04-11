@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import base64
+import io
 
 import requests
 import requests.adapters
 from urllib3.util.retry import Retry
+
+from offspot_config.constants import MAX_DIRECT_ONLINE_RESOURCE_PAYLOAD_SIZE
 
 session = requests.Session()
 # basic urllib retry mechanism.
@@ -56,6 +59,67 @@ def get_online_rsc_size(url: str) -> int:
 
 def get_base64_from(url: str) -> str:
     try:
-        return base64.b64encode(session.get(url).content).decode("ASCII")
+        return base64.b64encode(get_payload_from(url)).decode("ASCII")
     except Exception:
         return ""
+
+
+def get_payload_from(
+    url: str, no_more_than: int = MAX_DIRECT_ONLINE_RESOURCE_PAYLOAD_SIZE
+) -> bytes:
+    """Retrieved content from an URL
+
+    Limited in order to prevent download bomb.
+
+    Parameters:
+        url: URL to retrieve payload from (follows redirects)
+        no_more_than: number of bytes to consider too much and fail at
+
+    Raises:
+        OSError: Should declared or retrieved size exceed no_more_than
+        RequestException: HTTP or other error in requests
+        ConnectionError: connection issues
+        Timeout: ReadTimeout or request timeout"""
+    size = get_online_rsc_size(url)
+    if no_more_than and size > no_more_than:
+        raise OSError(f"URL content is larger than {no_more_than!s}")
+
+    resp = session.get(url, stream=True, allow_redirects=True, timeout=60)
+    resp.raise_for_status()
+    downloaded = 0
+    payload = io.BytesIO()
+    for data in resp.iter_content(2**30):
+        downloaded += len(data)
+        if no_more_than and downloaded > no_more_than:
+            raise OSError(f"URL content is larger than {no_more_than!s}")
+        payload.write(data)
+    payload.seek(0)
+    return payload.getvalue()
+
+
+def read_checksum_from(url: str) -> str:
+    """checksum from mirrorbrain-like (or raw) digest URL
+
+        Format can be the raw digest or digest and filename:
+            9e92449ce93115e8d85e29e8e584dece  wikipedia_ab_all_maxi_2024-02.zim
+
+    Parameters:
+        url: URL to read from. eg: download.kiwix.org/x/y/z.zim.sha1
+
+    Raises:
+        OSError: Should declared or retrieved size exceed no_more_than
+        RequestException: HTTP or other error in requests
+        ConnectionError: connection issues
+        Timeout: ReadTimeout or request timeout
+        UnicodeDecodeError: content cannot be decoded into ASCII
+        UnicodeEncodeError: content  cannot be encoded into UTF-8
+        IndexError: content is empty or malformed
+    """
+    return (
+        get_payload_from(url, no_more_than=2 * 2**10)
+        .decode("UTF-8")
+        .strip()
+        .split(maxsplit=1)[0]
+        .encode("UTF-8")
+        .decode("ASCII")
+    )

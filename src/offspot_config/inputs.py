@@ -6,9 +6,10 @@ from typing import Any
 from attrs import asdict, define, field
 from typeguard import typechecked
 
-from offspot_config.constants import DATA_PART_PATH
+from offspot_config.constants import DATA_PART_PATH, SUPPORTED_CHECKSUM_ALGORITHMS
 from offspot_config.file import File
 from offspot_config.oci_images import OCIImage
+from offspot_config.utils.download import read_checksum_from
 from offspot_config.utils.misc import is_list_of_dict, parse_size
 from offspot_config.utils.yaml import custom_yaml_repr, yaml_load
 
@@ -54,6 +55,43 @@ class OCIImageConfig:
     fullsize: int
 
 
+@typechecked
+@define(kw_only=True)
+class Checksum:
+    """Checksum for download validation
+
+    kind is either `digest` (default) or `url` to use the special async mode.
+
+    In this async mode, the digest is unknown until calling `.digest` which
+    resolves it by querying the URL stored in `value`.
+    This allows adding files for which checksum is unknown but the web-server
+    is known to provide it and is trustable (transfer validation only)"""
+
+    algo: str
+    value: str
+    kind: str = "digest"
+
+    def __attrs_post_init__(self):
+        if self.algo not in SUPPORTED_CHECKSUM_ALGORITHMS:
+            raise ValueError(
+                f"Unsupported checksum algorith: {self.algo}. "
+                f"Supported: {','.join(SUPPORTED_CHECKSUM_ALGORITHMS)}"
+            )
+
+        if self.kind not in ("digest", "url"):
+            raise ValueError(
+                f"Unsupported `kind`: {self.kind}. "
+                "Suported: `digest` (default) or `url`"
+            )
+
+    @property
+    def digest(self) -> str:
+        if self.kind == "url":
+            self.value = read_checksum_from(self.value)
+            self.kind = "digest"
+        return self.value
+
+
 @custom_yaml_repr
 @typechecked
 @define(kw_only=True)
@@ -63,6 +101,7 @@ class FileConfig:
     content: BlockStr | None = None
     via: str | None = "direct"
     size: str | int | None = -1
+    checksum: Checksum | None = None
 
     def __attrs_post_init__(self):
         if self.via not in WAYS:

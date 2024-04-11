@@ -6,6 +6,17 @@ import shutil
 DATA_PART_PATH: pathlib.Path = pathlib.Path("/data")
 CONTENT_TARGET_PATH: pathlib.Path = DATA_PART_PATH / "contents"
 SUPPORTED_UNPACKING_FORMATS: list[str] = [f[0] for f in shutil.get_unpack_formats()]
+# based on aria2c v1.37.0 static binary
+SUPPORTED_CHECKSUM_ALGORITHMS: list[str] = [
+    "sha-1",
+    "sha-224",
+    "sha-256",
+    "sha-384",
+    "sha-512",
+    "md5",
+    "adler32",
+]
+MAX_DIRECT_ONLINE_RESOURCE_PAYLOAD_SIZE: int = 4 * 2**20  # 4MiB
 POST_EXPANSION_UNWANTED_PATTERNS = (
     ### Linux ###
     "*~",

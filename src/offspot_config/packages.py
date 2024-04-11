@@ -8,7 +8,7 @@ from pathvalidate import sanitize_filename
 from typeguard import typechecked
 
 from offspot_config.constants import CONTENT_TARGET_PATH
-from offspot_config.inputs import FileConfig
+from offspot_config.inputs import Checksum, FileConfig
 from offspot_config.oci_images import OCIImage
 from offspot_config.utils.download import get_base64_from
 
@@ -44,6 +44,9 @@ class Package:
     def get_download_size(self) -> int | None:
         return None
 
+    def get_download_checksum(self) -> Checksum | None:
+        return None
+
     def to_dashboard_entry(self, fqdn: str, download_fqdn: str | None):
         entry = {
             "ident": self.ident,
@@ -56,14 +59,15 @@ class Package:
             "icon": get_base64_from(self.icon_url) if self.icon_url else "",
         }
         if self.get_download_url(str(download_fqdn)) and self.get_download_size():
-            entry.update(
-                {
-                    "download": {
-                        "url": self.get_download_url(str(download_fqdn)),
-                        "size": self.get_download_size(),
-                    }
+            download = {
+                "download": {
+                    "url": self.get_download_url(str(download_fqdn)),
+                    "size": self.get_download_size(),
                 }
-            )
+            }
+            if self.get_download_checksum():
+                download["download"]["checksum"] = self.get_download_checksum()
+            entry.update(download)
         return entry
 
 
@@ -72,6 +76,7 @@ class Package:
 class ZimPackage(Package):
     kind: str = "zim"
     domain: str = "kiwix"
+    download_checksum: Checksum | None = None
 
     ident: str
     name: str
@@ -111,6 +116,9 @@ class ZimPackage(Package):
     def get_download_size(self) -> int:
         return self.download_size
 
+    def get_download_checksum(self) -> Checksum | None:
+        return self.download_checksum
+
 
 @typechecked
 @define(kw_only=True)
@@ -121,6 +129,7 @@ class AppPackage(Package):
     image_fullsize: int
     download_url: str | None = None
     download_size: int | None = None
+    download_checksum: Checksum | None = None
     download_to: str | None = None
     download_via: str | None = "direct"
     # map of global:local environ to pass from config to container
@@ -172,7 +181,14 @@ class AppPackage(Package):
             url=self.download_url,
             via=self.download_via,
             size=self.download_size,
+            checksum=self.download_checksum,
         )
+
+    def get_download_size(self) -> int:
+        return self.download_size or 0
+
+    def get_download_checksum(self) -> Checksum | None:
+        return self.download_checksum
 
 
 @typechecked
@@ -182,6 +198,7 @@ class FilesPackage(Package):
     via: str
     download_url: str
     download_size: int | None = None
+    download_checksum: Checksum | None = None
     target: str | None = None
 
     @property
@@ -202,4 +219,11 @@ class FilesPackage(Package):
             content=None,
             via=self.via,
             size=self.download_size,
+            checksum=self.download_checksum,
         )
+
+    def get_download_size(self) -> int:
+        return self.size
+
+    def get_download_checksum(self) -> Checksum | None:
+        return self.download_checksum

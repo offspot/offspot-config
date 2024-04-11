@@ -3,13 +3,15 @@ from __future__ import annotations
 import re
 from pathlib import PurePath as Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from offspot_config.catalog import app_catalog, get_app_path
 from offspot_config.constants import CONTENT_TARGET_PATH
-from offspot_config.inputs import BaseConfig, BlockStr, FileConfig
+from offspot_config.inputs import BaseConfig, BlockStr, Checksum, FileConfig
 from offspot_config.oci_images import OCIImage
 from offspot_config.packages import AppPackage, FilesPackage, ZimPackage
 from offspot_config.utils.dashboard import Link, Reader
+from offspot_config.utils.download import read_checksum_from
 from offspot_config.utils.sizes import (
     get_margin_for,
     get_min_image_size_for,
@@ -204,11 +206,23 @@ class ConfigBuilder:
 
         # Add files for requested readers
         for reader in self.dashboard_readers:
+            checksum = None
+            # download.kiwix.org is known to provide digests via mirrorbrain
+            if urlsplit(reader.download_url).netloc == "download.kiwix.org":
+                try:
+                    checksum = Checksum(
+                        algo="md5",
+                        value=read_checksum_from(f"{reader.download_url}.md5"),
+                    )
+                # we cant assume this this work forever
+                except Exception:
+                    ...
             self.add_file(
                 url_or_content=reader.download_url,
                 to=str(KIWIXSERVE_DATA_PATH / reader.filename),
                 via="direct",
                 size=reader.size,
+                checksum=checksum,
                 is_url=True,
             )
 
@@ -492,6 +506,7 @@ class ConfigBuilder:
             to=str(KIWIXSERVE_DATA_PATH / zim.filename),
             via="direct",
             size=zim.download_size,
+            checksum=zim.download_checksum,
             is_url=True,
         )
 
@@ -726,6 +741,7 @@ class ConfigBuilder:
         via: str,
         size: int,
         is_url: bool | None = True,
+        checksum: Checksum | None = None,
     ):
         # @to param can reference a specific package's home
         app_dir_match = RE_SPECIFIC_APP_DIR.match(to)
@@ -742,6 +758,7 @@ class ConfigBuilder:
                     "to": to,
                     "via": via,
                     "size": size,
+                    "checksum": checksum,
                 }
             )
         )

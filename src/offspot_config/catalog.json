@@ -35,6 +35,10 @@
         "download_url": "https://drive.offspot.it/wikifundi/fr_2021-12.tar",
         "download_via": "tar",
         "download_size": 4723138560,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "9532683142885b67c305b16ad8b5dccd"
+        },
         "environ_map": {
             "ADMIN_PASSWORD": "MEDIAWIKI_ADMIN_PASSWORD"
         },
@@ -75,6 +79,10 @@
         "download_url": "https://drive.offspot.it/wikifundi/en_2021-12.tar",
         "download_via": "tar",
         "download_size": 5477140480,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "ddfa210ea602e06500b684cbe19e27ec"
+        },
         "environ_map": {
             "ADMIN_PASSWORD": "MEDIAWIKI_ADMIN_PASSWORD"
         },
@@ -115,6 +123,10 @@
         "download_url": "https://drive.offspot.it/wikifundi/es_2021-12.tar",
         "download_via": "tar",
         "download_size": 5842176000,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "44e0894ef16fb04ec4b0feb3c7ea3db8"
+        },
         "environ_map": {
             "ADMIN_PASSWORD": "MEDIAWIKI_ADMIN_PASSWORD"
         },
@@ -179,6 +191,10 @@
         "icon_url": "https://drive.offspot.it/nomad/nomad_logo.png",
         "download_url": "https://drive.offspot.it/nomad/nomadeducation_fr_android_2023-11.zip",
         "download_size": 151606771,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "0a5b3814ef7ab67b5de906495989fa59"
+        },
         "via": "zip"
     },
     {
@@ -196,6 +212,10 @@
         "icon_url": "https://drive.offspot.it/mathews/mathmathews_logo.png",
         "download_url": "https://drive.offspot.it/mathews/mathmathews_fr_android_1.6.zip",
         "download_size": 35710192,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "12e4912c44b28e085f6292083c18dc2e"
+        },
         "via": "zip"
     },
     {
@@ -214,6 +234,10 @@
         "icon_url": "https://drive.offspot.it/africatik/africatik_logo.png",
         "download_url": "https://drive.offspot.it/africatik/africatik_fr_ecoles-numeriques_2023-02.zip",
         "download_size": 13906969131,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "0055097bf4768b7e295c167265023b9c"
+        },
         "via": "zip"
     },
     {
@@ -232,6 +256,10 @@
         "icon_url": "https://drive.offspot.it/africatik/africatik_logo.png",
         "download_url": "https://drive.offspot.it/africatik/africatik_fr_maisons-digitales_2023-02.zip",
         "download_size": 4394410977,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "d89d79979209247b7ecf8eb3f11eccde"
+        },
         "via": "zip"
     },
     {
@@ -249,6 +277,10 @@
         "icon_url": "https://drive.offspot.it/fizziq/fizziq-junior.png",
         "download_url": "https://drive.offspot.it/fizziq/fizziq_fr_junior_2023-03.zip",
         "download_size": 128724719,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "4e528e12576f6d365425306e5d318f32"
+        },
         "via": "zip"
     },
     {
@@ -264,6 +296,10 @@
         "icon_url": "https://drive.offspot.it/eleda/icon_zim.png",
         "download_url": "https://drive.offspot.it/eleda/eleda_fr_fo-offline_2023-10.zip",
         "download_size": 83684857,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "c8ad28bfd8e5a0005ad128c9d09dd5c6"
+        },
         "via": "zip"
     },
     {
@@ -281,6 +317,10 @@
         "icon_url": "https://drive.offspot.it/eleda/icon_zim.png",
         "download_url": "https://drive.offspot.it/eleda/eleda_fr_android_2023-10.zip",
         "download_size": 49364213,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "4e5e6761f61d71d0b728c0a967d7ca08"
+        },
         "via": "zip"
     },
     {
@@ -305,6 +345,10 @@
         "icon_url": "https://drive.offspot.it/magoe/magoe.png",
         "download_url": "https://drive.offspot.it/magoe/magoe_fr_app_2024-03.zip",
         "download_size": 295323137,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "0ec2d9b9c2f61eb22247ceb935124923"
+        },
         "download_via": "zip"
     },
     {
@@ -322,6 +366,10 @@
         "icon_url": "https://drive.offspot.it/f-droid/com.kylecorry.trail_sense.png",
         "download_url": "https://drive.offspot.it/f-droid/com.kylecorry.trail_sense_111.zip",
         "download_size": 7171835,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "8e7a3e22750789e8a70615a9d74686ee"
+        },
         "via": "zip"
     },
     {
@@ -339,6 +387,10 @@
         "icon_url": "https://drive.offspot.it/f-droid/org.ligi.survivalmanual.png",
         "download_url": "https://drive.offspot.it/f-droid/org.ligi.survivalmanual_428.zip",
         "download_size": 5528415,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "620510a857da1655b931081c2f85e33a"
+        },
         "via": "zip"
     },
     {
@@ -356,6 +408,10 @@
         "icon_url": "https://drive.offspot.it/f-droid/org.hlwd.bible_multi_the_life.png",
         "download_url": "https://drive.offspot.it/f-droid/org.hlwd.bible_multi_the_life_20230823.zip",
         "download_size": 59891151,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "b1a1e31076651b212b6b08f7cd897e07"
+        },
         "via": "zip"
     }
 ]

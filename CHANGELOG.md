@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- [utils.download] `get_payload_from` to retrieve small bit of data from a URL
+- [utils.download] `read_checksum_from` to retrieve digest-looking string from a URL
+- [inputs] `Checksum` type that describe a checksum with its algo (several supported) and includes mechanism for later-resolution via URL URL retrieval
+- [inputs] Packages (Files, App, Zim) gets an optional `download_checksum` param that is passed to FileConfig
+- [builder] Readers get an automatically fetched checksum if URL is on download.kiwix.org
+- [builder] `add_file()` takes an optional `checksum` param
+
+### Changed
+
+- [catalog] All Catalog entries now have download_checksum if applicable
+- [zim] `get_zim_package` now includes a live-fetched MD5 checksum
+
+
 ## [1.13.0] - 2024-04-01
 
 ### Added
