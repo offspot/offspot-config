@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- [inputs.file] File now includes a `checksum` property (optional)
+- [inputs.checksum] Checksum now includes an `as_aria` property (`algo=digest` formatted string)
+
+### Changed
+
+- [inputs] API refactored into an empty `inputs` module with many sub-modules (breaking change)
+
 ## [1.14.0] - 2024-04-11
 
 ### Added

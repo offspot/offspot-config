@@ -4,6 +4,7 @@ import pathlib
 import urllib.parse
 
 from offspot_config.constants import DATA_PART_PATH, SUPPORTED_UNPACKING_FORMATS
+from offspot_config.inputs.checksum import Checksum
 from offspot_config.utils.download import get_online_rsc_size
 from offspot_config.utils.misc import get_filesize
 
@@ -29,7 +30,7 @@ class File:
 
     unpack_formats: list[str]
 
-    def __init__(self, payload: dict[str, str | int]):
+    def __init__(self, payload: dict[str, str | int | dict[str, str]]):
         self.unpack_formats = ["direct", *SUPPORTED_UNPACKING_FORMATS]
         self.url: urllib.parse.ParseResult | None = None
         self.content: str = str(payload.get("content", "") or "").strip()
@@ -48,11 +49,18 @@ class File:
         if self.via not in self.unpack_formats:
             raise NotImplementedError(f"Unsupported handler `{self.via}`")
 
+        # optional checksum
+        self.checksum = None
+        if "checksum" in payload and isinstance(payload["checksum"], dict):
+            self.checksum = Checksum(**payload["checksum"])
+
         # initialized has unknown
-        self._size: int = int(payload.get("size", -1))
-        self._fullsize: int | None = (
-            int(payload["fullsize"]) if "fullsize" in payload else None
-        )
+        self._size = -1
+        if "size" in payload and isinstance(payload["size"], (int, str)):
+            self._size: int = int(payload["size"])
+        self._fullsize: int | None = None
+        if "fullsize" in payload and isinstance(payload["fullsize"], (int, str)):
+            self._fullsize = int(payload["fullsize"])
 
     @property
     def source(self) -> str:  # Item interface

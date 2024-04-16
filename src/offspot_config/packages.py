@@ -8,7 +8,8 @@ from pathvalidate import sanitize_filename
 from typeguard import typechecked
 
 from offspot_config.constants import CONTENT_TARGET_PATH
-from offspot_config.inputs import Checksum, FileConfig
+from offspot_config.inputs.checksum import Checksum
+from offspot_config.inputs.file import FileConfig
 from offspot_config.oci_images import OCIImage
 from offspot_config.utils.download import get_base64_from
 
