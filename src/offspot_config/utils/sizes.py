@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 
 from offspot_config.file import File
-from offspot_config.inputs import MainConfig
+from offspot_config.inputs.mainconfig import MainConfig
 from offspot_config.oci_images import OCIImage
 
 ONE_GB = int(1e9)

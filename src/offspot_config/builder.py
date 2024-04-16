@@ -7,7 +7,10 @@ from urllib.parse import urlsplit
 
 from offspot_config.catalog import app_catalog, get_app_path
 from offspot_config.constants import CONTENT_TARGET_PATH
-from offspot_config.inputs import BaseConfig, BlockStr, Checksum, FileConfig
+from offspot_config.inputs.base import BaseConfig
+from offspot_config.inputs.checksum import Checksum
+from offspot_config.inputs.file import FileConfig
+from offspot_config.inputs.str import BlockStr
 from offspot_config.oci_images import OCIImage
 from offspot_config.packages import AppPackage, FilesPackage, ZimPackage
 from offspot_config.utils.dashboard import Link, Reader

@@ -8,7 +8,7 @@ from typing import NamedTuple
 import requests
 import xmltodict
 
-from offspot_config.inputs import Checksum
+from offspot_config.inputs.checksum import Checksum
 from offspot_config.packages import ZimPackage
 from offspot_config.utils.download import read_checksum_from
 
