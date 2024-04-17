@@ -33,7 +33,12 @@ class File:
     def __init__(self, payload: dict[str, str | int | dict[str, str]]):
         self.unpack_formats = ["direct", *SUPPORTED_UNPACKING_FORMATS]
         self.url: urllib.parse.ParseResult | None = None
+        self.to: pathlib.Path = pathlib.Path(str(payload["to"])).resolve()
+        self.via: str = str(payload.get("via", "direct"))
         self.content: str = str(payload.get("content", "") or "").strip()
+        self.checksum: Checksum | None = None
+        self._size = -1
+        self._fullsize: int | None = None
 
         if not self.content:
             try:
@@ -41,24 +46,19 @@ class File:
             except Exception as exc:
                 raise ValueError(f"URL “{payload.get('url')}” is incorrect") from exc
 
-        self.to: pathlib.Path = pathlib.Path(str(payload["to"])).resolve()
         if not self.to.is_relative_to(DATA_PART_PATH):
             raise ValueError(f"{self.to} not a descendent of {DATA_PART_PATH}")
 
-        self.via: str = str(payload.get("via", "direct"))
         if self.via not in self.unpack_formats:
             raise NotImplementedError(f"Unsupported handler `{self.via}`")
 
         # optional checksum
-        self.checksum = None
         if "checksum" in payload and isinstance(payload["checksum"], dict):
             self.checksum = Checksum(**payload["checksum"])
 
-        # initialized has unknown
-        self._size = -1
+        # initialized as unknown
         if "size" in payload and isinstance(payload["size"], (int, str)):
             self._size: int = int(payload["size"])
-        self._fullsize: int | None = None
         if "fullsize" in payload and isinstance(payload["fullsize"], (int, str)):
             self._fullsize = int(payload["fullsize"])
 
