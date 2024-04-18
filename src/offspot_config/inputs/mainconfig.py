@@ -35,7 +35,7 @@ class MainConfig:
             self.base = BaseConfig(**self.base)
 
         if isinstance(self.base.source, str):
-            self.base_file = get_base_from(self.base.source)
+            self.base_file = get_base_from(self.base)
 
         if isinstance(self.output, dict):
             self.output = OutputConfig(**self.output)

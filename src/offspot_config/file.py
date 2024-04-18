@@ -124,7 +124,9 @@ class File:
             msg += f", url={self.geturl()}"
         if self.content:
             msg += f", content={self.content.splitlines()[0][:10]}"
-        msg += f", size={self.size})"
+        msg += f", size={self.size}"
+        msg += f", checksum={self.checksum.as_aria if self.checksum else None}"
+        msg += ")"
         return msg
 
     def __str__(self) -> str:

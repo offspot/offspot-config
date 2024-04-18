@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [builder] Removed useless download.kiwix.org special behavior for reader checksum. Checksum now on Reader
 - [inputs.base] Version-only base image def now targets uncompressed URL
+- [inputs.base] BaseConfig gets an optional `checksum` and populates base_file accordingly
+- [inputs.base] Version-only base image def now also retrieves Checksum via expected .md5 endpoint
 
 ## [2.0.0] - 2024-04-16
 

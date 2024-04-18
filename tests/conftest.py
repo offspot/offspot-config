@@ -1,7 +1,7 @@
 import pytest  # pyright: ignore [reportMissingImports]
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def mini_config_yaml():
     yield """
 ---
