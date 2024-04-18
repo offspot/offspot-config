@@ -15,7 +15,7 @@ def get_base_from(url: str) -> File:
     match = re.match(r"^(?P<version>\d\.\d\.\d)(?P<extra>[a-z0-9\-\.\_]*)", url)
     if match:
         version = "".join(match.groups())
-        url = f"https://drive.offspot.it/base/offspot-base-arm64-{version}.img.xz"
+        url = f"https://drive.offspot.it/base/offspot-base-arm64-{version}.img"
     return File({"url": url, "to": str(DATA_PART_PATH / "-")})
 
 
