@@ -4,6 +4,7 @@ import pathlib
 import urllib.parse
 from typing import NamedTuple, TypeVar
 
+from offspot_config.inputs.checksum import Checksum
 from offspot_config.utils.download import get_online_rsc_size
 
 R = TypeVar("R", bound="Reader")
@@ -19,9 +20,15 @@ class Reader(NamedTuple):
     download_url: str
     filename: str
     size: int
+    checksum: Checksum | None = None
 
     def to_dict(self) -> dict[str, str | int]:
-        return {field: getattr(self, field) for field in self._fields}
+        def value_or_dict(value):
+            if hasattr(value, "to_dict"):
+                return value.to_dict()
+            return value
+
+        return {field: value_or_dict(getattr(self, field)) for field in self._fields}
 
     @property
     def order(self) -> int:
@@ -31,13 +38,16 @@ class Reader(NamedTuple):
         )
 
     @classmethod
-    def using(cls: type[R], platform: str, download_url: str) -> R:
+    def using(
+        cls: type[R], platform: str, download_url: str, checksum: Checksum | None = None
+    ) -> R:
         """Reader from a platform name and download URL"""
         return cls(
             platform=platform,
             download_url=download_url,
             size=get_online_rsc_size(download_url),
             filename=cls.filename_from_url(download_url),
+            checksum=checksum,
         )
 
     @staticmethod

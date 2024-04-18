@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from attrs import define
+from attrs import asdict, define
 from typeguard import typechecked
 
 from offspot_config.constants import SUPPORTED_CHECKSUM_ALGORITHMS
@@ -47,3 +47,6 @@ class Checksum:
     def as_aria(self) -> str:
         """aria2-compatible checksum format: {algo}={digest}"""
         return f"{self.algo}={self.digest}"
+
+    def to_dict(self) -> dict[str, str]:
+        return asdict(self)
