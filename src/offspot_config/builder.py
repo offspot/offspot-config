@@ -59,9 +59,9 @@ INTERNAL_IMAGES = {
         "fullsize": 58922600,
     },
     "kiwix-serve": {
-        "source": "ghcr.io/offspot/kiwix-serve:3.6.0",
-        "filesize": 62351360,
-        "fullsize": 62313418,
+        "source": "ghcr.io/offspot/kiwix-serve:3.7.0-1",
+        "filesize": 58480640,
+        "fullsize": 58443713,
     },
     "metrics": {
         "source": "ghcr.io/offspot/metrics:0.3.0",
@@ -69,9 +69,9 @@ INTERNAL_IMAGES = {
         "fullsize": 167202612,
     },
     "reverse-proxy": {
-        "source": "ghcr.io/offspot/reverse-proxy:1.7",
-        "filesize": 120350720,
-        "fullsize": 120279091,
+        "source": "ghcr.io/offspot/reverse-proxy:1.8",
+        "filesize": 120432640,
+        "fullsize": 120368490,
     },
 }
 
