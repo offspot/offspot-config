@@ -5,7 +5,11 @@ from pathlib import PurePath as Path
 from typing import Any
 
 from offspot_config.catalog import app_catalog, get_app_path
-from offspot_config.constants import CONTENT_TARGET_PATH, DATA_PART_PATH
+from offspot_config.constants import (
+    CONTENT_TARGET_PATH,
+    DATA_PART_PATH,
+    INTERNAL_BRANDING_PATH,
+)
 from offspot_config.inputs.base import BaseConfig
 from offspot_config.inputs.checksum import Checksum
 from offspot_config.inputs.file import FileConfig
@@ -894,7 +898,7 @@ class ConfigBuilder:
         # add original branding so apps can rely on it
         self.ensure_host_path(ORIGINAL_BRANDING_PATH)
         data = b""
-        for fpath in ORIGINAL_BRANDING_PATH.iterdir():
+        for fpath in INTERNAL_BRANDING_PATH.iterdir():
             data = b64_encode(fpath.read_bytes())
             self.add_file(
                 url_or_content=data,
