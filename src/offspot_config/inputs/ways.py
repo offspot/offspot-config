@@ -1,1 +1,1 @@
-WAYS = ("direct", "bztar", "gztar", "tar", "xztar", "zip")
+WAYS = ("direct", "base64", "bztar", "gztar", "tar", "xztar", "zip")
