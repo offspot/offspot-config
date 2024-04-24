@@ -899,9 +899,9 @@ class ConfigBuilder:
         self.ensure_host_path(ORIGINAL_BRANDING_PATH)
         data = b""
         for fpath in INTERNAL_BRANDING_PATH.iterdir():
-            data = b64_encode(fpath.read_bytes())
+            data = fpath.read_bytes()
             self.add_file(
-                url_or_content=data,
+                url_or_content=b64_encode(data),
                 to=str(ORIGINAL_BRANDING_PATH.joinpath(fpath.name)),
                 via="base64",
                 size=len(data),
