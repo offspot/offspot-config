@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import datetime
 import fnmatch
 import inspect
@@ -140,6 +141,16 @@ def expand_file(src: pathlib.Path, method: str, dest: pathlib.Path):
         for pattern in POST_EXPANSION_UNWANTED_PATTERNS:
             if fnmatch.fnmatch(fpath.name, pattern):
                 fpath.unlink(missing_ok=True)
+
+
+def b64_encode(data: bytes) -> str:
+    """ASCII based64 repr of data"""
+    return base64.standard_b64encode(data).decode("ASCII")
+
+
+def b64_decode(data: str) -> bytes:
+    """ASCII based64 repr of data"""
+    return base64.standard_b64decode(data.encode("ASCII"))
 
 
 class SimpleAttrs:

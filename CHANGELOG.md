@@ -7,10 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [inputs.file] `File.is_base64_encoded` if `via` is `base64`
+- [utils.misc] `b64_encode()` and `b64_decode()` for reproducible base64 transport
+- [branding] `branding` folder in `offspot_config` containing official/original offspot branding files
+- [constants] `INTERNAL_BRANDING_PATH` pointing to code-reachable folder of branding files
+- [builder] `ORIGINAL_BRANDING_PATH` constant for '/data/branding`
+- [builder] `BRANDING_PATH` constant for `/data/contents/branding`
+
 ### Changed
 
 - [builder] Using kiwix-serve 3.7.0-1
 - [builder] Using reverse-proxy 1.8
+- [builder] Original branding files copied to `ORIGINAL_BRANDING_PATH`
+- [builder] Creating empty `BRANDING_PATH` for hotspot-specific branding
+- [builder] Added mounts for `BRANDING_PATH` (and `ORIGINAL_BRANDING_PATH`) on all internal apps
+- [builder] Catalog apps can mount `${BRANDING_PATH}` or `${ORIGINAL_BRANDING_PATH}`
 
 ## [2.1.0] - 2024-04-18
 

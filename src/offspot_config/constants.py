@@ -65,3 +65,4 @@ POST_EXPANSION_UNWANTED_PATTERNS = (
     # Windows shortcuts
     "*.lnk",
 )
+INTERNAL_BRANDING_PATH = pathlib.Path(__file__).with_name("branding")

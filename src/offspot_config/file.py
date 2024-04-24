@@ -18,11 +18,14 @@ class File:
     - size: optional[int]
         size of (expanded) content. If specified, must be >= source file
     - via: optional[str]
-        method to process source file (not for content). Values in File.unpack_formats
+        method to process source file. Values in File.unpack_formats
+        `base64` value only applies to `content`
+        other values not applicable if there's a `content` value
     - url: optional[str]
         URL to download file from
     - content: optional[str]
         plain text content to write to destination
+        can be base64 encoded (std) in which case via must be `base64`
 
     one of content or url must be supplied. content has priority"""
 
@@ -31,7 +34,7 @@ class File:
     unpack_formats: list[str]
 
     def __init__(self, payload: dict[str, str | int | dict[str, str]]):
-        self.unpack_formats = ["direct", *SUPPORTED_UNPACKING_FORMATS]
+        self.unpack_formats = ["direct", "base64", *SUPPORTED_UNPACKING_FORMATS]
         self.url: urllib.parse.ParseResult | None = None
         self.to: pathlib.Path = pathlib.Path(str(payload["to"])).resolve()
         self.via: str = str(payload.get("via", "direct"))
@@ -103,6 +106,11 @@ class File:
     def is_plain(self) -> bool:
         """whether a plain text content to be written"""
         return bool(self.content)
+
+    @property
+    def is_base64_encoded(self) -> bool:
+        """whether a plain text content to be written"""
+        return self.via == "base64"
 
     @property
     def is_local(self) -> bool:

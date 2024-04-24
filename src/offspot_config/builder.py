@@ -5,7 +5,7 @@ from pathlib import PurePath as Path
 from typing import Any
 
 from offspot_config.catalog import app_catalog, get_app_path
-from offspot_config.constants import CONTENT_TARGET_PATH
+from offspot_config.constants import CONTENT_TARGET_PATH, DATA_PART_PATH
 from offspot_config.inputs.base import BaseConfig
 from offspot_config.inputs.checksum import Checksum
 from offspot_config.inputs.file import FileConfig
@@ -13,6 +13,7 @@ from offspot_config.inputs.str import BlockStr
 from offspot_config.oci_images import OCIImage
 from offspot_config.packages import AppPackage, FilesPackage, ZimPackage
 from offspot_config.utils.dashboard import Link, Reader
+from offspot_config.utils.misc import b64_encode
 from offspot_config.utils.sizes import (
     get_margin_for,
     get_min_image_size_for,
@@ -34,6 +35,11 @@ METRICS_DATA_PATH = CONTENT_TARGET_PATH / "metrics"
 KIWIXSERVE_DATA_PATH = CONTENT_TARGET_PATH / "zims"
 METRICS_VAR_LOG_PATH_HOST = Path("/var/log/metrics")
 METRICS_VAR_LOG_PATH_CONT = Path("/var/log/host/metrics")
+# hotspot original branding material (usually kept as untouched)
+ORIGINAL_BRANDING_PATH = DATA_PART_PATH / "branding"
+# actual hotspot branding. default from orig, replaced in builder
+BRANDING_PATH = CONTENT_TARGET_PATH / "branding"
+
 KIWIX_ZIM_LOAD_BALANCER_URL = "https://download.kiwix.org/zim/"
 
 # data source for “internal images” (out of catalog)
@@ -248,6 +254,18 @@ class ConfigBuilder:
                     "target": "/data/zims",
                     "read_only": True,
                 },
+                {
+                    "type": "bind",
+                    "source": BRANDING_PATH,
+                    "target": "/var/www/branding",
+                    "read_only": True,
+                },
+                {
+                    "type": "bind",
+                    "source": ORIGINAL_BRANDING_PATH,
+                    "target": "/var/www/offspot.branding",
+                    "read_only": True,
+                },
             ],
         }
 
@@ -326,7 +344,19 @@ class ConfigBuilder:
                     "source": str(METRICS_VAR_LOG_PATH_HOST.parent),
                     "target": str(METRICS_VAR_LOG_PATH_CONT),
                     "read_only": False,
-                }
+                },
+                {
+                    "type": "bind",
+                    "source": BRANDING_PATH,
+                    "target": "/var/www/branding",
+                    "read_only": True,
+                },
+                {
+                    "type": "bind",
+                    "source": ORIGINAL_BRANDING_PATH,
+                    "target": "/var/www/offspot.branding",
+                    "read_only": True,
+                },
             ],
         }
 
@@ -383,7 +413,19 @@ class ConfigBuilder:
                     "source": "/var/run/internet",
                     "target": "/var/run/internet",
                     "read_only": True,
-                }
+                },
+                {
+                    "type": "bind",
+                    "source": BRANDING_PATH,
+                    "target": "/src/portal/branding",
+                    "read_only": True,
+                },
+                {
+                    "type": "bind",
+                    "source": ORIGINAL_BRANDING_PATH,
+                    "target": "/src/portal/offspot.branding",
+                    "read_only": True,
+                },
             ],
         }
 
@@ -441,6 +483,18 @@ class ConfigBuilder:
                     "target": in_container_packages_path,
                     "read_only": True,
                 },
+                {
+                    "type": "bind",
+                    "source": BRANDING_PATH,
+                    "target": "/src/ui/branding",
+                    "read_only": True,
+                },
+                {
+                    "type": "bind",
+                    "source": ORIGINAL_BRANDING_PATH,
+                    "target": "/src/ui/offspot.branding",
+                    "read_only": True,
+                },
             ],
         }
 
@@ -468,6 +522,20 @@ class ConfigBuilder:
             "restart": "unless-stopped",
             "expose": ["80"],
             "privileged": True,
+            "volumes": [
+                {
+                    "type": "bind",
+                    "source": BRANDING_PATH,
+                    "target": "/src/branding",
+                    "read_only": True,
+                },
+                {
+                    "type": "bind",
+                    "source": ORIGINAL_BRANDING_PATH,
+                    "target": "/src/offspot.branding",
+                    "read_only": True,
+                },
+            ],
         }
 
         self.protected_services.update(
@@ -523,7 +591,19 @@ class ConfigBuilder:
                     "source": f"{CONTENT_TARGET_PATH}/zims",
                     "target": "/data",
                     "read_only": True,
-                }
+                },
+                {
+                    "type": "bind",
+                    "source": BRANDING_PATH,
+                    "target": "/data/branding",
+                    "read_only": True,
+                },
+                {
+                    "type": "bind",
+                    "source": ORIGINAL_BRANDING_PATH,
+                    "target": "/data/offspot.branding",
+                    "read_only": True,
+                },
             ],
             "command": '/bin/sh -c "kiwix-serve --blockexternal '
             '--port 80 --nodatealiases /data/*.zim"',
@@ -714,7 +794,19 @@ class ConfigBuilder:
                         "source": f"{CONTENT_TARGET_PATH}",
                         "target": "/data",
                         "read_only": True,
-                    }
+                    },
+                    {
+                        "type": "bind",
+                        "source": BRANDING_PATH,
+                        "target": "/branding",
+                        "read_only": True,
+                    },
+                    {
+                        "type": "bind",
+                        "source": ORIGINAL_BRANDING_PATH,
+                        "target": "/offspot.branding",
+                        "read_only": True,
+                    },
                 ],
             }
 
@@ -761,8 +853,11 @@ class ConfigBuilder:
         if match:
             repl = self.environ[match.groupdict()["var"]]
             text = RE_ENVIRON_VAR.sub(repl, text)
-        resolved = text.replace("${FQDN}", self.fqdn).replace(
-            "${REVERSE_NAME}", "reverse-proxy"
+        resolved = (
+            text.replace("${FQDN}", self.fqdn)
+            .replace("${REVERSE_NAME}", "reverse-proxy")
+            .replace("${BRANDING_PATH}", str(BRANDING_PATH))
+            .replace("${ORIGINAL_BRANDING_PATH}", str(ORIGINAL_BRANDING_PATH))
         )
         if package:
             app_dir = get_app_path(package=package)
@@ -796,7 +891,21 @@ class ConfigBuilder:
         """compute config based on requests"""
         ...
 
-        # add kiwix apps?
+        # add original branding so apps can rely on it
+        self.ensure_host_path(ORIGINAL_BRANDING_PATH)
+        data = b""
+        for fpath in ORIGINAL_BRANDING_PATH.iterdir():
+            data = b64_encode(fpath.read_bytes())
+            self.add_file(
+                url_or_content=data,
+                to=str(ORIGINAL_BRANDING_PATH.joinpath(fpath.name)),
+                via="base64",
+                size=len(data),
+            )
+        del data
+
+        # make sure branding folder exists for mounts
+        self.ensure_host_path(BRANDING_PATH)
 
         # gen dashboard.yaml
         if self.with_dashboard:
