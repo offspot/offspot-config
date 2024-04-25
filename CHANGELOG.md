@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - YAML repr of Checksum (#42)
 
+### Changed
+
+- Using captive-portal 1.4.2 with branding support
+
 ## [2.2.0] - 2024-04-24
 
 ### Added

@@ -49,9 +49,9 @@ KIWIX_ZIM_LOAD_BALANCER_URL = "https://download.kiwix.org/zim/"
 # data source for “internal images” (out of catalog)
 INTERNAL_IMAGES = {
     "captive-portal": {
-        "source": "ghcr.io/offspot/captive-portal:1.4.1",
-        "filesize": 189911040,
-        "fullsize": 189841976,
+        "source": "ghcr.io/offspot/captive-portal:1.4.2",
+        "filesize": 189900800,
+        "fullsize": 189833272,
     },
     "dashboard": {
         "source": "ghcr.io/offspot/dashboard:1.3.1",
