@@ -905,6 +905,7 @@ class ConfigBuilder:
                 to=str(ORIGINAL_BRANDING_PATH.joinpath(fpath.name)),
                 via="base64",
                 size=len(data),
+                is_url=False,
             )
         del data
 
