@@ -5,8 +5,10 @@ from typeguard import typechecked
 
 from offspot_config.constants import SUPPORTED_CHECKSUM_ALGORITHMS
 from offspot_config.utils.download import read_checksum_from
+from offspot_config.utils.yaml import custom_yaml_repr
 
 
+@custom_yaml_repr
 @typechecked
 @define(kw_only=True)
 class Checksum:
@@ -50,3 +52,9 @@ class Checksum:
 
     def to_dict(self) -> dict[str, str]:
         return asdict(self)
+
+    @staticmethod
+    def __yaml_repr__(dumper, data):
+        return dumper.represent_dict(
+            {key: value for key, value in asdict(data).items() if value is not None}
+        )
