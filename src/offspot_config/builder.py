@@ -599,13 +599,13 @@ class ConfigBuilder:
                 {
                     "type": "bind",
                     "source": BRANDING_PATH,
-                    "target": "/data/branding",
+                    "target": "/branding",
                     "read_only": True,
                 },
                 {
                     "type": "bind",
                     "source": ORIGINAL_BRANDING_PATH,
-                    "target": "/data/offspot.branding",
+                    "target": "/offspot.branding",
                     "read_only": True,
                 },
             ],
