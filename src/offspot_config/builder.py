@@ -294,7 +294,7 @@ class ConfigBuilder:
 
         if self.dashboard_readers:
             payload["readers"] = [
-                reader.to_dict()
+                reader.to_dashboard_dict(download_fqdn=f"{ZIMDL_PREFIX}.{self.fqdn}")
                 for reader in sorted(self.dashboard_readers, key=Reader.sort)
             ]
 

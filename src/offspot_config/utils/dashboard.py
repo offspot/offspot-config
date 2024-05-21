@@ -30,6 +30,11 @@ class Reader(NamedTuple):
 
         return {field: value_or_dict(getattr(self, field)) for field in self._fields}
 
+    def to_dashboard_dict(self, download_fqdn: str) -> dict[str, str | int]:
+        data = self.to_dict()
+        data["download_url"] = f"//{download_fqdn}/{data['filename']!s}"
+        return data
+
     @property
     def order(self) -> int:
         """sort-usable order based on reader's platform popularity"""
