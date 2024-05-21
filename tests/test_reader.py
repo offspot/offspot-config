@@ -27,8 +27,8 @@ REALISTIC_VALUES = [
     ),
     (
         "macos",
-        "https://download.kiwix.org/release/kiwix-desktop-macos/kiwix-desktop-macos_3.1.0.dmg",
-        "kiwix-desktop-macos_3.1.0.dmg",
+        "https://download.kiwix.org/release/kiwix-macos/kiwix-macos_3.1.0.dmg",
+        "kiwix-macos_3.1.0.dmg",
         16051402,
         "747fd0841b56d2d5158e0e65646b1be1",
     ),
@@ -47,8 +47,8 @@ REALISTIC_VALUES = [
             "kiwix-3.9.1.apk",
         ),
         (
-            "https://download.kiwix.org/release/kiwix-desktop-macos/kiwix-desktop-macos_3.1.0.dmg",
-            "kiwix-desktop-macos_3.1.0.dmg",
+            "https://download.kiwix.org/release/kiwix-macos/kiwix-macos_3.1.0.dmg",
+            "kiwix-macos_3.1.0.dmg",
         ),
         (
             "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_x86_64_2.3.1-4.appimage",
@@ -201,14 +201,14 @@ def test_sort_order():
         ),
         (
             "macos",
-            "https://download.kiwix.org/release/kiwix-desktop-macos/kiwix-desktop-macos_3.1.0.dmg",
+            "https://download.kiwix.org/release/kiwix-macos/kiwix-macos_3.1.0.dmg",
             None,
             None,
             None,
             {
                 "platform": "macos",
-                "download_url": "https://download.kiwix.org/release/kiwix-desktop-macos/kiwix-desktop-macos_3.1.0.dmg",
-                "filename": "kiwix-desktop-macos_3.1.0.dmg",
+                "download_url": "https://download.kiwix.org/release/kiwix-macos/kiwix-macos_3.1.0.dmg",
+                "filename": "kiwix-macos_3.1.0.dmg",
                 "size": 16051402,
                 "checksum": None,
             },
