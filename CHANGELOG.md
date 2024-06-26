@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
+### Removed
 
-- [catalog] `eleda.offspot.kiwix.org` package was incorrectly set as `files` package
+- [catalog] `eleda.offspot.kiwix.org` package as it is available as a ZIM
 
 ## [2.2.5] - 2024-05-21
 

@@ -284,25 +284,6 @@
         "via": "zip"
     },
     {
-        "ident": "eleda.offspot.kiwix.org",
-        "domain": "eleda",
-        "kind": "app",
-        "title": "Les mathématiques du primaire",
-        "description": "Les mathématiques pour l'école primaire avec plus 600 activités randomisées du CP au CM2.",
-        "languages": [
-            "fra"
-        ],
-        "tags": [],
-        "icon_url": "https://drive.offspot.it/eleda/icon_zim.png",
-        "download_url": "https://drive.offspot.it/eleda/eleda_fr_fo-offline_2023-10.zip",
-        "download_size": 83684857,
-        "download_checksum": {
-            "algo": "md5",
-            "value": "c8ad28bfd8e5a0005ad128c9d09dd5c6"
-        },
-        "via": "zip"
-    },
-    {
         "ident": "eleda-android.offspot.kiwix.org",
         "domain": "eleda-android",
         "kind": "files",
