@@ -286,7 +286,7 @@
     {
         "ident": "eleda.offspot.kiwix.org",
         "domain": "eleda",
-        "kind": "files",
+        "kind": "app",
         "title": "Les mathématiques du primaire",
         "description": "Les mathématiques pour l'école primaire avec plus 600 activités randomisées du CP au CM2.",
         "languages": [
