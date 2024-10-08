@@ -337,7 +337,7 @@
         "domain": "com.kylecorry.trail_sense",
         "kind": "files",
         "title": "Trail Sense",
-        "description": "Use your phone's sensors to assist with wilderness treks",
+        "description": "Downloadable android APK that uses your phone's sensors to assist with wilderness treks",
         "languages": [
             "eng"
         ],
@@ -358,7 +358,7 @@
         "domain": "org.ligi.survivalmanual",
         "kind": "files",
         "title": "Survival Manual",
-        "description": "Learn how to survive",
+        "description": "Downloadable Android APK. Learn how to survive",
         "languages": [
             "eng"
         ],
@@ -379,7 +379,7 @@
         "domain": "org.hlwd.bible_multi_the_life",
         "kind": "files",
         "title": "The Life",
-        "description": "Bible multi languages, free, offline, no advertising.",
+        "description": "Downloadable Android Bible. Multi languages, free, offline, no advertising.",
         "languages": [
             "eng"
         ],
