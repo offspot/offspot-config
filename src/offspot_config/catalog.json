@@ -334,7 +334,7 @@
     },
     {
         "ident": "com.kylecorry.trail_sense.offspot.kiwix.org",
-        "domain": "com.kylecorry.trail_sense",
+        "domain": "com.kylecorry.trail-sense",
         "kind": "files",
         "title": "Trail Sense",
         "description": "Downloadable android APK that uses your phone's sensors to assist with wilderness treks",
@@ -376,7 +376,7 @@
     },
     {
         "ident": "org.hlwd.bible_multi_the_life.offspot.kiwix.org",
-        "domain": "org.hlwd.bible_multi_the_life",
+        "domain": "org.hlwd.bible-multi-the-life",
         "kind": "files",
         "title": "The Life",
         "description": "Downloadable Android Bible. Multi languages, free, offline, no advertising.",
