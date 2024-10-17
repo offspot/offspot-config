@@ -10,7 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Domain names for com.kylecorry.trail_sense.offspot.kiwix.org and org.hlwd.bible_multi_the_life.offspot.kiwix.org now uses dashes instead of underscores.
+- [catalog] Domain names now uses dashes instead of underscores:
+  - `com.kylecorry.trail_sense.offspot.kiwix.org`
+  - `org.hlwd.bible_multi_the_life.offspot.kiwix.org`
 
 
 ## [2.3.0]
