@@ -152,8 +152,8 @@
         "ident": "file-manager.offspot.kiwix.org",
         "domain": "resources",
         "kind": "app",
-        "title": "File Resources",
-        "description": "View and download resources",
+        "title": "File Manager",
+        "description": "Upload and download documents",
         "languages": [
             "mul"
         ],
