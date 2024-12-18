@@ -409,10 +409,10 @@
         ],
         "icon_url": "https://drive.offspot.it/af-rica/icon.png",
         "download_url": "https://drive.offspot.it/af-rica/af_and_rica_ar_1.0.0.zip",
-        "download_size": 42956189,
+        "download_size": 46509014,
         "download_checksum": {
             "algo": "md5",
-            "value": "007d72d211f3d9241de4ea3fc26d2f94"
+            "value": "ed2994a67844c68fd4adfc1dab8f6cdd"
         },
         "via": "zip"
     },
@@ -430,10 +430,10 @@
         ],
         "icon_url": "https://drive.offspot.it/af-rica/icon.png",
         "download_url": "https://drive.offspot.it/af-rica/af_and_rica_en_1.0.0.zip",
-        "download_size": 42956094,
+        "download_size": 46508913,
         "download_checksum": {
             "algo": "md5",
-            "value": "7d083c24f06263ca34ba5ca223dadb75"
+            "value": "4a7098275be7eb0ce94b387a71bdf8eb"
         },
         "via": "zip"
     },
@@ -451,10 +451,10 @@
         ],
         "icon_url": "https://drive.offspot.it/af-rica/icon.png",
         "download_url": "https://drive.offspot.it/af-rica/af_and_rica_fr_1.0.0.zip",
-        "download_size": 42956143,
+        "download_size": 46508976,
         "download_checksum": {
             "algo": "md5",
-            "value": "11161481259c3654de047c63ca9f7fab"
+            "value": "14ab4def1fcd518dd12f529fd41bb354"
         },
         "via": "zip"
     }
