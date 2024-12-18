@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [catalog] Added Af&Rica files packages in FR, EN, AR.
+
 ### Changed
 
 - [catalog] Update name and description for file-manager.offspot.kiwix.org (now File Manager)

@@ -394,5 +394,68 @@
             "value": "b1a1e31076651b212b6b08f7cd897e07"
         },
         "via": "zip"
+    },
+    {
+        "ident": "com.af-et-rica.dcx.ar.offspot.kiwix.org",
+        "domain": "com.af-et-rica.dcx.ar",
+        "kind": "files",
+        "title": "Af&Rica",
+        "description": "العب واكتشف الثقافات الإفريقية مع المغامرين أف و ريكا",
+        "languages": [
+            "ara"
+        ],
+        "tags": [
+            "android"
+        ],
+        "icon_url": "https://drive.offspot.it/af-rica/icon.png",
+        "download_url": "https://drive.offspot.it/af-rica/af_and_rica_ar_1.0.0.zip",
+        "download_size": 46509014,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "ed2994a67844c68fd4adfc1dab8f6cdd"
+        },
+        "via": "zip"
+    },
+    {
+        "ident": "com.af-et-rica.dcx.en.offspot.kiwix.org",
+        "domain": "com.af-et-rica.dcx.en",
+        "kind": "files",
+        "title": "Af&Rica",
+        "description": "Play and discover African cultures with the two adventurers Af and Rica.",
+        "languages": [
+            "eng"
+        ],
+        "tags": [
+            "android"
+        ],
+        "icon_url": "https://drive.offspot.it/af-rica/icon.png",
+        "download_url": "https://drive.offspot.it/af-rica/af_and_rica_en_1.0.0.zip",
+        "download_size": 46508913,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "4a7098275be7eb0ce94b387a71bdf8eb"
+        },
+        "via": "zip"
+    },
+    {
+        "ident": "com.af-et-rica.dcx.fr.offspot.kiwix.org",
+        "domain": "com.af-et-rica.dcx.fr",
+        "kind": "files",
+        "title": "Af&Rica",
+        "description": "Jouez et découvrez les cultures Africaines avec les deux aventuriers Af & Rica.",
+        "languages": [
+            "fra"
+        ],
+        "tags": [
+            "android"
+        ],
+        "icon_url": "https://drive.offspot.it/af-rica/icon.png",
+        "download_url": "https://drive.offspot.it/af-rica/af_and_rica_fr_1.0.0.zip",
+        "download_size": 46508976,
+        "download_checksum": {
+            "algo": "md5",
+            "value": "14ab4def1fcd518dd12f529fd41bb354"
+        },
+        "via": "zip"
     }
 ]
