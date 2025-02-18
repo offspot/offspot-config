@@ -49,14 +49,14 @@ KIWIX_ZIM_LOAD_BALANCER_URL = "https://download.kiwix.org/zim/"
 # data source for “internal images” (out of catalog)
 INTERNAL_IMAGES = {
     "captive-portal": {
-        "source": "ghcr.io/offspot/captive-portal:1.4.3",
-        "filesize": 189890560,
-        "fullsize": 189818424,
+        "source": "ghcr.io/offspot/captive-portal:1.5.0",
+        "filesize": 180121600,
+        "fullsize": 180055087,
     },
     "dashboard": {
-        "source": "ghcr.io/offspot/dashboard:1.4.8",
+        "source": "ghcr.io/offspot/dashboard:1.5.0",
         "filesize": 178063360,
-        "fullsize": 177954885,
+        "fullsize": 177129017,
     },
     "file-browser": {
         "source": "ghcr.io/offspot/file-browser:1.1",
@@ -69,9 +69,9 @@ INTERNAL_IMAGES = {
         "fullsize": 58922600,
     },
     "kiwix-serve": {
-        "source": "ghcr.io/offspot/kiwix-serve:3.7.0-1",
+        "source": "ghcr.io/offspot/kiwix-serve:3.7.0-2",
         "filesize": 58480640,
-        "fullsize": 58443713,
+        "fullsize": 58447802,
     },
     "metrics": {
         "source": "ghcr.io/offspot/metrics:0.3.0",
@@ -79,9 +79,9 @@ INTERNAL_IMAGES = {
         "fullsize": 167202612,
     },
     "reverse-proxy": {
-        "source": "ghcr.io/offspot/reverse-proxy:1.8",
-        "filesize": 120432640,
-        "fullsize": 120368490,
+        "source": "ghcr.io/offspot/reverse-proxy:1.10",
+        "filesize": 108052480,
+        "fullsize": 107972550,
     },
 }
 

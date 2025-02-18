@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - [branding] Updated logos to use new (case) version and removed dark-mode versions (now same as light)
+- [captive-portal] Using 1.5.0 with updated branding
+- [dashboard] Using 1.5.0 with updated branding and removed size filter
+- [kiwix-serve] Using 3.7.0-2
+- [reverse-proxy] Using 1.10 with updated Caddy
 
 ## [2.3.2] - 2025-01-20
 
