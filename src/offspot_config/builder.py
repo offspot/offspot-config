@@ -620,7 +620,7 @@ class ConfigBuilder:
             self.add_files_service()
             self.files_mapping.update({ZIMDL_PREFIX: "zims"})
 
-        self.reversed_services.add("kiwix")
+        self.reversed_services.add("browse:kiwix")
 
         image = get_internal_image("file-manager")
         self.config["oci_images"].add(image)
