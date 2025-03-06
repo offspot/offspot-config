@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [dashboard] Added offspot-config version as hotspot version for dashboard 1.5
+
 ### Changed
 
 - [branding] Eventually settled on no-padding branding
+- [kiwix] Fixed links and NO_HOME broken in 2.4.0
 
 ## [2.4.0] - 2025-02-18
 

@@ -24,6 +24,7 @@ from offspot_config.utils.sizes import (
     get_raw_content_size_for,
 )
 from offspot_config.utils.yaml import yaml_dump
+from offspot_runtime.__about__ import __version__
 
 # matches $environ[XXX] where XXX is a builder-level environ to replace with
 RE_ENVIRON_VAR = re.compile(r"\$environ{(?P<var>[A-Za-z_\-0-9]+)}")
@@ -31,6 +32,8 @@ RE_SPECIFIC_APP_DIR = re.compile(r"\${APP_DIR:(?P<ident>[a-z\.\-]+)}")
 
 # service subdomain for ZIM downloads, when enabled
 ZIMDL_PREFIX = "zim-download"
+# service subdomain for kiwix-serve (used to be static to kiwix)
+KIWIX_PREFIX = "browse"
 # on-host path to dashboard config
 DASHBOARD_CONFIG_PATH = CONTENT_TARGET_PATH / "dashboard.yaml"
 # on-host metrics persistent data folder
@@ -237,7 +240,8 @@ class ConfigBuilder:
             "restart": "unless-stopped",
             "expose": ["80"],
             "environment": {
-                "KIWIX_READER_LINK_TPL": "//kiwix.{fqdn}/viewer#{zim_name}",
+                "KIWIX_READER_LINK_TPL": f"//{KIWIX_PREFIX}."
+                + "{fqdn}/viewer#{zim_name}",
                 "KIWIX_DOWNLOAD_LINK_TPL": (
                     f"//{ZIMDL_PREFIX}." + "{fqdn}/{zim_filename}"
                 ),
@@ -285,7 +289,11 @@ class ConfigBuilder:
             download_fqdn = None
 
         payload = {
-            "metadata": {"name": self.name, "fqdn": self.fqdn},
+            "metadata": {
+                "name": self.name,
+                "fqdn": self.fqdn,
+                "version": f"v{__version__}",
+            },
             "packages": [
                 package.to_dashboard_entry(fqdn=self.fqdn, download_fqdn=download_fqdn)
                 for package in self.dashboard_entries
@@ -620,7 +628,7 @@ class ConfigBuilder:
             self.add_files_service()
             self.files_mapping.update({ZIMDL_PREFIX: "zims"})
 
-        self.reversed_services.add("browse:kiwix")
+        self.reversed_services.add(f"{KIWIX_PREFIX}:kiwix")
 
         image = get_internal_image("file-manager")
         self.config["oci_images"].add(image)
@@ -922,7 +930,7 @@ class ConfigBuilder:
             self.compose["services"]["reverse-proxy"]["environment"].update(
                 {
                     "SERVICES": ",".join(self.reversed_services),
-                    "NO_HOME_SERVICES": "kiwix",
+                    "NO_HOME_SERVICES": f"{KIWIX_PREFIX}",
                     "FILES_MAPPING": ",".join(
                         f"{domain}:{folder}"
                         for domain, folder in self.files_mapping.items()
