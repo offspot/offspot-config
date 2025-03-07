@@ -13,12 +13,6 @@ from offspot_config.inputs.file import FileConfig
 from offspot_config.oci_images import OCIImage
 from offspot_config.utils.download import get_base64_from
 
-# @typechecked
-# @define(kw_only=True)
-# class BaseImage:
-#     source: str
-#     root_size: int
-
 
 @typechecked
 @define(kw_only=True)
@@ -48,7 +42,9 @@ class Package:
     def get_download_checksum(self) -> Checksum | None:
         return None
 
-    def to_dashboard_entry(self, fqdn: str, download_fqdn: str | None):
+    def to_dashboard_entry(
+        self, fqdn: str, kiwix_domain: str, download_fqdn: str | None
+    ):
         entry = {
             "ident": self.ident,
             "kind": self.kind,
@@ -56,7 +52,7 @@ class Package:
             "description": self.description,
             "languages": self.languages,
             "tags": self.tags,
-            "url": self.get_url(fqdn),
+            "url": self.get_url(fqdn, kiwix_domain=kiwix_domain),
             "icon": get_base64_from(self.icon_url) if self.icon_url else "",
         }
         if self.get_download_url(str(download_fqdn)) and self.get_download_size():
@@ -103,9 +99,7 @@ class ZimPackage(Package):
     def size(self) -> int:
         return self.download_size
 
-    def get_url(
-        self, fqdn: str, kiwix_domain: str | None = "kiwix", **kwargs  # noqa: ARG002
-    ) -> str:
+    def get_url(self, fqdn: str, kiwix_domain: str, **kwargs) -> str:  # noqa: ARG002
         # this assumes that the ZIM is stored using self.filename
         from offspot_config.zim import get_libkiwix_humanid
 

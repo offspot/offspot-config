@@ -295,7 +295,11 @@ class ConfigBuilder:
                 "version": f"v{__version__}",
             },
             "packages": [
-                package.to_dashboard_entry(fqdn=self.fqdn, download_fqdn=download_fqdn)
+                package.to_dashboard_entry(
+                    fqdn=self.fqdn,
+                    kiwix_domain=KIWIX_PREFIX,
+                    download_fqdn=download_fqdn,
+                )
                 for package in self.dashboard_entries
             ],
         }
