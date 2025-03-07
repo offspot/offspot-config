@@ -5,16 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.4.1] - 2025-03-07
 
-### Added
-
-- [dashboard] Added offspot-config version as hotspot version for dashboard 1.5
-
-### Changed
+### Fixed
 
 - [branding] Eventually settled on no-padding branding
 - [kiwix] Fixed links and NO_HOME broken in 2.4.0
+- [dashboard] Added offspot-config version as hotspot version for dashboard 1.5
 
 ## [2.4.0] - 2025-02-18
 
