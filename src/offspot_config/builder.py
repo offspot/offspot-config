@@ -57,9 +57,9 @@ INTERNAL_IMAGES = {
         "fullsize": 180055087,
     },
     "dashboard": {
-        "source": "ghcr.io/offspot/dashboard:1.5.0",
-        "filesize": 178063360,
-        "fullsize": 177129017,
+        "source": "ghcr.io/offspot/dashboard:1.6.0",
+        "filesize": 177735680,
+        "fullsize": 177616322,
     },
     "file-browser": {
         "source": "ghcr.io/offspot/file-browser:1.1",
@@ -82,9 +82,9 @@ INTERNAL_IMAGES = {
         "fullsize": 167202612,
     },
     "reverse-proxy": {
-        "source": "ghcr.io/offspot/reverse-proxy:1.10",
-        "filesize": 108052480,
-        "fullsize": 107972550,
+        "source": "ghcr.io/offspot/reverse-proxy:1.11",
+        "filesize": 108257280,
+        "fullsize": 108177344,
     },
 }
 
