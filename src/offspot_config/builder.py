@@ -57,9 +57,9 @@ INTERNAL_IMAGES = {
         "fullsize": 180055087,
     },
     "dashboard": {
-        "source": "ghcr.io/offspot/dashboard:1.6.0",
+        "source": "ghcr.io/offspot/dashboard:1.6.1",
         "filesize": 177735680,
-        "fullsize": 177616322,
+        "fullsize": 177616345,
     },
     "file-browser": {
         "source": "ghcr.io/offspot/file-browser:1.1",
