@@ -205,7 +205,7 @@ def restore_iptables():
     Uses systemd's `iptables-restore` unit if it exists;
     Otherwise calls iptables-restore individualy for each rules file"""
     svc_name = "iptables-restore"
-    if simple_run([str(SYSTEMCTL_PATH), "--no-pager", "cat", svc_name]):
+    if simple_run([str(SYSTEMCTL_PATH), "--no-pager", "cat", svc_name]) == 0:
         return simple_run([str(SYSTEMCTL_PATH), "restart", svc_name])
 
     return sum(
