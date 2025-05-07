@@ -115,6 +115,7 @@ class ConfigBuilder:
         environ: dict[str, str] | None = None,
         write_config: bool | None = False,
         kiwix_zim_mirror: str | None = None,
+        public_version: str | None = None,
     ):
         self.name = name
         self.environ = environ or {}
@@ -150,6 +151,10 @@ class ConfigBuilder:
         self.dashboard_links: list[Link] = []
         # every card the dashboard will display
         self.dashboard_entries = []
+        # advertised version for the Hotspot stack. defaults to ours
+        self.public_version = (
+            str(public_version) if public_version else f"v{__version__}"
+        )
 
         # domain of services that must be reversed to (all but special cases)
         # either domain or domain:target-domain:target-port
@@ -292,7 +297,7 @@ class ConfigBuilder:
             "metadata": {
                 "name": self.name,
                 "fqdn": self.fqdn,
-                "version": f"v{__version__}",
+                "version": self.public_version,
             },
             "packages": [
                 package.to_dashboard_entry(
