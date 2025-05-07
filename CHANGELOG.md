@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.1] - 2025-05-07
+
+### Changed
+
+- [captive-portal] Using [1.5.3](https://github.com/offspot/captive-portal/blob/1.5.3/CHANGELOG.md) with regression (1.5.2) fix
+
 ## [2.6.0] - 2025-05-07
 
 ### Added
