@@ -208,7 +208,7 @@ Without an *armor*, configuration is appended at end of file, specifying `eth0` 
 |---------------------|----------- |----------|------------------------------------------------------------------------------------------------------------------|
 | `ssid    `          | `string`   | **yes**  | SSID (Network Name)                                                                                              |
 | `passphrase`        | `string`   | no       | Passphrase/password to connect to the network. Defaults to Open Network                                          |
-| `address`           | `string`   | no       | IP address to set on the wireless interface. Defaults to 192.168.2.1                                             |
+| `address`           | `string`   | no       | IP address to set on the wireless interface. Defaults to 192.168.144.1                                             |
 | `channel`           | `integer`  | no       | WiFi channel to use for the network (1-14). Defaults to `11`.                                                    |
 | `country`           | `string`   | no       | Country-code to apply frequencies limitations for. Defaults to `FR`                                              |
 | `hide`              | `boolean`  | no       | Hide SSID (Clients must know and enter its name to connect)                                                      |

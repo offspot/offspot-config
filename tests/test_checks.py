@@ -187,7 +187,7 @@ def test_is_valid_ethernet_config(
         ("", "", False),
         (1, None, False),
         ("192.168.1.1,192.168.1.200,255.255.255.0,1h", "192.168.1.254", True),
-        ("192.168.1.1,192.168.1.200,255.255.0.0,1h", "192.168.2.1", True),
+        ("192.168.1.1,192.168.1.200,255.255.0.0,1h", "192.168.144.1", True),
         # start is incorrect (network address)
         ("192.168.1.0,192.168.1.200,255.255.255.0,1h", "192.168.1.254", False),
         # end is incorrect (broadcast address)
@@ -197,7 +197,7 @@ def test_is_valid_ethernet_config(
         # end of range is same as host
         ("192.168.1.1,192.168.1.254,255.255.255.0,1h", "192.168.1.254", False),
         # host not compatible with range
-        ("192.168.1.1,192.168.1.254,255.255.255.0,1h", "192.168.2.1", False),
+        ("192.168.1.1,192.168.1.254,255.255.255.0,1h", "192.168.144.1", False),
         # incorrect ttl suffix
         ("192.168.1.1,192.168.1.254,255.255.255.0,1y", "192.168.1.100", False),
         # incorrect ttl value
@@ -217,7 +217,7 @@ def test_is_valid_ethernet_config(
         # end is broadcast
         ("192.168.1.1,192.168.1.255,255.255.255.0,1h", "192.168.1.254", False),
         # end not in network
-        ("192.168.1.1,192.168.2.10,255.255.255.0,1h", "192.168.1.200", False),
+        ("192.168.1.1,192.168.144.10,255.255.255.0,1h", "192.168.1.200", False),
         # end before start
         ("192.168.1.10,192.168.1.9,255.255.255.0,1h", "192.168.1.200", False),
     ],
@@ -403,7 +403,7 @@ def test_is_valid_ap_config():
         "ssid": "",
         "hide": False,
         "passphrase": None,
-        "address": "192.168.2.1",
+        "address": "192.168.144.1",
         "as_gateway": False,
         "spoof": "auto",
         "tld": "offspot",
@@ -412,8 +412,8 @@ def test_is_valid_ap_config():
         "channel": 11,
         "country": "US",
         "interface": "wlan0",
-        "dhcp_range": "192.168.2.2,192.168.2.254,255.255.255.0,1h",
-        "network": "192.168.2.0/24",
+        "dhcp_range": "192.168.144.2,192.168.144.254,255.255.255.0,1h",
+        "network": "192.168.144.0/24",
         "dns": ["8.8.8.8", "1.1.1.1"],
         "captured_address": "192.168.0.1",
         "other_interfaces": [],
@@ -452,19 +452,19 @@ def test_is_valid_ap_config():
     config["interface"] = "wlan0"
     assert is_valid_ap_config(**config)
 
-    config["dhcp_range"] = "192.168.2.1,192.168.2.254,255.255.255.0,1h"
+    config["dhcp_range"] = "192.168.144.1,192.168.144.254,255.255.255.0,1h"
     assert not is_valid_ap_config(**config)
-    config["dhcp_range"] = "192.168.2.2,192.168.2.254,255.255.255.0,1h"
+    config["dhcp_range"] = "192.168.144.2,192.168.144.254,255.255.255.0,1h"
     assert is_valid_ap_config(**config)
 
-    config["network"] = "192.168.2.2"
+    config["network"] = "192.168.144.2"
     assert not is_valid_ap_config(**config)
-    config["network"] = "192.168.2.0/24"
+    config["network"] = "192.168.144.0/24"
     assert is_valid_ap_config(**config)
 
     config["address"] = "0.0.0.0"  # nosec B104
     assert not is_valid_ap_config(**config)
-    config["address"] = "192.168.2.3"
+    config["address"] = "192.168.144.3"
     assert is_valid_ap_config(**config)
 
     config["as_gateway"] = 3

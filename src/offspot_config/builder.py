@@ -52,9 +52,9 @@ KIWIX_ZIM_LOAD_BALANCER_URL = "https://download.kiwix.org/zim/"
 # data source for “internal images” (out of catalog)
 INTERNAL_IMAGES = {
     "captive-portal": {
-        "source": "ghcr.io/offspot/captive-portal:1.5.3",
-        "filesize": 179998720,
-        "fullsize": 179925549,
+        "source": "ghcr.io/offspot/captive-portal:1.6.0",
+        "filesize": 180008960,
+        "fullsize": 179938359,
     },
     "dashboard": {
         "source": "ghcr.io/offspot/dashboard:1.6.2",
@@ -393,11 +393,11 @@ class ConfigBuilder:
         # but we assign dhcp addresses in the .128/25 network (comprised in the /24 one)
         # so packets coming from AP clients can be identified in Pi's router and
         # treated specially (for the captive portal)
-        wlan0_address = "192.168.2.1"
+        wlan0_address = "192.168.144.1"
         self.config["offspot"]["ap"].update(
             {
-                "dhcp-range": "192.168.2.129,192.168.2.254,255.255.255.0,1h",
-                "network": "192.168.2.0/24",
+                "dhcp-range": "192.168.144.129,192.168.144.254,255.255.255.0,1h",
+                "network": "192.168.144.0/24",
                 "address": wlan0_address,
                 "as-gateway": True,
             }
@@ -418,7 +418,7 @@ class ConfigBuilder:
                 "HOTSPOT_NAME": self.name,
                 "HOTSPOT_IP": wlan0_address,
                 "HOTSPOT_FQDN": self.fqdn,
-                "CAPTURED_NETWORKS": "192.168.2.128/25",
+                "CAPTURED_NETWORKS": "192.168.144.128/25",
                 "TIMEOUT": "60",
                 "FILTER_MODULE": "portal_filter",
             },

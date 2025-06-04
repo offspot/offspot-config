@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- [runtime] WLAN network to use 192.168.144.0/24 network by default instead of 192.168.2.0/24
+- [runtime] WLAN DHCP to use 192.168.144.128/25 network by default instead of 192.168.2.128/25
+- [captive-portal] Using 1.6.0 which default 192.168.144.128/25 network by default instead of 192.168.2.128/25
+- [builder] Using 192.168.144.0/24 and 192.168.144.128/25 instead of 192.168.2.0/24 and 192.168.2.128/25
+
 ## [2.6.1] - 2025-05-07
 
 ### Changed
