@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [runtime] WLAN DHCP to use 192.168.144.128/25 network by default instead of 192.168.2.128/25
 - [captive-portal] Using 1.6.0 which default 192.168.144.128/25 network by default instead of 192.168.2.128/25
 - [builder] Using 192.168.144.0/24 and 192.168.144.128/25 instead of 192.168.2.0/24 and 192.168.2.128/25
+- [builder] Added optional `variant` param
+- [builder] Now creating `/data/etc/offspot.json` with Kiwix Hotspot details (variant and version)
 
 ## [2.6.1] - 2025-05-07
 

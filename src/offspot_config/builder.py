@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from pathlib import PurePath as Path
 from typing import Any
@@ -46,6 +47,7 @@ METRICS_VAR_LOG_PATH_CONT = Path("/var/log/host/metrics")
 ORIGINAL_BRANDING_PATH = DATA_PART_PATH / "branding"
 # actual hotspot branding. default from orig, replaced in builder
 BRANDING_PATH = CONTENT_TARGET_PATH / "branding"
+OFFSPOT_JSON_PATH = DATA_PART_PATH / "etc" / "offspot.json"
 
 KIWIX_ZIM_LOAD_BALANCER_URL = "https://download.kiwix.org/zim/"
 
@@ -99,6 +101,23 @@ def get_internal_image(ident: str) -> OCIImage:
     )
 
 
+def gen_offspot_json(variant: str, version: str) -> str:
+    human = "Kiwix Hotspot"
+    if variant.strip():
+        human += f" “{variant}”"
+    if version.strip():
+        human += f" {version}"
+    return json.dumps(
+        {
+            "name": "Kiwix Hotspot",
+            "variant": variant,
+            "version": version,
+            "human": human,
+        },
+        indent=4,
+    )
+
+
 class ConfigBuilder:
     def __init__(
         self,
@@ -116,6 +135,7 @@ class ConfigBuilder:
         write_config: bool | None = False,
         kiwix_zim_mirror: str | None = None,
         public_version: str | None = None,
+        variant: str = "",
     ):
         self.name = name
         self.environ = environ or {}
@@ -155,6 +175,7 @@ class ConfigBuilder:
         self.public_version = (
             str(public_version) if public_version else f"v{__version__}"
         )
+        self.variant = variant
 
         # domain of services that must be reversed to (all but special cases)
         # either domain or domain:target-domain:target-port
@@ -933,6 +954,18 @@ class ConfigBuilder:
         if self.with_dashboard:
             self.gen_dashboard_config()
 
+        # add offspot.json
+        offspot_json_text = gen_offspot_json(
+            variant=self.variant, version=self.public_version
+        )
+        self.add_file(
+            url_or_content=offspot_json_text,
+            to=str(OFFSPOT_JSON_PATH),
+            via="direct",
+            size=len(offspot_json_text),
+            is_url=False,
+        )
+
         # update reverseproxy config
         # > domain to subfolder for all files packages + zim-dl
         if self.with_reverseproxy:
@@ -950,10 +983,4 @@ class ConfigBuilder:
                     ),
                 }
             )
-
-        # render compose
-
-        # compute output size
-        # self.config["output"] = get_size_for(self.config)
-
         return yaml_dump(self.config)
