@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [builder] Added optional `variant` param
 - [builder] Now creating `/data/etc/offspot.json` with Kiwix Hotspot details (variant and version)
 
+### Removed
+
+- Support for Python 3.9 and 3.10 as base-image been based on Bookworm for a long time
+
 ## [2.6.1] - 2025-05-07
 
 ### Changed

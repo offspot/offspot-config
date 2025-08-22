@@ -8,17 +8,16 @@ authors = [
   { name = "Kiwix", email = "dev@kiwix.org" },
 ]
 keywords = ["offspot"]
-# target is (was) Debian Bullseye which offers python 3.9.2
-requires-python = ">=3.9"
+# target is Debian Bookworm which offers python 3.11.2
+requires-python = ">=3.11"
 description = "Offspot Config helpers"
 readme = "README.md"
 license = {text = "GPL-3.0-or-later"}
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Operating System :: POSIX",
 ]
@@ -95,7 +94,7 @@ python = ["3.11"]
 features = ["scripts", "test"]
 
 [[tool.hatch.envs.test.matrix]]
-python = ["3.9", "3.10", "3.11", "3.12"]
+python = ["3.11", "3.12", "3.13"]
 
 [tool.hatch.envs.test.scripts]
 run = "inv test --args '{args}'"
@@ -125,10 +124,10 @@ all = "inv checkall --args '{args}'"
 
 [tool.black]
 line-length = 88
-target-version = ['py39']
+target-version = ['py311']
 
 [tool.ruff]
-target-version = "py39"
+target-version = "py311"
 line-length = 88
 src = ["src"]
 
@@ -260,6 +259,6 @@ exclude_lines = [
 include = ["src", "tests", "tasks.py"]
 exclude = [".env/**", ".venv/**"]
 extraPaths = ["src"]
-pythonVersion = "3.9"
+pythonVersion = "3.11"
 typeCheckingMode="basic"
 reportImplicitStringConcatenation=false
