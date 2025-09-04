@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 
-""" Configures boot-time setable settings from /boot/config.json
+"""Configures boot-time setable settings from /boot/config.json
 
-    Using individual scripts for various features ; each reporting whether
-    requested setting is valid, and set (or errored) or ignored.
-    JSON config file is rewritten to remove applied setting """
+Using individual scripts for various features ; each reporting whether
+requested setting is valid, and set (or errored) or ignored.
+JSON config file is rewritten to remove applied setting"""
 import argparse
 import pathlib
 import sys
+import time
 
+from offspot_config.utils.yaml import yaml_dump, yaml_load
 from offspot_runtime.__about__ import __version__
 from offspot_runtime.checks import FIRMWARES
 from offspot_runtime.configlib import (
@@ -16,13 +18,14 @@ from offspot_runtime.configlib import (
     SYSTEMCTL_PATH,
     Config,
     colored,
-    from_yaml,
+    get_nb_compose_services,
+    get_nb_running_containers,
     get_progname,
     get_runtime_bin,
     restart_service,
+    service_started,
     simple_run,
     succeed,
-    to_yaml,
     warn_unless_root,
 )
 
@@ -177,7 +180,7 @@ class Handlers:
 
     @staticmethod
     def config_containers(item: dict) -> int:
-        payload = to_yaml(item)
+        payload = yaml_dump(item)
         command = get_runtime_bin("containers")
         if Config.debug:
             command += ["--debug"]
@@ -226,6 +229,34 @@ def start_ap_stack():
     )
 
 
+def start_containers_stack() -> int:
+    nb_services = get_nb_compose_services()
+    if not nb_services:
+        logger.error("No services found in docker-compose")
+        return 1
+
+    res = restart_service("docker-compose.service")
+    if res != 0:
+        logger.error(f"docker-compose.service failed with {res}")
+        return res
+
+    polls = 5 * 60  # we'll wait up to this number of seconds
+    while polls:
+        compose_status = service_started("docker-compose.service")
+        if not compose_status.started:
+            logger.error(
+                f"docker-compose.service failed with {compose_status.exit_code}"
+            )
+            return compose_status.exit_code
+        nb_running = get_nb_running_containers()
+        logger.debug(f"Currently running containers: {nb_running=}")
+        if bool(nb_running) and nb_running >= nb_services:
+            return 0
+        time.sleep(1)
+    logger.error("Unable to validate docker containers after all attempts")
+    return 1
+
+
 def main(config_path) -> int:
     config_path = pathlib.Path(config_path).expanduser().resolve()
     logger.info(f"Starting offspot-runtime-config off {config_path}")
@@ -233,15 +264,21 @@ def main(config_path) -> int:
     has_error = False
 
     try:
-        config = from_yaml(config_path.read_text())
+        config = yaml_load(config_path.read_text()) or {}
     except Exception as exc:
         logger.critical(
             colored(f"Unable to read/parse YAML config at {config_path}: {exc}", "red")
         )
-        start_ap_stack()
         return 1
 
-    for key in ("firmware", "timezone", "hostname", "ethernet", "ap", "containers"):
+    for key in (
+        "firmware",
+        "timezone",
+        "hostname",
+        "ethernet",
+        "containers",
+        "ap",
+    ):
         if config.get(key):
             logger.debug(f"[{key}] config change requested")
             returncode = getattr(Handlers, f"config_{key}")(config.get(key))
@@ -260,10 +297,17 @@ def main(config_path) -> int:
                     colored("Mandatory reboot requested. rebooting now.", "red")
                 )
                 simple_run(["/usr/sbin/shutdown", "-r", "now"])
-
         elif key == "ap":
             if start_ap_stack() != 0:
                 has_error = True
+
+        # start and validate docker-compose
+        if key == "containers":
+            # stop the loop (dont start WiFi) if containers failed to start
+            if start_containers_stack() != 0:
+                logger.critical(colored("Failed to start docker compose", "red"))
+                has_error = True
+                break
 
     if has_error:
         return 1
@@ -271,7 +315,7 @@ def main(config_path) -> int:
 
 
 def save_config(config_path: pathlib.Path, config: dict):
-    config_path.write_text(banner + to_yaml(config) if config else "---\n")
+    config_path.write_text(banner + yaml_dump(config) if config else "---\n")
 
 
 def entrypoint():
