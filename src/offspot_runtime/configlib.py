@@ -220,7 +220,14 @@ def get_nb_running_containers() -> int:
     min_seconds_healthy = 5
     try:
         ps = subprocess.run(
-            ["docker-compose", "-f", str(COMPOSE_PATH), "ps", "--format", "json"],
+            [
+                "/usr/local/bin/docker-compose",
+                "-f",
+                str(COMPOSE_PATH),
+                "ps",
+                "--format",
+                "json",
+            ],
             text=True,
             capture_output=True,
             check=True,
