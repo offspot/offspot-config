@@ -7,16 +7,15 @@ import logging
 import pathlib
 import sys
 
+from offspot_config.utils.yaml import yaml_dump, yaml_load
 from offspot_runtime.__about__ import __version__
 from offspot_runtime.checks import is_valid_compose
 from offspot_runtime.configlib import (
     Config,
     ensure_folder,
     fail_invalid,
-    from_yaml,
     get_progname,
     succeed,
-    to_yaml,
     warn_unless_root,
 )
 
@@ -45,7 +44,7 @@ def main(src: str, dest: str) -> int:
             fail_invalid(f"Unable to read compose from {src}: {exc}")
 
     try:
-        compose = from_yaml(payload)
+        compose = yaml_load(payload)
     except Exception as exc:
         fail_invalid(f"Unable to parse YAML compose: {exc}")
         compose = {}
@@ -56,7 +55,7 @@ def main(src: str, dest: str) -> int:
         fail_invalid(check.help_text)
 
     ensure_folder(dest_path.parent)
-    dest_path.write_text(to_yaml(compose))
+    dest_path.write_text(yaml_dump(compose))
 
     return succeed("docker-compose configured")
 

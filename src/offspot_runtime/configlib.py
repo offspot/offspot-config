@@ -1,26 +1,23 @@
+import json
 import logging
 import os
 import pathlib
 import re
 import subprocess
 import sys
-from typing import Optional
+from typing import Any, NamedTuple, Optional
 
-import yaml
+import humanfriendly
 from attrs import define, field
 
-try:
-    from yaml import CDumper as Dumper
-    from yaml import CSafeLoader as SafeLoader
-except ImportError:
-    from yaml import Dumper, SafeLoader
-
+from offspot_config.utils.yaml import yaml_load
 
 SYSTEMCTL_PATH = pathlib.Path("/usr/bin/systemctl")
 DNSMASQ_CONF_PATH = pathlib.Path("/etc/dnsmasq.conf")
 DNSMASQ_SPOOF_CONFIG_PATH = DNSMASQ_CONF_PATH.with_name("dnsmasq-spoof.conf")
 IPTABLES_DIR = pathlib.Path("/etc/iptables/")
 TERM_COLORS = {"red": "31", "green": "32", "blue": "34"}
+COMPOSE_PATH = pathlib.Path("/etc/docker/compose.yml")
 
 
 def colored(text, color: str) -> str:
@@ -34,6 +31,14 @@ logging.basicConfig(
     level=logging.INFO,
     format=f"{colored('%(name)s', 'blue')} %(levelname)s: %(message)s",
 )
+
+
+class SystemDServiceStatus(NamedTuple):
+    """systemctl show {service} originated info"""
+
+    started: bool
+    exit_code: int
+    payload: dict[str, str]
 
 
 @define
@@ -122,24 +127,37 @@ def ensure_folder(fpath: pathlib.Path):
     fpath.mkdir(exist_ok=True, parents=True)
 
 
-def to_yaml(payload: dict) -> str:
-    """serialize object into a YAML string"""
-    return yaml.dump(payload, Dumper=Dumper)
-
-
-def from_yaml(payload: str) -> dict:
-    """serialize object into a YAML string"""
-    return yaml.load(payload, Loader=SafeLoader) or {}
-
-
 def restart_service(service):
     """start or restart systemd unit based on status"""
     action = (
         "restart"
-        if simple_run([str(SYSTEMCTL_PATH), "--no-pager", "status", service]) == 0
+        if service_started(service).payload.get("ActiveState", "") != "running"
         else "start"
     )
     return simple_run([str(SYSTEMCTL_PATH), action, service])
+
+
+def service_started(service) -> SystemDServiceStatus:
+    """whether a systemd service started with details"""
+    payload: dict[str, str] = {}
+    command = [str(SYSTEMCTL_PATH), "--no-pager", "--plain", "show", service]
+    Config.logger.debug(f"{command=}")
+    try:
+        ps = subprocess.run(command, text=True, capture_output=True, check=True)
+        for line in ps.stdout.splitlines():
+            if line.strip():
+                key, value = line.split("=", 1)
+                payload[key] = value
+    except Exception as exc:
+        if Config.debug:
+            Config.logger.exception(exc)
+        return SystemDServiceStatus(started=False, exit_code=99, payload={})
+    else:
+        succeeded = payload.get("Result", "") == "success"
+        rc = int(payload.get("ExecMainStatus", "99"))
+        if not succeeded:
+            Config.logger.error(f"Service {service} failed with returncode {rc}")
+        return SystemDServiceStatus(started=succeeded, exit_code=rc, payload=payload)
 
 
 def install_dnsmasq_spoof_service(*, remove: bool):
@@ -182,3 +200,52 @@ WantedBy=multi-user.target
             simple_run([str(SYSTEMCTL_PATH), "start", pathunit_path.name]),
         ]
     )
+
+
+def get_nb_compose_services() -> int:
+    """number of expected services from reading docker-compose YAML"""
+    try:
+        payload = yaml_load(COMPOSE_PATH.read_text())
+        if not isinstance(payload["services"], dict):
+            raise ValueError("Unexpected YAML data")
+        return len(payload["services"].keys())
+    except Exception as exc:
+        Config.logger.exception(exc)
+        return 0
+
+
+def get_nb_running_containers() -> int:
+    """number of currently running containers (via docker-compose)"""
+    containers: list[dict[str, Any]] = []
+    min_seconds_healthy = 5
+    try:
+        ps = subprocess.run(
+            [
+                "/usr/local/bin/docker-compose",
+                "-f",
+                str(COMPOSE_PATH),
+                "ps",
+                "--format",
+                "json",
+            ],
+            text=True,
+            capture_output=True,
+            check=True,
+        )
+        for line in ps.stdout.splitlines():
+            if line.strip():
+                container = json.loads(line.strip())
+                container["healthy"] = container["Health"] == "healthy"
+                if not container["healthy"]:
+                    container["healthy"] = (
+                        humanfriendly.parse_timespan(
+                            container["RunningFor"].replace(" ago", "")
+                        )
+                        >= min_seconds_healthy
+                    )
+                containers.append(container)
+        return len(list(filter(lambda cont: cont["healthy"], containers)))
+    except Exception as exc:
+        Config.logger.error("failed to get compose status")
+        Config.logger.exception(exc)
+        return -1

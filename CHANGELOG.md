@@ -11,10 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [runtime] WLAN network to use 192.168.144.0/24 network by default instead of 192.168.2.0/24
 - [runtime] WLAN DHCP to use 192.168.144.128/25 network by default instead of 192.168.2.128/25
+- [runtime] WiFi AP stack manually started in `fromfile` after container stack is reported Up.
 - [captive-portal] Using 1.6.0 which default 192.168.144.128/25 network by default instead of 192.168.2.128/25
 - [builder] Using 192.168.144.0/24 and 192.168.144.128/25 instead of 192.168.2.0/24 and 192.168.2.128/25
 - [builder] Added optional `variant` param
 - [builder] Now creating `/data/etc/offspot.json` with Kiwix Hotspot details (variant and version)
+
+### Removed
+
+- Support for Python 3.9 and 3.10 as base-image been based on Bookworm for a long time
 
 ## [2.6.1] - 2025-05-07
 
