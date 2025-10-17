@@ -263,7 +263,7 @@ def enable_routing():
         "net.ipv4.ip_forward=1\n"
     )
 
-    return simple_run(["/usr/sbin/sysctl", "-p"])
+    return simple_run(["/usr/sbin/sysctl", "--system"])
 
 
 def enable_masquerade_for(interface: str):
