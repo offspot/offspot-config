@@ -147,12 +147,14 @@ class Handlers:
             command += ["--debug"]
 
         for key in (
+            "profile",
             "passphrase",
             "address",
             "tld",
             "domain",
             "welcome",
-            "channel",
+            "channel_24",
+            "channel_5",
             "country",
             "interface",
             "dhcp-range",

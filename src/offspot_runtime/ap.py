@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-""" Configures WiFi Access Point (using hostapd and dnsmasq)
+"""Configures WiFi Access Point (using hostapd and dnsmasq)
 
-    Refs:
-        https://en.wikipedia.org/wiki/List_of_WLAN_channels#2.4_GHz_(802.11b/g/n/ax)
+Refs:
+    https://en.wikipedia.org/wiki/List_of_WLAN_channels#2.4_GHz_(802.11b/g/n/ax)
 """
 
 import argparse
@@ -40,7 +40,8 @@ NAME = pathlib.Path(__file__).stem
 
 RFKILL_PATH = pathlib.Path("/usr/sbin/rfkill")
 IPTABLES_PATH = pathlib.Path("/usr/sbin/iptables")
-DEFAULT_CHANNEL = 11
+DEFAULT_CHANNEL_24 = 11
+DEFAULT_CHANNEL_5 = 36
 DEFAULT_ADDRESS = "192.168.144.1"
 DEFAULT_CAPTURED_ADDRESS = "198.51.100.1"
 DEFAULT_DNS = ["8.8.8.8", "1.1.1.1"]
@@ -61,21 +62,17 @@ ctrl_interface_group=0
 
 # wlan card driver
 driver=nl80211
-# wifi ssid
-ssid={ssid}
 utf8_ssid=1
 country_code={country_code}
-# wifi mode (g for g and n)
-hw_mode=g
-# wifi channel
-channel={channel}
 # MAC address access control (0 = accept by default)
 macaddr_acl=0
 # dont hide the SSID
-ignore_broadcast_ssid={ignore_broadcast}
+ignore_broadcast_ssid=0
+ssid={ssid}
+
 {wpa2}
-ieee80211n=1
-wmm_enabled=1
+
+{profile_part}
 """
 HOSTAPD_CONF_WPA2_TEMPLATE = """
 # use WPA
@@ -89,6 +86,37 @@ wpa_key_mgmt=WPA-PSK
 wpa_pairwise=TKIP
 rsn_pairwise=CCMP
 """
+
+HOSTAPD_CONF_N24_TEMPLATE = """
+hw_mode=g
+channel={channel_24}
+ieee80211n=1
+wmm_enabled=1
+ht_capab=[HT20][HT40][MAX-AMSDU-3839][DSSS_CCK-40][RX-HT20-SGI][RX-HT40-SGI]
+require_ht=0
+"""
+
+HOSTAPD_CONF_N5_TEMPLATE = """
+hw_mode=a
+wps_rf_bands=a
+channel={channel_5}
+ieee80211n=1
+wmm_enabled=1
+require_ht=1
+ht_capab=[HT20][HT40][MAX-AMSDU-3839][DSSS_CCK-40][RX-HT20-SGI][RX-HT40-SGI]
+ieee80211ac=0
+"""
+
+HOSTAPD_CONF_AC5_TEMPLATE = """
+ieee80211ac=1
+wmm_enabled=1
+ht_capab=[HT40+][HT40-][MAX-AMSDU-3839][DSSS_CCK-40][RX-HT20-SGI][RX-HT40-SGI]
+vht_capab=[MAX-MPDU-3895][SHORT-GI-80][SU-BEAMFORMEE]
+channel={channel_5}
+hw_mode=a
+vht_oper_chwidth=1
+"""
+
 DNSMASQ_CONF_TEMPLATE = """
 # interface to listen on
 interface={interface}
@@ -115,9 +143,35 @@ iface {interface} inet static
 address {address}
 netmask {netmask}
 """
+PROFILES = ["perf", "coverage"]
 
 Config.init(NAME)
 logger = Config.logger
+
+
+def is_using_brcm43455(interface: str) -> bool:
+    """Whether interace is a Broadcom BCM 43455 using brcmfmac driver"""
+
+    # check for device's vendor and product IDs
+    for fname, value in {"vendor": "0x02d0", "device": "0x4345"}.items():
+        try:
+            if (
+                pathlib.Path(f"/sys/class/net/{interface}/device/{fname}").read_text()
+                != value
+            ):
+                return False
+        except Exception as exc:
+            logger.error(f"Failed to read wlan0 {fname}: {exc}")
+            return False
+
+    # check that it has a brcmfmac_wcc holder
+    driver_holder_dir = pathlib.Path(
+        f"/sys/class/net/{interface}/device/driver/module/holders/brcmfmac_wcc"
+    )
+    if not driver_holder_dir.exists() or not driver_holder_dir.is_dir():
+        return False
+
+    return True
 
 
 def get_ip_address(interface: str) -> str:
@@ -183,10 +237,18 @@ def write_hostapd_conf(hostapd_conf_path: pathlib.Path, **kwargs) -> int:
         else ""
     )
 
+    profile_template = (
+        HOSTAPD_CONF_AC5_TEMPLATE
+        if kwargs["profile"] == "perf"
+        else HOSTAPD_CONF_N24_TEMPLATE
+    )
+    profile_part = profile_template.format(**kwargs)
+
     ensure_folder(hostapd_conf_path.parent)
     hostapd_conf_path.write_text(
         HOSTAPD_CONF_TEMPLATE.format(
             ignore_broadcast="1" if kwargs["hide_ssid"] else 0,
+            profile_part=profile_part,
             wpa2=wpa2,
             **kwargs,
         )
@@ -331,6 +393,7 @@ def main(**kwargs) -> int:
 
     check = is_valid_ap_config(
         ssid=kwargs["ssid"],
+        profile=kwargs["profile"],
         hide=kwargs["hide_ssid"],
         passphrase=kwargs["passphrase"],
         address=kwargs["address"],
@@ -339,7 +402,8 @@ def main(**kwargs) -> int:
         tld=kwargs["tld"],
         domain=kwargs["domain"],
         welcome=kwargs["welcome_domain"],
-        channel=kwargs["channel"],
+        channel_24=kwargs["channel_24"],
+        channel_5=kwargs["channel_5"],
         country=kwargs["country_code"],
         interface=kwargs["interface"],
         dhcp_range=kwargs["dhcp_range"],
@@ -353,7 +417,7 @@ def main(**kwargs) -> int:
     if not check.passed:
         fail_invalid(check.help_text)
 
-    # std cidr notation for network
+    # std CIDR notation for network
     kwargs["network"] = ipaddress.IPv4Network(kwargs["network"]).with_prefixlen
 
     unblock_wireless()
@@ -452,6 +516,14 @@ def entrypoint():
     )
 
     parser.add_argument(
+        "--profile",
+        help="Network profile to setup. `perf` is only ever applied if on brcm43455.",
+        choices=PROFILES,
+        default=PROFILES[0],
+        dest="profile",
+    )
+
+    parser.add_argument(
         "--hide",
         help="Hide SSID (Clients must know and enter its name to connect)",
         dest="hide_ssid",
@@ -512,10 +584,19 @@ def entrypoint():
     )
 
     parser.add_argument(
-        "--channel",
-        help=f"WiFi channel to use for the network. Defaults to {DEFAULT_CHANNEL}",
-        dest="channel",
-        default=DEFAULT_CHANNEL,
+        "--channel-24",
+        help=f"WiFi channel to use for 2.4Ghz network. Defaults to {DEFAULT_CHANNEL_24}",
+        dest="channel_24",
+        default=DEFAULT_CHANNEL_24,
+        type=int,
+        required=False,
+    )
+
+    parser.add_argument(
+        "--channel-5",
+        help=f"WiFi channel to use for 5Ghz network. Defaults to {DEFAULT_CHANNEL_5}",
+        dest="channel_5",
+        default=DEFAULT_CHANNEL_5,
         type=int,
         required=False,
     )
@@ -556,7 +637,7 @@ def entrypoint():
     parser.add_argument(
         "--dns",
         help=f"DNS to set via DHCP when working as Internet gateway. "
-        f'Defaults to {", ".join(DEFAULT_DNS)}',
+        f"Defaults to {', '.join(DEFAULT_DNS)}",
         dest="dns",
         default=[],
         required=False,

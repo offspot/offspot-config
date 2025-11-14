@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Applied configuration (from offspot.yaml) now recorded to /etc/offspot/latest.yaml
+- [runtime] `fromfile` Records applied configuration (from offspot.yaml) to /etc/offspot/latest.yaml
+- [runtime] `ap` now supports `profile` (`perf` or `coverage`)
 
 ## [2.7.1] - 2025-10-20
 

@@ -19,7 +19,8 @@ from offspot_runtime.checks import (
     is_valid_ssid,
     is_valid_timezone,
     is_valid_tld,
-    is_valid_wifi_channel,
+    is_valid_24ghz_wifi_channel,
+    is_valid_5ghz_wifi_channel,
     is_valid_wifi_country_code,
     is_valid_wpa2_passphrase,
     port_in_range,
@@ -336,15 +337,137 @@ def test_is_valid_wpa2_passphrase(passphrase: str, should_pass: bool):
         (11, True),
         (12, True),
         (13, True),
-        (14, True),
+        (14, False),
         (15, False),
-        (110, False),
+        (30, False),
+        (31, False),  # bad
+        (32, False),  # bad
+        (34, False),  # U-NII-1
+        (36, False),  # U-NII-1
+        (38, False),  # U-NII-1
+        (40, False),  # U-NII-1
+        (42, False),  # U-NII-1
+        (44, False),  # U-NII-1
+        (46, False),  # U-NII-1
+        (48, False),  # U-NII-1
+        (50, False),  # bad
+        (51, False),  # bad
+        (52, False),  # U-NII-2A
+        (54, False),  # bad
+        (56, False),  # U-NII-2A
+        (60, False),  # U-NII-2A
+        (64, False),  # U-NII-2A
+        (96, False),  # bad
+        (100, False),  # U-NII-2C
+        (102, False),  # bad
+        (104, False),  # U-NII-2C
+        (108, False),  # U-NII-2C
+        (112, False),  # U-NII-2C
+        (116, False),  # U-NII-2C
+        (120, False),  # U-NII-2C
+        (124, False),  # U-NII-2C
+        (128, False),  # U-NII-2C
+        (132, False),  # U-NII-2C
+        (136, False),  # U-NII-2C
+        (140, False),  # U-NII-2C
+        (142, False),  # bad
+        (149, False),  # U-NII-3
+        (151, False),  # bad
+        (153, False),  # U-NII-3
+        (157, False),  # U-NII-3
+        (161, False),  # U-NII-3
+        (165, False),  # U-NII-3
+        (167, False),  # bad
+        (169, False),  # U-NII-4
+        (171, False),  # bad
+        (173, False),  # U-NII-4
+        (175, False),  # bad
+        (177, False),  # U-NII-4
+        (181, False),  # U-NII-4
+        (185, False),  # U-NII-4
     ],
 )
-def test_is_valid_wifi_channel(channel: int, should_pass: bool):
-    check = is_valid_wifi_channel(channel)
+def test_is_valid_24ghz_wifi_channel(channel: int, should_pass: bool):
+    check = is_valid_24ghz_wifi_channel(channel)
     assert check.passed == should_pass
     if check.passed and channel > 11:
+        assert check.help_text
+
+
+@pytest.mark.parametrize(
+    "channel, should_pass",
+    [
+        ("", False),
+        ("6", False),
+        (-1, False),
+        (0, False),
+        (1, False),
+        (2, False),
+        (3, False),
+        (4, False),
+        (5, False),
+        (6, False),
+        (7, False),
+        (8, False),
+        (9, False),
+        (10, False),
+        (11, False),
+        (12, False),
+        (13, False),
+        (14, False),
+        (15, False),
+        (30, False),
+        (31, False),  # bad
+        (32, False),  # U-NII-1
+        (34, False),  # U-NII-1
+        (36, True),  # U-NII-1
+        (38, False),  # U-NII-1
+        (40, True),  # U-NII-1
+        (42, False),  # U-NII-1
+        (44, True),  # U-NII-1
+        (46, False),  # U-NII-1
+        (48, True),  # U-NII-1
+        (50, False),  # bad
+        (51, False),  # bad
+        (52, False),  # U-NII-2A
+        (54, False),  # bad
+        (56, False),  # U-NII-2A
+        (60, False),  # U-NII-2A
+        (64, False),  # U-NII-2A
+        (96, False),  # bad
+        (100, False),  # U-NII-2C
+        (102, False),  # bad
+        (104, False),  # U-NII-2C
+        (108, False),  # U-NII-2C
+        (112, False),  # U-NII-2C
+        (116, False),  # U-NII-2C
+        (120, False),  # U-NII-2C
+        (124, False),  # U-NII-2C
+        (128, False),  # U-NII-2C
+        (132, False),  # U-NII-2C
+        (136, False),  # U-NII-2C
+        (140, False),  # U-NII-2C
+        (142, False),  # bad
+        (149, False),  # U-NII-3
+        (151, False),  # bad
+        (153, False),  # U-NII-3
+        (157, False),  # U-NII-3
+        (161, False),  # U-NII-3
+        (165, False),  # U-NII-3
+        (167, False),  # bad
+        (169, False),  # U-NII-4
+        (171, False),  # bad
+        (173, False),  # U-NII-4
+        (175, False),  # bad
+        (177, False),  # U-NII-4
+        (181, False),  # U-NII-4
+        (185, False),  # U-NII-4
+    ],
+)
+def test_is_valid_5ghz_wifi_channel(channel: int, should_pass: bool):
+    check = is_valid_5ghz_wifi_channel(channel)
+    assert check.passed == should_pass
+    if check.passed and channel != 36:
         assert check.help_text
 
 
@@ -401,6 +524,7 @@ def test_is_valid_wifi_country_code(country_code: str, should_pass: bool):
 def test_is_valid_ap_config():
     defaults = {
         "ssid": "",
+        "profile": "coverage",
         "hide": False,
         "passphrase": None,
         "address": "192.168.144.1",
@@ -409,7 +533,8 @@ def test_is_valid_ap_config():
         "tld": "offspot",
         "domain": "generic",
         "welcome": "goto.generic",
-        "channel": 11,
+        "channel_24": 11,
+        "channel_5": 36,
         "country": "US",
         "interface": "wlan0",
         "dhcp_range": "192.168.144.2,192.168.144.254,255.255.255.0,1h",
@@ -427,6 +552,11 @@ def test_is_valid_ap_config():
     config["ssid"] = "working!"
     assert is_valid_ap_config(**config)
 
+    config["profile"] = "speed"
+    assert not is_valid_ap_config(**config)
+    config["profile"] = "perf"
+    assert is_valid_ap_config(**config)
+
     config["hide"] = "yes"
     assert not is_valid_ap_config(**config)
     config["hide"] = True
@@ -437,9 +567,14 @@ def test_is_valid_ap_config():
     config["passphrase"] = "this is OK"
     assert is_valid_ap_config(**config)
 
-    config["channel"] = 15
+    config["channel_24"] = 15
     assert not is_valid_ap_config(**config)
-    config["channel"] = 6
+    config["channel_24"] = 6
+    assert is_valid_ap_config(**config)
+
+    config["channel_5"] = 32
+    assert not is_valid_ap_config(**config)
+    config["channel_5"] = 40
     assert is_valid_ap_config(**config)
 
     config["country"] = "AAA"
