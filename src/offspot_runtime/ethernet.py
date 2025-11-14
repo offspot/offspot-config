@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" Sets machine's ethernet network config (using dhcpcd5) """
+"""Sets machine's ethernet network config (using dhcpcd5)"""
 
 import argparse
 import logging

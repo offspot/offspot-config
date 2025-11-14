@@ -145,7 +145,10 @@ def test_invalid_data(
         Reader(download_url=download_url)  # pyright: ignore [reportCallIssue]
     with pytest.raises(TypeError):
         Reader.using(
-            platform, download_url, filename, size  # pyright: ignore [reportCallIssue]
+            platform,
+            download_url,
+            filename,
+            size,  # pyright: ignore [reportCallIssue]
         )
 
 

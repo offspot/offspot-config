@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" Sets machine's hostname (using systemd) """
+"""Sets machine's hostname (using systemd)"""
 
 import argparse
 import logging

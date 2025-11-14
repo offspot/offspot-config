@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" Validates and writes a docker-compose payload """
+"""Validates and writes a docker-compose payload"""
 
 import argparse
 import logging
