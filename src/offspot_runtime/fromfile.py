@@ -5,10 +5,12 @@
 Using individual scripts for various features ; each reporting whether
 requested setting is valid, and set (or errored) or ignored.
 JSON config file is rewritten to remove applied setting"""
+
 import argparse
 import pathlib
 import sys
 import time
+from typing import Any
 
 from offspot_config.utils.yaml import yaml_dump, yaml_load
 from offspot_runtime.__about__ import __version__
@@ -31,6 +33,7 @@ from offspot_runtime.configlib import (
 
 NAME = pathlib.Path(__file__).stem
 DEFAULT_CONFIG_PATH = pathlib.Path("/boot/firmware/offspot.yaml")
+LATEST_CONFIG_PATH = pathlib.Path("/etc/offspot/latest.yaml")
 Config.init(NAME)
 logger = Config.logger
 banner = """# This file allows changing this Offspot's configuration on boot.
@@ -284,8 +287,9 @@ def main(config_path) -> int:
             returncode = getattr(Handlers, f"config_{key}")(config.get(key))
             if returncode in (0, 100):  # 100 is special code requesting reboot
                 logger.info(f"[{key}] configuration applied")
-                config.pop(key)
-                save_config(config_path, config)
+                update = config.pop(key)
+                save_config(config_path, config, add_banner=True)
+                record_to_latest(key=key, payload=update)
             else:
                 if returncode == 2:
                     logger.error(f"[{key}] incorrect configuration. Please fix")
@@ -314,8 +318,26 @@ def main(config_path) -> int:
     return succeed("runtime-config applied successfuly")
 
 
-def save_config(config_path: pathlib.Path, config: dict):
-    config_path.write_text(banner + yaml_dump(config) if config else "---\n")
+def save_config(config_path: pathlib.Path, config: dict, add_banner: bool):
+    config_path.write_text(
+        (banner if add_banner else "") + yaml_dump(config) if config else "---\n"
+    )
+
+
+def record_to_latest(key: str, payload: dict[str, Any]):
+    """record passed config in “latest” YAML config record"""
+    try:
+        LATEST_CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        if not LATEST_CONFIG_PATH.exists():
+            LATEST_CONFIG_PATH.write_text("---\n")
+        config = yaml_load(LATEST_CONFIG_PATH.read_text()) or {}
+        config[key] = payload
+        save_config(config_path=LATEST_CONFIG_PATH, config=config, add_banner=False)
+    except Exception as exc:
+        logger.error(
+            f"Unable to record “latest” update for {key}: {type(exc).__name__} {exc!s}"
+        )
+        logger.exception(exc)
 
 
 def entrypoint():
