@@ -16,6 +16,7 @@ from offspot_runtime.checks import (
     is_valid_interface_name,
     is_valid_ipv4,
     is_valid_network,
+    is_valid_profile,
     is_valid_ssid,
     is_valid_timezone,
     is_valid_tld,
@@ -301,6 +302,22 @@ def test_is_valid_ssid(ssid: str, should_pass: bool):
 
 
 @pytest.mark.parametrize(
+    "profile, should_pass",
+    [
+        (1, False),
+        ("kiwix", False),
+        ("coverage", True),
+        ("perf", True),
+        ("", False),
+        (None, False),
+    ],
+)
+def test_is_valid_coverage(profile: str, should_pass: bool):
+    check = is_valid_profile(profile)
+    assert check.passed == should_pass
+
+
+@pytest.mark.parametrize(
     "passphrase, should_pass",
     [
         (1, False),
@@ -524,7 +541,7 @@ def test_is_valid_wifi_country_code(country_code: str, should_pass: bool):
 def test_is_valid_ap_config():
     defaults = {
         "ssid": "",
-        "profile": "coverage",
+        "profile": "",
         "hide": False,
         "passphrase": None,
         "address": "192.168.144.1",
@@ -632,6 +649,11 @@ def test_is_valid_ap_config():
     config["dns"] = ["240.0.0.1"]
     assert not is_valid_ap_config(**config)
     config["dns"] = ["1.1.1.1"]
+    assert is_valid_ap_config(**config)
+
+    config["captured_address"] = "256.192.144.1"
+    assert not is_valid_ap_config(**config)
+    config["captured_address"] = "192.168.144.1"
     assert is_valid_ap_config(**config)
 
     for key in ("other_interfaces", "except_interfaces", "nodhcp_interfaces"):
