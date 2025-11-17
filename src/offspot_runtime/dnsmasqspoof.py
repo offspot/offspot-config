@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" Toggle dnsmasq's spoof mode when internet connection is offline """
+"""Toggle dnsmasq's spoof mode when internet connection is offline"""
 
 import argparse
 import pathlib

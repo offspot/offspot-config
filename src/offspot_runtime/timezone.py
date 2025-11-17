@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" Sets machine's timezone (using systemd) """
+"""Sets machine's timezone (using systemd)"""
 
 import argparse
 import logging

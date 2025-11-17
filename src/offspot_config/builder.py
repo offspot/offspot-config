@@ -35,6 +35,8 @@ RE_SPECIFIC_APP_DIR = re.compile(r"\${APP_DIR:(?P<ident>[a-z\.\-]+)}")
 ZIMDL_PREFIX = "zim-download"
 # service subdomain for kiwix-serve (used to be static to kiwix)
 KIWIX_PREFIX = "browse"
+# service subdomain for adminui
+ADMIN_PREFIX = "admin"
 # on-host path to dashboard config
 DASHBOARD_CONFIG_PATH = CONTENT_TARGET_PATH / "dashboard.yaml"
 # on-host metrics persistent data folder
@@ -48,6 +50,11 @@ ORIGINAL_BRANDING_PATH = DATA_PART_PATH / "branding"
 # actual hotspot branding. default from orig, replaced in builder
 BRANDING_PATH = CONTENT_TARGET_PATH / "branding"
 OFFSPOT_JSON_PATH = DATA_PART_PATH / "etc" / "offspot.json"
+DOCKER_COMPOSE_PATH = Path("/etc/docker/compose.yml")
+OFFSPOT_CONFIG_PATH = Path("/boot/firmware/offspot.yaml")
+HOSTAPD_CONFIG_PATH = Path("/etc/hostapd/hostapd.conf")
+LATEST_CONFIG_PATH = Path("/etc/offspot/latest.yaml")
+HOST_BRIDGE_SOCKET = Path("/run/offspot/mekhenet.sock")
 
 KIWIX_ZIM_LOAD_BALANCER_URL = "https://download.kiwix.org/zim/"
 
@@ -62,6 +69,11 @@ INTERNAL_IMAGES = {
         "source": "ghcr.io/offspot/dashboard:1.6.2",
         "filesize": 177602560,
         "fullsize": 177484766,
+    },
+    "adminui": {
+        "source": "ghcr.io/offspot/adminui:dev",
+        "filesize": 277729280,
+        "fullsize": 277657895,
     },
     "file-browser": {
         "source": "ghcr.io/offspot/file-browser:1.1",
@@ -191,6 +203,7 @@ class ConfigBuilder:
         self.with_files: bool = False
         self.with_reverseproxy: bool = False
         self.with_dashboard: bool = False
+        self.with_adminui: bool = False
         self.with_captive_portal: bool = False
         self.with_hwclock: bool = False
         self.with_metrics: bool = False
@@ -350,6 +363,82 @@ class ConfigBuilder:
             via="direct",
             is_url=False,
         )
+
+    def add_adminui(self):
+        if self.with_adminui:
+            return
+
+        self.with_adminui = True
+
+        image = get_internal_image("adminui")
+        self.config["oci_images"].add(image)
+
+        # add to compose
+        self.compose["services"]["adminui"] = {
+            "image": image.source,
+            "container_name": "adminui",
+            "pull_policy": "never",
+            "restart": "unless-stopped",
+            "expose": ["80"],
+            "environment": {
+                "ADMIN_USERNAME": self.environ.get("ADMIN_USERNAME", ""),
+                "ADMIN_PASSWORD": self.environ.get("ADMIN_PASSWORD", ""),
+            },
+            "volumes": [
+                # mandates presence of this file on host (base-image).
+                {
+                    "type": "bind",
+                    "source": str(DOCKER_COMPOSE_PATH),
+                    "target": str(DOCKER_COMPOSE_PATH),
+                    "read_only": True,
+                },
+                # mandates presence of this file on host (base-image).
+                {
+                    "type": "bind",
+                    "source": str(OFFSPOT_CONFIG_PATH),
+                    "target": str(OFFSPOT_CONFIG_PATH),
+                    "read_only": False,
+                },
+                # mandates presence of this file on host (base-image).
+                {
+                    "type": "bind",
+                    "source": str(HOSTAPD_CONFIG_PATH),
+                    "target": str(HOSTAPD_CONFIG_PATH),
+                    "read_only": True,
+                },
+                # mandates presence of this folder on host (prob. not present)
+                {
+                    "type": "bind",
+                    "source": str(LATEST_CONFIG_PATH.parent),
+                    "target": str(LATEST_CONFIG_PATH.parent),
+                    "read_only": True,
+                },
+                # mandates presence of this folder on host (created by systemd in mekhenet.service)
+                {
+                    "type": "bind",
+                    "source": str(HOST_BRIDGE_SOCKET.parent),
+                    "target": str(HOST_BRIDGE_SOCKET.parent),
+                    "read_only": False,
+                },
+                {
+                    "type": "bind",
+                    "source": BRANDING_PATH,
+                    "target": "/var/www/static/branding",
+                    "read_only": True,
+                },
+                {
+                    "type": "bind",
+                    "source": ORIGINAL_BRANDING_PATH,
+                    "target": "/var/www/offspot.branding",
+                    "read_only": True,
+                },
+            ],
+        }
+
+        # add placeholder file to host fs to ensure bind succeeds
+        self.ensure_host_path(LATEST_CONFIG_PATH.parent)
+
+        self.reversed_services.add(f"{ADMIN_PREFIX}:adminui")
 
     def add_reverseproxy(self):
         if self.with_reverseproxy:

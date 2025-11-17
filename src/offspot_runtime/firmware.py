@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-""" Sets machine's WiFi firmware(s) to use """
+"""Sets machine's WiFi firmware(s) to use"""
 
 import argparse
 import logging

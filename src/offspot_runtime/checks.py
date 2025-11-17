@@ -134,8 +134,7 @@ def is_valid_compose(
         if service.get("network_mode") == "host" and ports:
             return CheckResponse(
                 False,
-                f"Service `{svcname}`: Host network mode "
-                "is incompatible with `ports`",
+                f"Service `{svcname}`: Host network mode is incompatible with `ports`",
             )
         if ports is None:
             continue
@@ -257,12 +256,23 @@ def is_valid_ethernet_config(
 
 
 def is_valid_ssid(ssid: str) -> CheckResponse:
-    """whether name represents a valid Timezone value"""
+    """whether ssid represents a valid Timezone value"""
     if not isinstance(ssid, str):
         return CheckResponse(False, "Incorrect type")
 
     if not RE_SSID.match(ssid):
         return CheckResponse(False, "Must be 32 chars max without: !#;+]/")
+
+    return CheckResponse(True)
+
+
+def is_valid_profile(profile: str) -> CheckResponse:
+    """whether profile represents a valid AP profile value"""
+    if not isinstance(profile, str):
+        return CheckResponse(False, "Incorrect type")
+
+    if profile != "perf" and profile != "coverage":
+        return CheckResponse(False, "Only `coverage` and `perf` profiles are supported")
 
     return CheckResponse(True)
 
@@ -277,16 +287,29 @@ def is_valid_wpa2_passphrase(passphrase: str) -> CheckResponse:
     return CheckResponse(True)
 
 
-def is_valid_wifi_channel(channel: int) -> CheckResponse:
+def is_valid_24ghz_wifi_channel(channel: int) -> CheckResponse:
     """whether channel is a valid WiFi channel value"""
     if not isinstance(channel, int):
         return CheckResponse(False, "Incorrect type")
 
-    if channel < 1 or channel > 14:
-        return CheckResponse(False, "Must be 1-14 (1-11 for most places)")
+    if channel < 1 or channel >= 14:
+        return CheckResponse(False, "Must be 1-13 (1-11 for most places)")
 
     return CheckResponse(
-        True, "Channels 12-14 are not allowed everywhere" if channel > 11 else ""
+        True, "Channels 12-13 are not allowed everywhere" if channel > 11 else ""
+    )
+
+
+def is_valid_5ghz_wifi_channel(channel: int) -> CheckResponse:
+    """whether channel is a valid WiFi channel value"""
+    if not isinstance(channel, int):
+        return CheckResponse(False, "Incorrect type")
+
+    if channel not in [36, 40, 44, 48]:
+        return CheckResponse(False, "Only supports U-NII-1 bands")
+
+    return CheckResponse(
+        True, "Only channel 36 allows up-to 80Mhz on U-NII-1" if channel != 36 else ""
     )
 
 
@@ -463,6 +486,7 @@ def is_valid_interface_name(name: str) -> CheckResponse:
 def is_valid_ap_config(
     *,
     ssid: str,
+    profile: str,
     hide: bool,
     passphrase: str,
     address: str,
@@ -471,7 +495,8 @@ def is_valid_ap_config(
     tld: str,
     domain: str,
     welcome: str,
-    channel: int,
+    channel_24: int,
+    channel_5: int,
     country: str,
     interface: str,
     dhcp_range: str,
@@ -486,6 +511,11 @@ def is_valid_ap_config(
     check = is_valid_ssid(ssid)
     if not check.passed:
         return CheckResponse(False, f"SSID: {check.help_text}")
+
+    if profile:
+        check = is_valid_profile(profile)
+        if not check.passed:
+            return CheckResponse(False, f"Profile: {check.help_text}")
 
     if not isinstance(hide, bool):
         return CheckResponse(False, "Hide: Incorrect type")
@@ -515,9 +545,13 @@ def is_valid_ap_config(
     if welcome and not is_valid_domain(welcome).passed:
         return CheckResponse(False, f"Welcome Domain: {check.help_text}")
 
-    check = is_valid_wifi_channel(channel)
+    check = is_valid_24ghz_wifi_channel(channel_24)
     if not check.passed:
-        return CheckResponse(False, f"Channel: {check.help_text}")
+        return CheckResponse(False, f"Channel 2.4Ghz: {check.help_text}")
+
+    check = is_valid_5ghz_wifi_channel(channel_5)
+    if not check.passed:
+        return CheckResponse(False, f"Channel 5Ghz: {check.help_text}")
 
     check = is_valid_wifi_country_code(country)
     if not check.passed:

@@ -206,10 +206,12 @@ Without an *armor*, configuration is appended at end of file, specifying `eth0` 
 
 | Member              | Kind       | Required | Function                                                                                                         |
 |---------------------|----------- |----------|------------------------------------------------------------------------------------------------------------------|
-| `ssid    `          | `string`   | **yes**  | SSID (Network Name)                                                                                              |
+| `ssid`              | `string`   | **yes**  | SSID (Network Name)                                                                                              |
 | `passphrase`        | `string`   | no       | Passphrase/password to connect to the network. Defaults to Open Network                                          |
-| `address`           | `string`   | no       | IP address to set on the wireless interface. Defaults to 192.168.144.1                                             |
-| `channel`           | `integer`  | no       | WiFi channel to use for the network (1-14). Defaults to `11`.                                                    |
+| `profile`           | `string`   | no       | AP Configuration: `perf` (802.11ac@5Ghz – requires brcm43455), `coverage`  (802.11n@2.4Ghz).  Defaults to `perf`.|
+| `address`           | `string`   | no       | IP address to set on the wireless interface. Defaults to 192.168.144.1                                           |
+| `channel_24`        | `integer`  | no       | WiFi channel to use for 2.4Ghz network (1-14). Defaults to `11`.                                                 |
+| `channel_5`         | `integer`  | no       | WiFi channel to use for 5Ghz network (32, 36, 40, 44). Defaults to `36`.                                         |
 | `country`           | `string`   | no       | Country-code to apply frequencies limitations for. Defaults to `FR`                                              |
 | `hide`              | `boolean`  | no       | Hide SSID (Clients must know and enter its name to connect)                                                      |
 | `interface`         | `string`   | no       | Interface to configure AP for. Defaults to `wlan0`                                                               |
