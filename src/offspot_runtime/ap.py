@@ -380,6 +380,14 @@ def main(**kwargs) -> int:
     if not is_valid_ipv4(kwargs["address"]):
         return fail_invalid("Invalid IPv4 address")
 
+    # perf is silently switched to coverage if chipset doesn't support it
+    if kwargs["profile"] == "perf" and not is_using_brcm43455(kwargs["interface"]):
+        kwargs["profile"] = "coverage"
+        logger.warning(
+            f"{kwargs['interface']} does not support `{kwargs['profile']}` profile "
+            f"(not brcm4355). Switching to `coverage`."
+        )
+
     if not kwargs["dns"]:
         kwargs["dns"] = DEFAULT_DNS
 
