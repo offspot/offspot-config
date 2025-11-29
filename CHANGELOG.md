@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [runtime] `ap` now supports `profile` (`perf` or `coverage`)
 - [builder] Admin UI support via `.add_adminui()`
 
+### Changed
+
+- [builder] Updated images (base updates) for `captive-portal:1.6.1`, `dashboard:1.6.3`, `file-browser:1.2`, `hwclock:1.3` and `reverse-proxy:1.12`
+- [catalog] Updated images (base updates) for `file-manager:1.4` and `magoe:1.1`
+
 ## [2.7.1] - 2025-10-20
 
 ### Changed
