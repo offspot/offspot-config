@@ -71,9 +71,9 @@ INTERNAL_IMAGES = {
         "fullsize": 166963163,
     },
     "adminui": {
-        "source": "ghcr.io/offspot/adminui:1.0",
-        "filesize": 295659520,
-        "fullsize": 295580605,
+        "source": "ghcr.io/offspot/adminui:1.1",
+        "filesize": 285081600,
+        "fullsize": 284997559,
     },
     "file-browser": {
         "source": "ghcr.io/offspot/file-browser:1.2",
@@ -434,9 +434,6 @@ class ConfigBuilder:
                 },
             ],
         }
-
-        # add placeholder file to host fs to ensure bind succeeds
-        self.ensure_host_path(LATEST_CONFIG_PATH.parent)
 
         self.reversed_services.add(f"{ADMIN_PREFIX}:adminui")
 
