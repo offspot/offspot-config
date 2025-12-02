@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [builder] `wifi_profile` parameter to ConfigBuilder
+
 ### Changed
 
 - [builder] Using kiwix-serve 3.8.1

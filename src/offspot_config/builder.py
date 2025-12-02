@@ -139,6 +139,7 @@ class ConfigBuilder:
         tld: str | None = "offspot",
         domain: str | None = "my-offspot",
         welcome_domain: str | None = "goto.kiwix",
+        wifi_profile: str | None = None,
         ssid: str | None = "my-offspot",
         passphrase: str | None = None,
         timezone: str | None = "UTC",  # noqa: ARG002
@@ -168,6 +169,7 @@ class ConfigBuilder:
                     "ssid": ssid,
                     "passphrase": passphrase,
                     "as-gateway": as_gateway,
+                    "profile": wifi_profile,
                 },
                 "containers": {"name": "offspot", "services": {}},
             },
