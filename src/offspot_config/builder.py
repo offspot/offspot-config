@@ -397,15 +397,15 @@ class ConfigBuilder:
                 # mandates presence of this file on host (base-image).
                 {
                     "type": "bind",
-                    "source": str(OFFSPOT_CONFIG_PATH),
-                    "target": str(OFFSPOT_CONFIG_PATH),
+                    "source": str(OFFSPOT_CONFIG_PATH.parent),
+                    "target": str(OFFSPOT_CONFIG_PATH.parent),
                     "read_only": False,
                 },
                 # mandates presence of this file on host (base-image).
                 {
                     "type": "bind",
-                    "source": str(HOSTAPD_CONFIG_PATH),
-                    "target": str(HOSTAPD_CONFIG_PATH),
+                    "source": str(HOSTAPD_CONFIG_PATH.parent),
+                    "target": str(HOSTAPD_CONFIG_PATH.parent),
                     "read_only": True,
                 },
                 # mandates presence of this folder on host (prob. not present)
