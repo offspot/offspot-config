@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- [builder] `/etc/hostapd/hostapd.conf` being created (as dir) by compose before being gen by ap.py
+- [builder] `/etc/hostapd/hostapd.conf` being created (as dir) by compose before being gen by ap.py (#53)
+- [ap] Improper detection of brcm4345 chipset (#54)
 
 ## [2.9.0] - 2025-12-02
 

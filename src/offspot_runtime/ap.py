@@ -149,14 +149,16 @@ Config.init(NAME)
 logger = Config.logger
 
 
-def is_using_brcm43455(interface: str) -> bool:
-    """Whether interace is a Broadcom BCM 43455 using brcmfmac driver"""
+def is_using_brcm43445(interface: str) -> bool:
+    """Whether interace is a Broadcom BCM 43445 using brcmfmac driver"""
 
     # check for device's vendor and product IDs
     for fname, value in {"vendor": "0x02d0", "device": "0x4345"}.items():
         try:
             if (
-                pathlib.Path(f"/sys/class/net/{interface}/device/{fname}").read_text()
+                pathlib.Path(f"/sys/class/net/{interface}/device/{fname}")
+                .read_text()
+                .strip()
                 != value
             ):
                 return False
@@ -381,12 +383,12 @@ def main(**kwargs) -> int:
         return fail_invalid("Invalid IPv4 address")
 
     # perf is silently switched to coverage if chipset doesn't support it
-    if kwargs["profile"] == "perf" and not is_using_brcm43455(kwargs["interface"]):
-        kwargs["profile"] = "coverage"
+    if kwargs["profile"] == "perf" and not is_using_brcm43445(kwargs["interface"]):
         logger.warning(
             f"{kwargs['interface']} does not support `{kwargs['profile']}` profile "
-            f"(not brcm4355). Switching to `coverage`."
+            f"(not brcm4345). Switching to `coverage`."
         )
+        kwargs["profile"] = "coverage"
 
     if not kwargs["dns"]:
         kwargs["dns"] = DEFAULT_DNS
