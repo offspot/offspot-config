@@ -86,9 +86,9 @@ INTERNAL_IMAGES = {
         "fullsize": 57585752,
     },
     "kiwix-serve": {
-        "source": "ghcr.io/offspot/kiwix-serve:3.7.0-2",
-        "filesize": 58480640,
-        "fullsize": 58447802,
+        "source": "ghcr.io/offspot/kiwix-serve:3.8.1",
+        "filesize": 62136320,
+        "fullsize": 62102478,
     },
     "metrics": {
         "source": "ghcr.io/offspot/metrics:0.3.0",
