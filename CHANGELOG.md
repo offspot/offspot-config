@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [builder] `/etc/hostapd/hostapd.conf` being created (as dir) by compose before being gen by ap.py (#53)
 - [ap] Improper detection of brcm4345 chipset (#54)
 
+### Changed
+
+- [builder] Using dashboard 1.6.4 with links fixes
+- [builder] Using adminui 1.3 with smaller size and better profile detection
+
 ## [2.9.0] - 2025-12-02
 
 ### Added
