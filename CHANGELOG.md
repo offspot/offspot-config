@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.2] - 2025-12-04
+
+### Fixed
+
+- [builder] Using dashboard 1.6.5 with falback color on about page (old browsers)
+- [builder] Using adminui 1.3.1 with regression fix (crash on start)
+
 ## [2.9.1] - 2025-12-03
 
 ### Fixed
