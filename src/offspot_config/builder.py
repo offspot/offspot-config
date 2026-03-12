@@ -71,9 +71,9 @@ INTERNAL_IMAGES = {
         "fullsize": 166963676,
     },
     "adminui": {
-        "source": "ghcr.io/offspot/adminui:1.3.1",
-        "filesize": 205598720,
-        "fullsize": 205525525,
+        "source": "ghcr.io/offspot/adminui:1.4.0",
+        "filesize": 207605760,
+        "fullsize": 207532516,
     },
     "file-browser": {
         "source": "ghcr.io/offspot/file-browser:1.2",
@@ -86,19 +86,19 @@ INTERNAL_IMAGES = {
         "fullsize": 57585752,
     },
     "kiwix-serve": {
-        "source": "ghcr.io/offspot/kiwix-serve:3.8.1",
-        "filesize": 62136320,
-        "fullsize": 62102478,
+        "source": "ghcr.io/offspot/kiwix-serve:3.8.2",
+        "filesize": 62330880,
+        "fullsize": 62299072,
     },
     "metrics": {
-        "source": "ghcr.io/offspot/metrics:0.3.0",
-        "filesize": 167311360,
-        "fullsize": 167202612,
+        "source": "ghcr.io/offspot/metrics:0.3.1",
+        "filesize": 154378240,
+        "fullsize": 154277513,
     },
     "reverse-proxy": {
-        "source": "ghcr.io/offspot/reverse-proxy:1.12",
-        "filesize": 109527040,
-        "fullsize": 109451723,
+        "source": "ghcr.io/offspot/reverse-proxy:1.13",
+        "filesize": 118056960,
+        "fullsize": 117982354,
     },
 }
 

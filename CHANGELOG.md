@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- [builder] Using adminui 1.4.0 with better login (password toggle, cookie fix)
+- [builder] Using kiwix-serve 3.8.2 with RAM usage fix (cluster cache)
+- [builder] Using metrics 0.3.1 with less logs
+- [builder] Using reverse-proxy 1.13 with Caddy 2.11
+
 ## [2.9.2] - 2025-12-04
 
 ### Fixed
