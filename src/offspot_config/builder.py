@@ -71,9 +71,9 @@ INTERNAL_IMAGES = {
         "fullsize": 166963676,
     },
     "adminui": {
-        "source": "ghcr.io/offspot/adminui:1.4.0",
-        "filesize": 207605760,
-        "fullsize": 207532516,
+        "source": "ghcr.io/offspot/adminui:1.4.1",
+        "filesize": 207656960,
+        "fullsize": 207579106,
     },
     "file-browser": {
         "source": "ghcr.io/offspot/file-browser:1.2",
