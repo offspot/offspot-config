@@ -6,7 +6,7 @@ def mini_config_yaml():
     yield """
 ---
 base:
-  source: https://drive.offspot.it/base/offspot-base-arm64-1.2.0.img
+  source: https://drive.hotspot.kiwix.org/base/offspot-base-arm64-1.2.0.img
   rootfs_size: 2638217216
 output:
   size: auto

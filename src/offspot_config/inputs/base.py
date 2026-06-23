@@ -24,7 +24,7 @@ def get_base_from(base: BaseConfig) -> File:
     if match:
         version = "".join(match.groups())
         payload["url"] = (
-            f"https://drive.offspot.it/base/offspot-base-arm64-{version}.img"
+            f"https://drive.hotspot.kiwix.org/base/offspot-base-arm64-{version}.img"
         )
         try:
             payload["checksum"] = Checksum(

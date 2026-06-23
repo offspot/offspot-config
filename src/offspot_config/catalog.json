@@ -11,7 +11,7 @@
         "tags": [
             "admin"
         ],
-        "icon_url": "https://drive.offspot.it/content-filter/content-filter.png",
+        "icon_url": "https://drive.hotspot.kiwix.org/content-filter/content-filter.png",
         "image": "ghcr.io/offspot/content-filter:1.0",
         "image_filesize": 506767360,
         "image_fullsize": 506645965
@@ -28,11 +28,11 @@
         "tags": [
             "Wikipedia"
         ],
-        "icon_url": "https://drive.offspot.it/wikifundi/wikifundi_logo.png",
+        "icon_url": "https://drive.hotspot.kiwix.org/wikifundi/wikifundi_logo.png",
         "image": "ghcr.io/offspot/wikifundi:1.0",
         "image_filesize": 1997875200,
         "image_fullsize": 1997766122,
-        "download_url": "https://drive.offspot.it/wikifundi/fr_2021-12.tar",
+        "download_url": "https://drive.hotspot.kiwix.org/wikifundi/fr_2021-12.tar",
         "download_via": "tar",
         "download_size": 4723138560,
         "download_checksum": {
@@ -72,11 +72,11 @@
         "tags": [
             "Wikipedia"
         ],
-        "icon_url": "https://drive.offspot.it/wikifundi/wikifundi_logo.png",
+        "icon_url": "https://drive.hotspot.kiwix.org/wikifundi/wikifundi_logo.png",
         "image": "ghcr.io/offspot/wikifundi:1.0",
         "image_filesize": 1997875200,
         "image_fullsize": 1997766122,
-        "download_url": "https://drive.offspot.it/wikifundi/en_2021-12.tar",
+        "download_url": "https://drive.hotspot.kiwix.org/wikifundi/en_2021-12.tar",
         "download_via": "tar",
         "download_size": 5477140480,
         "download_checksum": {
@@ -116,11 +116,11 @@
         "tags": [
             "Wikipedia"
         ],
-        "icon_url": "https://drive.offspot.it/wikifundi/wikifundi_logo.png",
+        "icon_url": "https://drive.hotspot.kiwix.org/wikifundi/wikifundi_logo.png",
         "image": "ghcr.io/offspot/wikifundi:1.0",
         "image_filesize": 1997875200,
         "image_fullsize": 1997766122,
-        "download_url": "https://drive.offspot.it/wikifundi/es_2021-12.tar",
+        "download_url": "https://drive.hotspot.kiwix.org/wikifundi/es_2021-12.tar",
         "download_via": "tar",
         "download_size": 5842176000,
         "download_checksum": {
@@ -160,7 +160,7 @@
         "tags": [
             "files"
         ],
-        "icon_url": "https://drive.offspot.it/edupi/edupi.png",
+        "icon_url": "https://drive.hotspot.kiwix.org/edupi/edupi.png",
         "image": "ghcr.io/offspot/file-manager:1.4",
         "image_filesize": 41615360,
         "image_fullsize": 41558268,
@@ -188,8 +188,8 @@
         "tags": [
             "android"
         ],
-        "icon_url": "https://drive.offspot.it/nomad/nomad_logo.png",
-        "download_url": "https://drive.offspot.it/nomad/nomadeducation_fr_android_2023-11.zip",
+        "icon_url": "https://drive.hotspot.kiwix.org/nomad/nomad_logo.png",
+        "download_url": "https://drive.hotspot.kiwix.org/nomad/nomadeducation_fr_android_2023-11.zip",
         "download_size": 151606771,
         "download_checksum": {
             "algo": "md5",
@@ -209,8 +209,8 @@
         "tags": [
             "android"
         ],
-        "icon_url": "https://drive.offspot.it/mathews/mathmathews_logo.png",
-        "download_url": "https://drive.offspot.it/mathews/mathmathews_fr_android_1.6.zip",
+        "icon_url": "https://drive.hotspot.kiwix.org/mathews/mathmathews_logo.png",
+        "download_url": "https://drive.hotspot.kiwix.org/mathews/mathmathews_fr_android_1.6.zip",
         "download_size": 35710192,
         "download_checksum": {
             "algo": "md5",
@@ -231,8 +231,8 @@
             "android",
             "windows"
         ],
-        "icon_url": "https://drive.offspot.it/africatik/africatik_logo.png",
-        "download_url": "https://drive.offspot.it/africatik/africatik_fr_ecoles-numeriques_2023-02.zip",
+        "icon_url": "https://drive.hotspot.kiwix.org/africatik/africatik_logo.png",
+        "download_url": "https://drive.hotspot.kiwix.org/africatik/africatik_fr_ecoles-numeriques_2023-02.zip",
         "download_size": 13906969131,
         "download_checksum": {
             "algo": "md5",
@@ -253,8 +253,8 @@
             "android",
             "windows"
         ],
-        "icon_url": "https://drive.offspot.it/africatik/africatik_logo.png",
-        "download_url": "https://drive.offspot.it/africatik/africatik_fr_maisons-digitales_2023-02.zip",
+        "icon_url": "https://drive.hotspot.kiwix.org/africatik/africatik_logo.png",
+        "download_url": "https://drive.hotspot.kiwix.org/africatik/africatik_fr_maisons-digitales_2023-02.zip",
         "download_size": 4394410977,
         "download_checksum": {
             "algo": "md5",
@@ -274,8 +274,8 @@
         "tags": [
             "android"
         ],
-        "icon_url": "https://drive.offspot.it/fizziq/fizziq-junior.png",
-        "download_url": "https://drive.offspot.it/fizziq/fizziq_fr_junior_2023-03.zip",
+        "icon_url": "https://drive.hotspot.kiwix.org/fizziq/fizziq-junior.png",
+        "download_url": "https://drive.hotspot.kiwix.org/fizziq/fizziq_fr_junior_2023-03.zip",
         "download_size": 128724719,
         "download_checksum": {
             "algo": "md5",
@@ -295,8 +295,8 @@
         "tags": [
             "android"
         ],
-        "icon_url": "https://drive.offspot.it/eleda/icon_zim.png",
-        "download_url": "https://drive.offspot.it/eleda/eleda_fr_android_2023-10.zip",
+        "icon_url": "https://drive.hotspot.kiwix.org/eleda/icon_zim.png",
+        "download_url": "https://drive.hotspot.kiwix.org/eleda/eleda_fr_android_2023-10.zip",
         "download_size": 49364213,
         "download_checksum": {
             "algo": "md5",
@@ -323,8 +323,8 @@
         "volumes": [
             "${APP_DIR}:/var/www/magoe"
         ],
-        "icon_url": "https://drive.offspot.it/magoe/magoe.png",
-        "download_url": "https://drive.offspot.it/magoe/magoe_fr_app_2024-03.zip",
+        "icon_url": "https://drive.hotspot.kiwix.org/magoe/magoe.png",
+        "download_url": "https://drive.hotspot.kiwix.org/magoe/magoe_fr_app_2024-03.zip",
         "download_size": 295323137,
         "download_checksum": {
             "algo": "md5",
@@ -344,8 +344,8 @@
         "tags": [
             "android"
         ],
-        "icon_url": "https://drive.offspot.it/f-droid/com.kylecorry.trail_sense.png",
-        "download_url": "https://drive.offspot.it/f-droid/com.kylecorry.trail_sense_111.zip",
+        "icon_url": "https://drive.hotspot.kiwix.org/f-droid/com.kylecorry.trail_sense.png",
+        "download_url": "https://drive.hotspot.kiwix.org/f-droid/com.kylecorry.trail_sense_111.zip",
         "download_size": 7171835,
         "download_checksum": {
             "algo": "md5",
@@ -365,8 +365,8 @@
         "tags": [
             "android"
         ],
-        "icon_url": "https://drive.offspot.it/f-droid/org.ligi.survivalmanual.png",
-        "download_url": "https://drive.offspot.it/f-droid/org.ligi.survivalmanual_428.zip",
+        "icon_url": "https://drive.hotspot.kiwix.org/f-droid/org.ligi.survivalmanual.png",
+        "download_url": "https://drive.hotspot.kiwix.org/f-droid/org.ligi.survivalmanual_428.zip",
         "download_size": 5528415,
         "download_checksum": {
             "algo": "md5",
@@ -386,8 +386,8 @@
         "tags": [
             "android"
         ],
-        "icon_url": "https://drive.offspot.it/f-droid/org.hlwd.bible_multi_the_life.png",
-        "download_url": "https://drive.offspot.it/f-droid/org.hlwd.bible_multi_the_life_20230823.zip",
+        "icon_url": "https://drive.hotspot.kiwix.org/f-droid/org.hlwd.bible_multi_the_life.png",
+        "download_url": "https://drive.hotspot.kiwix.org/f-droid/org.hlwd.bible_multi_the_life_20230823.zip",
         "download_size": 59891151,
         "download_checksum": {
             "algo": "md5",
@@ -407,8 +407,8 @@
         "tags": [
             "android"
         ],
-        "icon_url": "https://drive.offspot.it/af-rica/icon.png",
-        "download_url": "https://drive.offspot.it/af-rica/af_and_rica_ar_1.0.0.zip",
+        "icon_url": "https://drive.hotspot.kiwix.org/af-rica/icon.png",
+        "download_url": "https://drive.hotspot.kiwix.org/af-rica/af_and_rica_ar_1.0.0.zip",
         "download_size": 46509014,
         "download_checksum": {
             "algo": "md5",
@@ -428,8 +428,8 @@
         "tags": [
             "android"
         ],
-        "icon_url": "https://drive.offspot.it/af-rica/icon.png",
-        "download_url": "https://drive.offspot.it/af-rica/af_and_rica_en_1.0.0.zip",
+        "icon_url": "https://drive.hotspot.kiwix.org/af-rica/icon.png",
+        "download_url": "https://drive.hotspot.kiwix.org/af-rica/af_and_rica_en_1.0.0.zip",
         "download_size": 46508913,
         "download_checksum": {
             "algo": "md5",
@@ -449,8 +449,8 @@
         "tags": [
             "android"
         ],
-        "icon_url": "https://drive.offspot.it/af-rica/icon.png",
-        "download_url": "https://drive.offspot.it/af-rica/af_and_rica_fr_1.0.0.zip",
+        "icon_url": "https://drive.hotspot.kiwix.org/af-rica/icon.png",
+        "download_url": "https://drive.hotspot.kiwix.org/af-rica/af_and_rica_fr_1.0.0.zip",
         "download_size": 46508976,
         "download_checksum": {
             "algo": "md5",
