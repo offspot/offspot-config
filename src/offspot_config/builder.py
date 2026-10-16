@@ -282,7 +282,7 @@ class ConfigBuilder:
             "expose": ["80"],
             "environment": {
                 "KIWIX_READER_LINK_TPL": f"//{KIWIX_PREFIX}."
-                + "{fqdn}/viewer#{zim_name}",
+                + "{fqdn}/viewer#{libkiwix_path}",
                 "KIWIX_DOWNLOAD_LINK_TPL": (
                     f"//{ZIMDL_PREFIX}." + "{fqdn}/{zim_filename}"
                 ),
