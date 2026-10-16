@@ -66,9 +66,9 @@ INTERNAL_IMAGES = {
         "fullsize": 169506325,
     },
     "dashboard": {
-        "source": "ghcr.io/offspot/dashboard:1.6.5",
-        "filesize": 167086080,
-        "fullsize": 166963676,
+        "source": "ghcr.io/offspot/dashboard:1.7.0",
+        "filesize": 169195520,
+        "fullsize": 169080134,
     },
     "adminui": {
         "source": "ghcr.io/offspot/adminui:1.4.2",
@@ -86,9 +86,9 @@ INTERNAL_IMAGES = {
         "fullsize": 57585752,
     },
     "kiwix-serve": {
-        "source": "ghcr.io/offspot/kiwix-serve:3.8.2",
-        "filesize": 62330880,
-        "fullsize": 62299072,
+        "source": "ghcr.io/offspot/kiwix-serve:3.8.2_1",
+        "filesize": 62320640,
+        "fullsize": 62269347,
     },
     "metrics": {
         "source": "ghcr.io/offspot/metrics:0.3.1",
@@ -735,8 +735,7 @@ class ConfigBuilder:
                     "read_only": True,
                 },
             ],
-            "command": '/bin/sh -c "kiwix-serve --blockexternal '
-            '--port 80 --nodatealiases /data/*.zim"',
+            "command": "kiwix-serve-zims --blockexternal --port 80 --nodatealiases",
         }
 
         # add placeholder file to host fs to ensure bind succeeds
