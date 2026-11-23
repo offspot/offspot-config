@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 import os
@@ -7,7 +8,6 @@ import subprocess
 import sys
 from typing import Any, NamedTuple, Optional
 
-import humanfriendly
 from attrs import define, field
 
 from offspot_config.utils.yaml import yaml_load
@@ -202,6 +202,97 @@ WantedBy=multi-user.target
     )
 
 
+
+# Compose `ps --format json` reports State (running, exited, ...) and a
+# human-readable RunningFor string from Docker's HumanDuration helper, often
+# with an " ago" suffix. RunningFor is measured from container creation, so it
+# can read "8 months ago" on a long-lived image. The generic timespan parser
+# from the humanfriendly package does not accept month/year units or Docker's
+# "About a minute" / "Less than a second" phrasing.
+
+
+def _container_state_is_running(state: Any) -> bool:
+    """True when compose/docker State looks like a running container.
+
+    Accepts `running` (compose v2 JSON) and `Up` / `Up (healthy)` (older
+    docker-compose). Missing State is treated as unknown rather than stopped.
+    """
+    if state is None:
+        return True
+    text = str(state).strip().lower()
+    return text == "running" or text.startswith("up")
+
+
+def parse_docker_running_for(running_for: str) -> Optional[float]:
+    """Best-effort seconds from a Docker/compose RunningFor value.
+
+    Returns None when the string cannot be parsed. Month and year use the same
+    30-day / 365-day approximations as docker/go-units.HumanDuration. The
+    result only needs to be compared against a small uptime threshold.
+    """
+    if not running_for or not isinstance(running_for, str):
+        return None
+    text = running_for.strip()
+    text = re.sub(r"\s+ago$", "", text, flags=re.IGNORECASE).strip()
+    if not text:
+        return None
+    lowered = text.lower()
+    if lowered == "less than a second":
+        return 0.0
+    if lowered == "about a minute":
+        return 60.0
+    if lowered == "about an hour":
+        return 3600.0
+    match = re.fullmatch(
+        r"(\d+)\s+(second|minute|hour|day|week|month|year)s?",
+        lowered,
+    )
+    if not match:
+        return None
+    count = int(match.group(1))
+    unit = match.group(2)
+    seconds = {
+        "second": 1,
+        "minute": 60,
+        "hour": 3600,
+        "day": 86400,
+        "week": 7 * 86400,
+        "month": 30 * 86400,
+        "year": 365 * 86400,
+    }[unit]
+    return float(count * seconds)
+
+
+def _parse_container_started_at(value: Any) -> Optional[datetime.datetime]:
+    if not value or not isinstance(value, str):
+        return None
+    text = value.strip()
+    if text.endswith("Z"):
+        text = text[:-1] + "+00:00"
+    try:
+        parsed = datetime.datetime.fromisoformat(text)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=datetime.timezone.utc)
+    return parsed
+
+
+def _container_uptime_seconds(container: dict[str, Any]) -> Optional[float]:
+    """Uptime in seconds from a structured timestamp, else RunningFor."""
+    for key in ("StartedAt", "started_at", "CreatedAt", "created_at"):
+        started = _parse_container_started_at(container.get(key))
+        if started is not None:
+            now = datetime.datetime.now(datetime.timezone.utc)
+            return max(0.0, (now - started).total_seconds())
+    running_for = container.get("RunningFor")
+    if running_for is None:
+        running_for = container.get("running_for")
+    if isinstance(running_for, str):
+        return parse_docker_running_for(running_for)
+    return None
+
+
 def get_nb_compose_services() -> int:
     """number of expected services from reading docker-compose YAML"""
     try:
@@ -235,14 +326,26 @@ def get_nb_running_containers() -> int:
         for line in ps.stdout.splitlines():
             if line.strip():
                 container = json.loads(line.strip())
-                container["healthy"] = container["Health"] == "healthy"
-                if not container["healthy"]:
-                    container["healthy"] = (
-                        humanfriendly.parse_timespan(
-                            container["RunningFor"].replace(" ago", "")
-                        )
-                        >= min_seconds_healthy
-                    )
+                health = container.get("Health") or container.get("health") or ""
+                state = container.get("State", container.get("state"))
+                running = _container_state_is_running(state)
+                if health == "healthy":
+                    container["healthy"] = running
+                elif not running:
+                    container["healthy"] = False
+                elif health and health not in ("", "starting"):
+                    # Explicit non-healthy status (for example unhealthy): do
+                    # not promote the container via the uptime fallback.
+                    container["healthy"] = False
+                else:
+                    uptime = _container_uptime_seconds(container)
+                    if uptime is None:
+                        # State says running but no usable duration/timestamp.
+                        # Do not fail the whole poll (that used to return -1
+                        # and block the AP); treat as healthy.
+                        container["healthy"] = True
+                    else:
+                        container["healthy"] = uptime >= min_seconds_healthy
                 containers.append(container)
         return len(list(filter(lambda cont: cont["healthy"], containers)))
     except Exception as exc:
