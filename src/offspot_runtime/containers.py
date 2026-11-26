@@ -3,7 +3,6 @@
 """Validates and writes a docker-compose payload"""
 
 import argparse
-import logging
 import pathlib
 import sys
 
@@ -26,7 +25,7 @@ logger = Config.logger
 
 
 def main(src: str, dest: str) -> int:
-    logging.info(f"Writing docker-compose file from {src}")
+    logger.info(f"Writing docker-compose file from {src}")
     warn_unless_root()
 
     dest_path: pathlib.Path = pathlib.Path(dest).expanduser().resolve()
@@ -40,12 +39,12 @@ def main(src: str, dest: str) -> int:
     else:
         try:
             payload = pathlib.Path(src).read_text()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             fail_invalid(f"Unable to read compose from {src}: {exc}")
 
     try:
         compose = yaml_load(payload)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         fail_invalid(f"Unable to parse YAML compose: {exc}")
         compose = {}
 
@@ -87,7 +86,7 @@ def entrypoint():
         sys.exit(main(**kwargs))
     except Exception as exc:
         if Config.debug:
-            logger.exception(exc)
+            logger.exception("Error")
         else:
             logger.error(exc)
         sys.exit(1)

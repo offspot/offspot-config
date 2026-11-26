@@ -3,7 +3,6 @@
 """Sets machine's hostname (using systemd)"""
 
 import argparse
-import logging
 import pathlib
 import re
 import sys
@@ -26,7 +25,7 @@ logger = Config.logger
 
 
 def main(hostname: str) -> int:
-    logging.info(f"Configuring hostname for `{hostname}`")
+    logger.info(f"Configuring hostname for `{hostname}`")
     warn_unless_root()
 
     check = is_valid_hostname(hostname)
@@ -74,7 +73,7 @@ def entrypoint():
         sys.exit(main(**kwargs))
     except Exception as exc:
         if Config.debug:
-            logger.exception(exc)
+            logger.exception("Error")
         else:
             logger.error(exc)
         sys.exit(1)

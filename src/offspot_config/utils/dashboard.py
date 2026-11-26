@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pathlib
 import urllib.parse
-from typing import NamedTuple, TypeVar
+from typing import NamedTuple, Self, TypeVar
 
 from offspot_config.inputs.checksum import Checksum
 from offspot_config.utils.download import get_online_rsc_size
@@ -44,8 +44,8 @@ class Reader(NamedTuple):
 
     @classmethod
     def using(
-        cls: type[R], platform: str, download_url: str, checksum: Checksum | None = None
-    ) -> R:
+        cls, platform: str, download_url: str, checksum: Checksum | None = None
+    ) -> Self:
         """Reader from a platform name and download URL"""
         return cls(
             platform=platform,

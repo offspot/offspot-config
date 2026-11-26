@@ -81,14 +81,14 @@ def main() -> int:
     try:
         status = INTERNET_STATUS_PATH.read_text().strip()
         spoof = status != "online"
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         fail_error(
             f"unable to read Internet connection status "
             f"from {INTERNET_STATUS_PATH}: {exc}"
         )
     try:
         fixed = toggle_dnsmasq(dnsmasq_conf_path=DNSMASQ_SPOOF_CONFIG_PATH, spoof=spoof)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         fail_error(
             "unable to read/write dnsmasq spoof config "
             f"at {DNSMASQ_SPOOF_CONFIG_PATH}: {exc}"
@@ -118,7 +118,7 @@ def entrypoint():
         sys.exit(main(**kwargs))
     except Exception as exc:
         if Config.debug:
-            logger.exception(exc)
+            logger.exception("Error")
         else:
             logger.error(exc)
         sys.exit(1)

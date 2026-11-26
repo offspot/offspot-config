@@ -30,10 +30,10 @@ class Package:
     def size(self) -> int:
         raise NotImplementedError()
 
-    def get_url(self, fqdn: str, **kwargs) -> str:  # noqa: ARG002
+    def get_url(self, fqdn: str, **kwargs) -> str:
         return ""
 
-    def get_download_url(self, download_fqdn: str) -> str | None:  # noqa: ARG002
+    def get_download_url(self, download_fqdn: str) -> str | None:
         return None
 
     def get_download_size(self) -> int | None:
@@ -99,7 +99,7 @@ class ZimPackage(Package):
     def size(self) -> int:
         return self.download_size
 
-    def get_url(self, fqdn: str, kiwix_domain: str, **kwargs) -> str:  # noqa: ARG002
+    def get_url(self, fqdn: str, kiwix_domain: str, **kwargs) -> str:
         # this assumes that the ZIM is stored using self.filename
         from offspot_config.zim import get_libkiwix_humanid
 
@@ -162,7 +162,7 @@ class AppPackage(Package):
     def size(self) -> int:
         return self.image_fullsize + (self.download_size or 0)
 
-    def get_url(self, fqdn: str, **kwargs) -> str:  # noqa: ARG002
+    def get_url(self, fqdn: str, **kwargs) -> str:
         return f"//{self.domain}.{fqdn}/"
 
     def has_file(self) -> bool:
@@ -204,7 +204,7 @@ class FilesPackage(Package):
     def size(self) -> int:
         return self.download_size or 0
 
-    def get_url(self, fqdn: str, **kwargs) -> str:  # noqa: ARG002
+    def get_url(self, fqdn: str, **kwargs) -> str:
         return f"//{self.domain}.{fqdn}/"
 
     def as_fileconfig(self) -> FileConfig:

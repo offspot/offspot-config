@@ -288,11 +288,11 @@ def device_supports(dev_path: str, fs: str, option: str) -> bool:
     if not fs_folder.joinpath(dev_name).exists():
         try:
             dev_name = get_mapper_device_for(dev_name)
-        except Exception:
+        except Exception:  # noqa: BLE001
             return False
     try:
         options = fs_folder.joinpath(dev_name).joinpath("options").read_text()
-    except Exception:
+    except Exception:  # noqa: BLE001
         return False
     return bool(re.search(rf"^{option}", options, re.MULTILINE))
 
@@ -314,7 +314,7 @@ def supports_xattr(path: pathlib.Path) -> bool:
             attrs["flag"] = "value"
             if attrs["flag"] != "value":
                 return False
-        except Exception:
+        except Exception:  # noqa: BLE001
             return False
         return True
 
@@ -325,12 +325,12 @@ def supports_xattr(path: pathlib.Path) -> bool:
         return test_xattr(pathlib.Path(tmp.name))
 
 
-def is_dict(value: Any, *, accepts_none: bool | None = False) -> bool:  # noqa: ARG001
+def is_dict(value: Any, *, accepts_none: bool | None = False) -> bool:
     """whether value is a dict (shortcut)"""
     return isinstance(value, dict)
 
 
-def is_list(value: Any, *, accepts_none: bool | None = False) -> bool:  # noqa: ARG001
+def is_list(value: Any, *, accepts_none: bool | None = False) -> bool:
     """whether value is a list (shortcut)"""
     return isinstance(value, list)
 

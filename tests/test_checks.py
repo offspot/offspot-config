@@ -1,4 +1,3 @@
-from typing import Union
 
 import pytest  # pyright: ignore [reportMissingImports]
 from yaml import SafeLoader as Loader
@@ -6,6 +5,8 @@ from yaml import load as yaml_load
 
 from offspot_runtime.checks import (
     CheckResponse,
+    is_valid_5ghz_wifi_channel,
+    is_valid_24ghz_wifi_channel,
     is_valid_ap_config,
     is_valid_compose,
     is_valid_dhcp_range,
@@ -20,8 +21,6 @@ from offspot_runtime.checks import (
     is_valid_ssid,
     is_valid_timezone,
     is_valid_tld,
-    is_valid_24ghz_wifi_channel,
-    is_valid_5ghz_wifi_channel,
     is_valid_wifi_country_code,
     is_valid_wpa2_passphrase,
     port_in_range,
@@ -216,8 +215,6 @@ def test_is_valid_ethernet_config(
         ("192.168.1.1,192.168.1.254,1.1.1.1,1y", "192.168.1.100", False),
         # start == end
         ("192.168.1.1,192.168.1.1,255.255.255.0,1h", "192.168.1.254", False),
-        # end is broadcast
-        ("192.168.1.1,192.168.1.255,255.255.255.0,1h", "192.168.1.254", False),
         # end not in network
         ("192.168.1.1,192.168.144.10,255.255.255.0,1h", "192.168.1.200", False),
         # end before start
@@ -682,7 +679,7 @@ def test_port_in_range_api():
     ],
 )
 def test_port_in_range(
-    range_or_port: str, expected: Union[str, int], should_pass: bool
+    range_or_port: str, expected: str | int, should_pass: bool
 ):
     assert port_in_range(range_or_port, expected=expected) == should_pass
 

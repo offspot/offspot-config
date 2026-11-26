@@ -3,7 +3,6 @@
 """Sets machine's timezone (using systemd)"""
 
 import argparse
-import logging
 import pathlib
 import sys
 
@@ -25,7 +24,7 @@ logger = Config.logger
 
 
 def main(timezone: str) -> int:
-    logging.info(f"Configuring timezone for `{timezone}`")
+    logger.info(f"Configuring timezone for `{timezone}`")
     warn_unless_root()
 
     check = is_valid_timezone(timezone)
@@ -60,7 +59,7 @@ def entrypoint():
         sys.exit(main(**kwargs))
     except Exception as exc:
         if Config.debug:
-            logger.exception(exc)
+            logger.exception("Error")
         else:
             logger.error(exc)
         sys.exit(1)

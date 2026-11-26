@@ -53,14 +53,14 @@ def get_online_rsc_size(url: str) -> int:
             )
             resp.raise_for_status()
         return int(resp.headers.get("Content-Length") or -1)
-    except Exception:
+    except Exception:  # noqa: BLE001
         return -2
 
 
 def get_base64_from(url: str) -> str:
     try:
         return base64.b64encode(get_payload_from(url)).decode("ASCII")
-    except Exception:
+    except Exception:  # noqa: BLE001
         return ""
 
 

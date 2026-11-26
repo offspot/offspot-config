@@ -1,7 +1,7 @@
 import ipaddress
 import re
 import zoneinfo
-from typing import Any, NamedTuple, Optional, Union
+from typing import Any, NamedTuple
 
 import iso3166
 
@@ -25,7 +25,7 @@ FIRMWARES = {  # chipset: firmwares list
 }
 
 
-def port_in_range(range_or_port: str, expected: Union[str, int]) -> bool:
+def port_in_range(range_or_port: str, expected: str | int) -> bool:
     """whether expected port is in the range_or_port compose string"""
     if not isinstance(range_or_port, str) or not isinstance(expected, (str, int)):
         return False
@@ -45,7 +45,7 @@ def port_in_range(range_or_port: str, expected: Union[str, int]) -> bool:
 class CheckResponse(NamedTuple):
     """Check Response Interface"""
 
-    passed: Optional[bool] = False
+    passed: bool | None = False
     help_text: str = ""
 
     def __bool__(self) -> bool:
@@ -90,9 +90,9 @@ def is_valid_hostname(name: str) -> CheckResponse:
 def is_valid_compose(
     compose: dict[str, Any],
     *,
-    require_services: Optional[bool] = True,
-    require_image: Optional[bool] = True,
-    required_ports: Optional[list[int]] = None,
+    require_services: bool | None = True,
+    require_image: bool | None = True,
+    required_ports: list[int] | None = None,
 ) -> CheckResponse:
     """whether compose represents a valid-looking docker-compose Dict
 
@@ -157,9 +157,8 @@ def is_valid_compose(
                 if ":" not in port:
                     continue
                 # we want only tcp (if defined as its default)
-                if "/" in port:
-                    if port.rsplit("/", 1)[-1] != "tcp":
-                        continue
+                if "/" in port and port.rsplit("/", 1)[-1] != "tcp":
+                    continue
                 # host can be either a port-def or an IP:port-def
                 host = port.rsplit(":", 1)[0]
                 if ":" in host:
@@ -182,7 +181,7 @@ def is_valid_compose(
     return CheckResponse(True)
 
 
-def is_valid_ipv4(ip_addr: str, *, usable: Optional[bool] = True) -> CheckResponse:
+def is_valid_ipv4(ip_addr: str, *, usable: bool | None = True) -> CheckResponse:
     """whether textual IP address is a valid IP Address value
 
     usable controls whether address must be usable (bit-set, not network) or not"""
@@ -367,7 +366,7 @@ def is_valid_dhcp_range(range_str: str, with_address: str) -> CheckResponse:
         return CheckResponse(False, "Incorrect type for address")
 
     # make we we got all parts
-    if not range_str.count(",") == 3:
+    if range_str.count(",") != 3:
         return CheckResponse(False, "Incorrect range-string format")
 
     # validate all parts as IPs (and not network/broadcast)
@@ -434,7 +433,7 @@ def is_valid_dhcp_range(range_str: str, with_address: str) -> CheckResponse:
 
 
 def is_valid_network(
-    network: str, *, with_address: str, allow_any: Optional[bool] = False
+    network: str, *, with_address: str, allow_any: bool | None = False
 ) -> CheckResponse:
     """whether network is a valid hotspot network (CIDR) value
 
@@ -445,7 +444,7 @@ def is_valid_network(
 
     try:
         net = ipaddress.IPv4Network(network)
-    except Exception:
+    except Exception:  # noqa: BLE001
         return CheckResponse(False, f"Invalid network `{network}")
 
     if net.num_addresses < 2:
@@ -491,7 +490,7 @@ def is_valid_ap_config(
     passphrase: str,
     address: str,
     as_gateway: bool,
-    spoof: Union[bool, str],
+    spoof: bool | str,
     tld: str,
     domain: str,
     welcome: str,
@@ -609,7 +608,7 @@ def is_valid_ap_config(
 
 def is_valid_firmware_for(chipset: str, firmware: str) -> CheckResponse:
     """whether name represents a valid Timezone value"""
-    if chipset not in FIRMWARES.keys():
+    if chipset not in FIRMWARES:
         return CheckResponse(False, "Incorrect WiFi chipset “{chipset}”")
 
     if firmware not in FIRMWARES[chipset]:

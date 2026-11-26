@@ -3,7 +3,6 @@
 """Sets machine's ethernet network config (using dhcpcd5)"""
 
 import argparse
-import logging
 import pathlib
 import re
 import sys
@@ -97,7 +96,7 @@ def main(
     routers: list[str],
     dns: list[str],
 ) -> int:
-    logging.info("Configuring network")
+    logger.info("Configuring network")
     warn_unless_root()
 
     check = is_valid_ethernet_config(
@@ -178,7 +177,7 @@ def entrypoint():
         sys.exit(main(**kwargs))
     except Exception as exc:
         if Config.debug:
-            logger.exception(exc)
+            logger.exception("Error")
         else:
             logger.error(exc)
         sys.exit(1)

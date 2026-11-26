@@ -6,7 +6,7 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     permissions:
       id-token: write  # mandatory for PyPI trusted publishing
 
@@ -17,7 +17,6 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version-file: pyproject.toml
-          architecture: x64
 
       - name: Build packages
         run: |

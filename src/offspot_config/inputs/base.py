@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import re
 
 from attrs import define
@@ -26,12 +27,10 @@ def get_base_from(base: BaseConfig) -> File:
         payload["url"] = (
             f"https://drive.hotspot.kiwix.org/base/offspot-base-arm64-{version}.img"
         )
-        try:
+        with contextlib.suppress(Exception):
             payload["checksum"] = Checksum(
                 algo="md5", value=read_checksum_from(f"{payload['url']}.md5")
             ).to_dict()
-        except Exception:
-            ...
     elif isinstance(base.checksum, Checksum):
         payload["checksum"] = base.checksum.to_dict()
     return File(payload)
