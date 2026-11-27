@@ -5,7 +5,7 @@ import pathlib
 import re
 import subprocess
 import sys
-from typing import Any, NamedTuple, Optional
+from typing import Any, NamedTuple
 
 import humanfriendly
 from attrs import define, field
@@ -61,17 +61,20 @@ class Config:
 
 
 def fail_invalid(message: str):
-    Config.logger.error(colored(message, "red"))
+    if message:
+        Config.logger.error(colored(message, "red"))
     sys.exit(2)
 
 
 def fail_error(message: str):
-    Config.logger.critical(colored(message, "red"))
+    if message:
+        Config.logger.critical(colored(message, "red"))
     sys.exit(1)
 
 
 def succeed(message: str) -> int:
-    Config.logger.info(colored(message, "green"))
+    if message:
+        Config.logger.info(colored(message, "green"))
     return 0
 
 
@@ -81,7 +84,7 @@ def warn_unless_root():
 
 
 def simple_run(
-    command: list[str], stdin: Optional[str] = None, *, failsafe: bool = False
+    command: list[str], stdin: str | None = None, *, failsafe: bool = False
 ):
     """returncode from running passed command, optionnaly passing str as stdin"""
     Config.logger.debug(f"{command=}")
@@ -92,9 +95,9 @@ def simple_run(
             input=stdin,
             check=False,
         )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         if Config.debug:
-            Config.logger.exception(exc)
+            Config.logger.exception("Error")
         else:
             Config.logger.error(exc)
         return 1
@@ -118,7 +121,7 @@ def get_progname() -> str:
     """human-friendly program name for use in usage help text"""
     try:
         return pathlib.Path(sys.argv[0]).stem
-    except Exception:
+    except Exception:  # noqa: BLE001
         return sys.argv[0]
 
 
@@ -148,9 +151,9 @@ def service_started(service) -> SystemDServiceStatus:
             if line.strip():
                 key, value = line.split("=", 1)
                 payload[key] = value
-    except Exception as exc:
+    except Exception:  # noqa: BLE001
         if Config.debug:
-            Config.logger.exception(exc)
+            Config.logger.exception("Error")
         return SystemDServiceStatus(started=False, exit_code=99, payload={})
     else:
         succeeded = payload.get("Result", "") == "success"
