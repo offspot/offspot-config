@@ -207,17 +207,16 @@ def get_nb_compose_services() -> int:
     try:
         payload = yaml_load(COMPOSE_PATH.read_text())
         if not isinstance(payload["services"], dict):
-            raise ValueError("Unexpected YAML data")
+            raise TypeError("Unexpected YAML data")
         return len(payload["services"].keys())
-    except Exception as exc:
-        Config.logger.exception(exc)
+    except Exception:  # noqa: BLE001
+        Config.logger.exception("Error")
         return 0
 
 
 def get_nb_running_containers() -> int:
     """number of currently running containers (via docker-compose)"""
-    containers: list[dict[str, Any]] = []
-    min_seconds_healthy = 5
+    nb_healthy = 0
     try:
         ps = subprocess.run(
             [
@@ -227,6 +226,8 @@ def get_nb_running_containers() -> int:
                 "ps",
                 "--format",
                 "json",
+                "--status",
+                "running"
             ],
             text=True,
             capture_output=True,
@@ -235,17 +236,9 @@ def get_nb_running_containers() -> int:
         for line in ps.stdout.splitlines():
             if line.strip():
                 container = json.loads(line.strip())
-                container["healthy"] = container["Health"] == "healthy"
-                if not container["healthy"]:
-                    container["healthy"] = (
-                        humanfriendly.parse_timespan(
-                            container["RunningFor"].replace(" ago", "")
-                        )
-                        >= min_seconds_healthy
-                    )
-                containers.append(container)
-        return len(list(filter(lambda cont: cont["healthy"], containers)))
-    except Exception as exc:
+                nb_healthy += int(container["Health"] == "healthy")
+        return nb_healthy
+    except Exception:  # noqa: BLE001
         Config.logger.error("failed to get compose status")
-        Config.logger.exception(exc)
+        Config.logger.exception("Error")
         return -1

@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Support for Python 3.11 and 3.12 (now based on Trixie)
 
+### Fixed
+
+- No WiFi on systems with battery flashed months after image is built #56
 
 ## [2.10.5] - 2026-10-16
 
