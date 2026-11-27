@@ -1,33 +1,39 @@
+import os
+import time
+
 import pytest  # pyright: ignore [reportMissingImports]
 
 from offspot_config.inputs.checksum import Checksum
 from offspot_config.utils.dashboard import Reader
 
+# master.download.kiwix.org would otherwise issue 429 errors
+MASTER_DOWNLOAD_SLEEP_SECONDS = float(os.getenv("MASTER_DOWNLOAD_SLEEP_SECONDS", "1.5"))
+
 REALISTIC_VALUES = [
     (
         "linux",
-        "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_x86_64_2.3.1-4.appimage",
+        "https://master.download.kiwix.org/release/kiwix-desktop/kiwix-desktop_x86_64_2.3.1-4.appimage",
         "kiwix-desktop_x86_64_2.3.1-4.appimage",
         146629824,
         "899279fb76e357afe33bbdd968750376",
     ),
     (
         "android",
-        "https://download.kiwix.org/release/kiwix-android/kiwix-3.9.1.apk",
+        "https://master.download.kiwix.org/release/kiwix-android/kiwix-3.9.1.apk",
         "kiwix-3.9.1.apk",
         79629012,
         "d2ede8e23b4095718c508f44a341f687",
     ),
     (
         "windows",
-        "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_2.3.1-2.zip",
+        "https://master.download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_2.3.1-2.zip",
         "kiwix-desktop_windows_x64_2.3.1-2.zip",
         126628211,
         "adf9b64b5c6906427d7a1c8bdfc31546",
     ),
     (
         "macos",
-        "https://download.kiwix.org/release/kiwix-macos/kiwix-macos_3.1.0.dmg",
+        "https://master.download.kiwix.org/release/kiwix-macos/kiwix-macos_3.1.0.dmg",
         "kiwix-macos_3.1.0.dmg",
         16051402,
         "747fd0841b56d2d5158e0e65646b1be1",
@@ -39,19 +45,19 @@ REALISTIC_VALUES = [
     "url, expected_filename",
     [
         (
-            "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_2.3.1-2.zip",
+            "https://master.download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_2.3.1-2.zip",
             "kiwix-desktop_windows_x64_2.3.1-2.zip",
         ),
         (
-            "https://download.kiwix.org/release/kiwix-android/kiwix-3.9.1.apk",
+            "https://master.download.kiwix.org/release/kiwix-android/kiwix-3.9.1.apk",
             "kiwix-3.9.1.apk",
         ),
         (
-            "https://download.kiwix.org/release/kiwix-macos/kiwix-macos_3.1.0.dmg",
+            "https://master.download.kiwix.org/release/kiwix-macos/kiwix-macos_3.1.0.dmg",
             "kiwix-macos_3.1.0.dmg",
         ),
         (
-            "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_x86_64_2.3.1-4.appimage",
+            "https://master.download.kiwix.org/release/kiwix-desktop/kiwix-desktop_x86_64_2.3.1-4.appimage",
             "kiwix-desktop_x86_64_2.3.1-4.appimage",
         ),
         ("https://www.freecodecamp.org/news/css-unit-guide/", "css-unit-guide"),
@@ -107,6 +113,7 @@ def test_reader_using(
         size,
         get_checksum_from(md5sum),
     )
+    time.sleep(MASTER_DOWNLOAD_SLEEP_SECONDS)
     assert Reader.using(platform=platform, download_url=download_url) == Reader(
         platform,
         download_url,
@@ -114,12 +121,14 @@ def test_reader_using(
         size,
         None,
     )
+    time.sleep(MASTER_DOWNLOAD_SLEEP_SECONDS)
     assert Reader.using(platform=platform, download_url=download_url) == Reader(
         platform,
         download_url,
         filename,
         size,
     )
+    time.sleep(MASTER_DOWNLOAD_SLEEP_SECONDS)
 
 
 @pytest.mark.parametrize(
@@ -150,6 +159,7 @@ def test_invalid_data(
             filename,
             size,  # pyright: ignore [reportCallIssue]
         )
+    time.sleep(MASTER_DOWNLOAD_SLEEP_SECONDS)
 
 
 def test_sort_order():
@@ -172,13 +182,13 @@ def test_sort_order():
     [
         (
             "android",
-            "https://download.kiwix.org/release/kiwix-android/kiwix-3.9.1.apk",
+            "https://master.download.kiwix.org/release/kiwix-android/kiwix-3.9.1.apk",
             "kiwix-3.9.1.apk",
             79629012,
             None,
             {
                 "platform": "android",
-                "download_url": "https://download.kiwix.org/release/kiwix-android/kiwix-3.9.1.apk",
+                "download_url": "https://master.download.kiwix.org/release/kiwix-android/kiwix-3.9.1.apk",
                 "filename": "kiwix-3.9.1.apk",
                 "size": 79629012,
                 "checksum": None,
@@ -186,13 +196,13 @@ def test_sort_order():
         ),
         (
             "windows",
-            "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_2.3.1-2.zip",
+            "https://master.download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_2.3.1-2.zip",
             "kiwix-desktop_windows_x64_2.3.1-2.zip",
             126628211,
             "adf9b64b5c6906427d7a1c8bdfc31546",
             {
                 "platform": "windows",
-                "download_url": "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_2.3.1-2.zip",
+                "download_url": "https://master.download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_2.3.1-2.zip",
                 "filename": "kiwix-desktop_windows_x64_2.3.1-2.zip",
                 "size": 126628211,
                 "checksum": {
@@ -204,13 +214,13 @@ def test_sort_order():
         ),
         (
             "macos",
-            "https://download.kiwix.org/release/kiwix-macos/kiwix-macos_3.1.0.dmg",
+            "https://master.download.kiwix.org/release/kiwix-macos/kiwix-macos_3.1.0.dmg",
             None,
             None,
             None,
             {
                 "platform": "macos",
-                "download_url": "https://download.kiwix.org/release/kiwix-macos/kiwix-macos_3.1.0.dmg",
+                "download_url": "https://master.download.kiwix.org/release/kiwix-macos/kiwix-macos_3.1.0.dmg",
                 "filename": "kiwix-macos_3.1.0.dmg",
                 "size": 16051402,
                 "checksum": None,
@@ -226,4 +236,5 @@ def test_to_dict(platform, download_url, filename, size, md5sum, expected_dict):
         reader = Reader.using(
             platform=platform, download_url=download_url, checksum=checksum
         )
+        time.sleep(MASTER_DOWNLOAD_SLEEP_SECONDS)
     assert reader.to_dict() == expected_dict
